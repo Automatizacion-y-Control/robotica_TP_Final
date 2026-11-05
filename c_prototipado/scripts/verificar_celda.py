@@ -30,6 +30,8 @@ from robodk.robomath import transl, rotx, pi                                 # n
 
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8")
 NOMBRE_ESTACION = "Celda_Soldadura_Estator_Grupo4"
+if "--estacion" in sys.argv:
+    NOMBRE_ESTACION = sys.argv[sys.argv.index("--estacion") + 1]
 CON_COLISIONES = "--colisiones" in sys.argv
 CON_PIEZA = "--con-pieza" in sys.argv
 MODELO_ESTATOR = os.path.normpath(os.path.join(AQUI, "..", "modelos", "paquete_estator.stl"))
@@ -96,8 +98,12 @@ if CON_PIEZA:
         RDK.setCollisionActivePair(COLLISION_OFF, pieza_prueba, pinza, 0, i)
     for k in range(1, P.LOTE + 1):
         RDK.setCollisionActivePair(COLLISION_OFF, pieza_prueba, RDK.Item(f"Estator_{k}", ITEM_TYPE_OBJECT))
-    for nombre in ("Cinta_Entrada", "Pallet_Salida", "Sensor_Pieza_En_Toma"):
-        RDK.setCollisionActivePair(COLLISION_OFF, pieza_prueba, RDK.Item(nombre))
+    # Apoyos de la pieza según la versión: banda, tramo de salida, pallet y sensor.
+    for nombre in ("Cinta_Entrada", "Cinta_Pasante", "Cinta_Salida_Banda", "Cinta_Salida_Estructura",
+                   "Pallet_Salida", "Sensor_Pieza_En_Toma"):
+        otro = RDK.Item(nombre)
+        if otro.Valid():
+            RDK.setCollisionActivePair(COLLISION_OFF, pieza_prueba, otro)
     print("\nPieza de prueba colgada del TCP de la pinza")
 
 print("\n=== Programas (Update desde el estado inicial) ===")
