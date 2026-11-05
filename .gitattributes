@@ -1,21 +1,20 @@
-# Normalizar fin de línea en archivos de texto
+# Normalizar fin de línea en archivos de texto: LF en el repositorio y en la copia de trabajo
 * text=auto eol=lf
 
 # Archivos de texto
-*.md    text
-*.txt   text
-*.py    text
-*.json  text
-*.csv   text
+*.md    text eol=lf
+*.txt   text eol=lf
+*.py    text eol=lf
+*.json  text eol=lf
+*.csv   text eol=lf
 
 # Scripts de Windows con CRLF
 *.bat   text eol=crlf
 *.cmd   text eol=crlf
 *.ps1   text eol=crlf
 
-# Binarios (sin diff ni conversión de fin de línea)
+# Documentos e imágenes (sin diff ni conversión de fin de línea)
 *.pdf   binary
-*.rdk   binary
 *.docx  binary
 *.xlsx  binary
 *.pptx  binary
@@ -23,7 +22,15 @@
 *.jpg   binary
 *.jpeg  binary
 *.gif   binary
+*.zip   binary
+
+# RoboDK: estaciones y modelos de robots y herramientas de la biblioteca
+*.rdk   binary
+*.robot binary
+*.tool  binary
+
+# Modelos 3D. Los STL propios son ASCII, pero se tratan como binarios:
+# diff ilegible y sin conversión; generar_modelos.py los escribe con LF.
 *.stl   binary
 *.step  binary
 *.stp   binary
-*.zip   binary

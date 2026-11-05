@@ -35,7 +35,9 @@ def escribir_stl(nombre, triangulos):
     """Escribe una lista de triángulos ((x,y,z) x 3) como STL ASCII."""
     os.makedirs(SALIDA, exist_ok=True)
     ruta = os.path.join(SALIDA, nombre)
-    with open(ruta, "w", encoding="ascii") as f:
+    # newline="\n": LF también en Windows, para que el archivo sea idéntico en
+    # cualquier sistema (el .gitattributes trata los STL como binarios).
+    with open(ruta, "w", encoding="ascii", newline="\n") as f:
         f.write(f"solid {nombre}\n")
         for a, b, c in triangulos:
             u = [b[i] - a[i] for i in range(3)]
