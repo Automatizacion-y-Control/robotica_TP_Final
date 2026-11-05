@@ -1,0 +1,25 @@
+# Editor
+.vscode/
+.idea/
+
+# Sistema operativo
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# RoboDK: backups y temporales
+*.rdk.bak
+*.bak
+*~
+*.tmp
+
+# Office / LibreOffice: archivos de bloqueo
+~$*
+.~lock.*#
+
+# Python (scripts de RoboDK)
+__pycache__/
+*.pyc
+
+# Bibliografía (material con derechos de autor, no se versiona)
+b_investigacion/biblio/

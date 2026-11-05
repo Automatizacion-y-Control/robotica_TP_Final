@@ -1,0 +1,29 @@
+# Normalizar fin de línea en archivos de texto
+* text=auto eol=lf
+
+# Archivos de texto
+*.md    text
+*.txt   text
+*.py    text
+*.json  text
+*.csv   text
+
+# Scripts de Windows con CRLF
+*.bat   text eol=crlf
+*.cmd   text eol=crlf
+*.ps1   text eol=crlf
+
+# Binarios (sin diff ni conversión de fin de línea)
+*.pdf   binary
+*.rdk   binary
+*.docx  binary
+*.xlsx  binary
+*.pptx  binary
+*.png   binary
+*.jpg   binary
+*.jpeg  binary
+*.gif   binary
+*.stl   binary
+*.step  binary
+*.stp   binary
+*.zip   binary
