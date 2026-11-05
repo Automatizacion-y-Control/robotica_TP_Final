@@ -2,7 +2,8 @@
 
 Arma la estación completa a partir de parametros_celda.py y de los modelos de
 c_prototipado/modelos/: equipos, frames, herramientas, targets y programas.
-El resultado se guarda en c_prototipado/Celda_Soldadura_Estator_Grupo4.rdk.
+El resultado se guarda en c_prototipado/Celda_Soldadura_Estator_Grupo4_v02.rdk
+(versión con pallet de salida; la v03 se obtiene con mejora_01_cinta_pasante.py).
 
 Alcance del script:
     - Solo CONSTRUYE la estación. No ejecuta ni mueve los robots durante el
@@ -36,7 +37,7 @@ from robodk.robomath import Mat, transl, rotz, roty, rotx, pi  # noqa: E402
 RAIZ = os.path.normpath(os.path.join(AQUI, ".."))
 MODELOS = os.path.join(RAIZ, "modelos")
 BIBLIO = os.path.join(MODELOS, "biblioteca")
-ARCHIVO_RDK = os.path.join(RAIZ, "Celda_Soldadura_Estator_Grupo4.rdk")
+ARCHIVO_RDK = os.path.join(RAIZ, "Celda_Soldadura_Estator_Grupo4_v02.rdk")
 NOMBRE_ESTACION = "Celda_Soldadura_Estator_Grupo4"
 
 RDK = Robolink()

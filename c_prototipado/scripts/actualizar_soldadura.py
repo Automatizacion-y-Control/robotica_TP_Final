@@ -29,7 +29,7 @@ from robodk.robolink import (Robolink, ITEM_TYPE_STATION, ITEM_TYPE_ROBOT,  # no
 from robodk.robomath import transl                                      # noqa: E402
 
 NOMBRE_ESTACION = "Celda_Soldadura_Estator_Grupo4"
-ARCHIVO_RDK = os.path.normpath(os.path.join(AQUI, "..", "Celda_Soldadura_Estator_Grupo4.rdk"))
+ARCHIVO_RDK = os.path.normpath(os.path.join(AQUI, "..", "Celda_Soldadura_Estator_Grupo4_v02.rdk"))
 
 RDK = Robolink()
 estacion = RDK.Item(NOMBRE_ESTACION, ITEM_TYPE_STATION)

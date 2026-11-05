@@ -53,7 +53,7 @@ con los documentos de conceptos ([`b_investigacion/conceptos/`](../b_investigaci
 catálogo de componentes ([`componentesRDK.md`](../b_investigacion/componentesRDK.md)) y la
 bibliografía de la cátedra.
 
-La estación está en [`Celda_Soldadura_Estator_Grupo4.rdk`](Celda_Soldadura_Estator_Grupo4.rdk).
+La estación está en [`Celda_Soldadura_Estator_Grupo4_v02.rdk`](Celda_Soldadura_Estator_Grupo4_v02.rdk).
 Se genera de forma reproducible con los scripts de [`scripts/`](scripts/). Los scripts solo
 **construyen** la estación: todos los movimientos del ciclo son instrucciones nativas de RoboDK
 (MoveJ, MoveL y MoveC), y ningún script mueve los robots durante la ejecución.
@@ -116,7 +116,7 @@ Se toma como base el ejemplo **17 *Conveyor Swap*** de la biblioteca de RoboDK
 
 ### 2.2 Mejoras respecto de la versión anterior del grupo
 
-La estación anterior ([`Estacion_de_soldado_TP_Robotica_Casali_Ferrero_Vera.rdk`](Estacion_de_soldado_TP_Robotica_Casali_Ferrero_Vera.rdk))
+La estación anterior ([`Celda_Soldadura_Estator_Grupo4_v01.rdk`](Celda_Soldadura_Estator_Grupo4_v01.rdk))
 soldaba 6 cordones en un cilindro montado en un posicionador ABB MTD 250. Se conserva su idea
 central: **la pieza gira y el soldador repite el mismo cordón en el mismo lugar del espacio**. Se
 corrige lo siguiente:
@@ -499,7 +499,8 @@ Queda fuera del alcance de este trabajo.
 
 | Archivo | Contenido |
 |---|---|
-| `Celda_Soldadura_Estator_Grupo4.rdk` | Estación completa |
+| `Celda_Soldadura_Estator_Grupo4_v01.rdk` | Versión anterior del grupo (posicionador MTD 250) |
+| `Celda_Soldadura_Estator_Grupo4_v02.rdk` | Estación descripta en este documento (salida por pallet) |
 | `scripts/parametros_celda.py` | Todas las cotas y parámetros de proceso |
 | `scripts/generar_modelos.py` | Genera los STL propios (pieza, pallet, soporte, antorcha, estación de servicio, cerramiento, puerta, cortina) |
 | `scripts/construir_celda.py` | Arma la estación: equipos, frames, herramientas, targets, programas y pares de colisión |
