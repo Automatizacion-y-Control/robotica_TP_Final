@@ -28,6 +28,7 @@ Comisión 2LA1 · Año 2026
 ## Índice
 
 - [Prólogo](#prólogo)
+- [Historial de versiones](#historial-de-versiones)
 - [1. Tarea de la celda](#1-tarea-de-la-celda)
 - [2. Punto de partida y mejoras](#2-punto-de-partida-y-mejoras)
 - [3. Disposición](#3-disposición)
@@ -63,6 +64,19 @@ Todas las cotas de la celda están en [`scripts/parametros_celda.py`](scripts/pa
 que es la fuente única de valores.
 
 ![Vista general de la celda](imagenes/celda_vista_general.png)
+
+---
+
+## Historial de versiones
+
+| Versión | Archivo | Cambio principal | Documento |
+|---|---|---|---|
+| v01 | [`Celda_Soldadura_Estator_Grupo4_v01.rdk`](Celda_Soldadura_Estator_Grupo4_v01.rdk) | Versión original: posicionador MTD 250, cilindro de 6 cordones, sin transporte | Informe de la entrega anterior (`d_presentacion/`) |
+| v02 | [`Celda_Soldadura_Estator_Grupo4_v02.rdk`](Celda_Soldadura_Estator_Grupo4_v02.rdk) | Manipulador + soldador TIG; paquete de estator real; entrada por cinta y salida por pallet | Este documento |
+| v03 | [`Celda_Soldadura_Estator_Grupo4_v03.rdk`](Celda_Soldadura_Estator_Grupo4_v03.rdk) | **Cinta pasante:** la misma cinta trae y saca las piezas; se elimina el pallet y su ventana | [mejora 01](mejora_01_cinta_pasante.md) |
+
+Este documento define la **v02**. En las secciones que cambian con la v03 hay una nota
+**"v03"** al final, con el resumen del cambio; el detalle y la justificación están en la [mejora 01](mejora_01_cinta_pasante.md).
 
 ---
 
@@ -163,6 +177,11 @@ Cotas en el sistema `Frame_Celda` (origen en el piso, bajo la base del manipulad
   afuera, que es la medida de "dispositivos de intercambio de piezas" de Barrientos [Barrientos,
   9.3.2, p. 274] y el esquema de doble estación de Groover [Groover, 8.4.2, p. 220].
 
+> **v03:** la toma pasa a x = −150 mm y el depósito a x = +150 mm, los dos sobre la banda. Se
+> quitan el pallet y su soporte, y la cinta se prolonga con un tramo de salida que atraviesa la
+> cara este del cerramiento (abertura de salida en lugar de la ventana del pallet). Ver la
+> [mejora 01](mejora_01_cinta_pasante.md), §3 y §4.
+
 ## 4. Equipos
 
 El detalle de cada componente está en [`componentesRDK.md`](../b_investigacion/componentesRDK.md).
@@ -180,6 +199,9 @@ El detalle de cada componente está en [`componentesRDK.md`](../b_investigacion/
 manipulador además la toma de la cinta y la deposita en el pallet, con lo que el operario no entra
 a la celda para cargar y descargar. Un posicionador puede reemplazar grados de libertad del robot
 [Barrientos, 9.2.2, p. 265], pero acá el robot manipulador hace las dos funciones.
+
+> **v03:** el pallet sale de la celda; la salida es la misma **cinta pasante** (modelo ConveyorA +
+> tramo de salida propio) con una **cortina de luz en la entrada y otra en la salida**.
 
 ## 5. Sistemas de referencia y TCP
 
@@ -210,6 +232,10 @@ soldadura sirve para los dos lados de la pieza y para todas las piezas.
 El modelo de la pinza es un mecanismo sin TCP; `TCP_Pinza` se definió como herramienta propia. El
 largo se midió sobre el modelo: las puntas de los dedos quedan a ~160 mm de la brida.
 
+> **v03:** se agrega `Frame_Deposito_Cinta` (punto de depósito sobre la banda). `Frame_Pallet` se
+> reutiliza como `Frame_Piezas_Soldadas`, colgado de `Frame_Banda`: las piezas soltadas avanzan
+> con la cinta.
+
 ## 6. Secuencia de operación
 
 ### 6.1 Ciclo de una pieza
@@ -238,6 +264,10 @@ es una parada natural del proceso, y por eso ahí se verifica la antorcha.
 El **cambio de tungsteno** (`Sold_Cambio_Tungsteno`) se ejecuta a pedido: el robot lleva la
 antorcha a la bandeja de servicio, la celda se pausa para el operario y, al reanudar, se verifica
 el TCP.
+
+> **v03:** en el paso 7 el manipulador devuelve la pieza soldada a la banda, un paso aguas abajo
+> de la toma. El avance de la cinta del ciclo siguiente la corre hacia la salida y libera el
+> depósito. Al final del lote, `Cinta_Evacuar` saca las 4 piezas soldadas fuera de la celda.
 
 ## 7. Estructura de programas
 
@@ -280,6 +310,9 @@ Sold_Cambio_Tungsteno            a pedido: pausa para el operario + Sold_Servici
   el ciclo puede repetirse (requisito C4).
 - **Comentarios:** cada programa empieza con una instrucción de comentario que dice qué hace, y los
   pasos importantes están comentados.
+
+> **v03:** `Man_Depositar_P1…P4` se reemplazan por un único `Man_Depositar_Cinta`. `Fin_Lote`
+> llama a `Sold_Servicio_Antorcha` y a `Cinta_Evacuar` (nuevo); `Cinta_Reinicio_Lote` se elimina.
 
 ## 8. Tipos de movimiento
 
@@ -388,6 +421,10 @@ celda, su programación y su uso son del integrador, es decir, del grupo [Barrie
 |---|
 | ![Servicio de la antorcha](imagenes/celda_servicio_antorcha.png) |
 
+> **v03:** desaparecen la ventana del pallet y su cortina. La cinta atraviesa el cerramiento por
+> dos túneles (oeste y este), cada uno con su cortina de luz. **El operario no entra a la celda en
+> operación normal**: carga y descarga afuera.
+
 ## 11. Variantes de pieza y de patrón
 
 Requisito C3 [Lineamientos]: la celda tiene **los tres elementos** que se piden como alternativas.
@@ -397,6 +434,8 @@ Requisito C3 [Lineamientos]: la celda tiene **los tres elementos** que se piden 
 | **Segundo robot** | El manipulador IRB 1200 trabaja junto al soldador CRB 1300, sincronizados por interlocks | Reemplaza al posicionador y agrega el transporte de la pieza (§2.2) |
 | **Cinta transportadora** | Mecanismo lineal movido con `MoveJ` a targets articulares, sin Python | Entrada de piezas desde afuera de la celda |
 | **Patrón de pallet** | 4 posiciones (2 × 2) con un programa de depósito por posición | Salida ordenada; el lote coincide con un pallet |
+
+> **v03:** se elimina el patrón de pallet a propósito; C3 se cumple con la cinta y el segundo robot.
 
 ## 12. Verificación y resultados
 
@@ -471,6 +510,10 @@ Con dos manipuladores, o con un segundo puesto de presentación, el soldador pod
 se carga la pieza siguiente. Es la idea de los dos utillajes de Groover [Groover, 8.4.2, p. 220].
 Queda fuera del alcance de este trabajo.
 
+> **v03:** verificada sin colisiones, también ejecutando el `Programa_Principal` con los eventos:
+> las 4 piezas terminan afuera de la celda. Ciclo de 73,6 a 75,2 s por pieza, lote de ≈ 317 s
+> (≈ 45 piezas/h), igual que la v02.
+
 ## 13. Pendientes
 
 1. **Eventos de simulación (tomar y soltar la pieza).** ✔ Cargados. La API de RoboDK no permite
@@ -494,6 +537,10 @@ Queda fuera del alcance de este trabajo.
 5. **Panel de operador y sensores** (puerta, emergencia, presencia), retomando el de la versión
    anterior. Solo puede habilitar o detener el ciclo, nunca mover los robots.
 6. **Volver a verificar** con `verificar_celda.py --colisiones --con-pieza` después de los cambios.
+
+> **v03:** la reposición del lote se resuelve con eventos nativos: *Ajustar las articulaciones
+> al inicio* (cinta) y *Fijar la posición del objeto (relativa)* (cada estator). Están indicados
+> como `EVENTO:` al final de `Fin_Lote`.
 
 ## 14. Archivos y reproducción
 
@@ -524,6 +571,9 @@ C:\RoboDK\Python-Embedded\python.exe scripts/verificar_celda.py --colisiones --c
 los eventos se usa `scripts/actualizar_soldadura.py`, que solo rehace `Sold_Par_Cordones` y sus
 targets; con `--reiniciar-lote` deja además la simulación en el inicio de lote. La estación queda con la velocidad de simulación en 1×
 (tiempo real), para que la ejecución se vea con los tiempos de §12.3.
+
+> **v03:** se genera con `scripts/mejora_01_cinta_pasante.py` a partir de la v02, para conservar
+> los eventos de tomar y soltar. No se reconstruye con `construir_celda.py`.
 
 ## 15. Referencias
 

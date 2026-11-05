@@ -43,7 +43,8 @@ Comisión 2LA1 · Año 2026
 - [12. Versión anterior: posicionador ABB MTD 250](#12-versión-anterior-posicionador-abb-mtd-250)
 - [13. Verificaciones de carga y alcance](#13-verificaciones-de-carga-y-alcance)
 - [14. Archivos y cómo regenerarlos](#14-archivos-y-cómo-regenerarlos)
-- [15. Referencias](#15-referencias)
+- [15. Cambios en la v03 (mejora 01)](#15-cambios-en-la-v03-mejora-01)
+- [16. Referencias](#16-referencias)
 
 ---
 
@@ -404,7 +405,28 @@ respecto de la versión anterior.
 El script `generar_modelos.py` solo escribe archivos STL: no se conecta con RoboDK ni mueve ningún
 robot.
 
-## 15. Referencias
+## 15. Cambios en la v03 (mejora 01)
+
+La v03 reemplaza la salida por pallet por una **cinta pasante** (ver
+[`mejora_01_cinta_pasante.md`](../c_prototipado/mejora_01_cinta_pasante.md)).
+
+| Componente | v02 | v03 | Archivo |
+|---|---|---|---|
+| Pallet de 4 posiciones y su soporte (§9) | Sí | **Se quita** | `pallet_4_posiciones.stl`, `soporte_pallet.stl` |
+| Cortina de la ventana del pallet (§11) | Sí | **Se quita** | `cortina_luz.stl` |
+| Cinta ConveyorA (§7) | Entrada | **Entrada y salida**, renombrada `Cinta_Pasante` | `Conveyor.robot` |
+| **Tramo de salida de la cinta** | — | **Nuevo:** prolonga la banda (600 mm de ancho, cara superior a 366,5 mm) hasta x = 2100 mm, afuera de la cara este | `cinta_extension_banda.stl`, `cinta_extension_estructura.stl` |
+| **Cortinas de luz de la cinta** | — | **Nuevas:** una en la entrada (oeste) y otra en la salida (este) | `cortina_luz_cinta.stl` |
+| Cerramiento (§11) | Ventana del pallet en la cara este | **Abertura de salida de la cinta** en la cara este | `cerramiento_*_v03.stl` |
+
+El tramo de salida es geometría fija. Lo que viaja sobre la banda lo mueve el único eje del
+mecanismo de la cinta, como en una cinta real con un solo accionamiento.
+
+| Salida de la cinta con su cortina (v03) |
+|---|
+| ![Salida v03](../c_prototipado/imagenes/v03/v03_salida_cortina.png) |
+
+## 16. Referencias
 
 - RoboDK. *ABB CRB 1300-10/1.15*. Biblioteca de robots. <https://robodk.com/robot/ABB/CRB-1300-10-1-15>
 - RoboDK. *ABB IRB 1200-7/0.7*. Biblioteca de robots. <https://robodk.com/robot/ABB/IRB-1200-7-0-7>
