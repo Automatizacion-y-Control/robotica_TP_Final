@@ -1,0 +1,86 @@
+solid cinta_extension_banda.stl
+  facet normal 0.000000 0.000000 -1.000000
+    outer loop
+      vertex 220.0000 -860.0000 346.5000
+      vertex 220.0000 -260.0000 346.5000
+      vertex 2100.0000 -260.0000 346.5000
+    endloop
+  endfacet
+  facet normal 0.000000 0.000000 -1.000000
+    outer loop
+      vertex 220.0000 -860.0000 346.5000
+      vertex 2100.0000 -260.0000 346.5000
+      vertex 2100.0000 -860.0000 346.5000
+    endloop
+  endfacet
+  facet normal 0.000000 0.000000 1.000000
+    outer loop
+      vertex 220.0000 -860.0000 366.5000
+      vertex 2100.0000 -860.0000 366.5000
+      vertex 2100.0000 -260.0000 366.5000
+    endloop
+  endfacet
+  facet normal 0.000000 0.000000 1.000000
+    outer loop
+      vertex 220.0000 -860.0000 366.5000
+      vertex 2100.0000 -260.0000 366.5000
+      vertex 220.0000 -260.0000 366.5000
+    endloop
+  endfacet
+  facet normal 0.000000 -1.000000 0.000000
+    outer loop
+      vertex 220.0000 -860.0000 346.5000
+      vertex 2100.0000 -860.0000 346.5000
+      vertex 2100.0000 -860.0000 366.5000
+    endloop
+  endfacet
+  facet normal 0.000000 -1.000000 0.000000
+    outer loop
+      vertex 220.0000 -860.0000 346.5000
+      vertex 2100.0000 -860.0000 366.5000
+      vertex 220.0000 -860.0000 366.5000
+    endloop
+  endfacet
+  facet normal 0.000000 1.000000 0.000000
+    outer loop
+      vertex 220.0000 -260.0000 346.5000
+      vertex 220.0000 -260.0000 366.5000
+      vertex 2100.0000 -260.0000 366.5000
+    endloop
+  endfacet
+  facet normal 0.000000 1.000000 0.000000
+    outer loop
+      vertex 220.0000 -260.0000 346.5000
+      vertex 2100.0000 -260.0000 366.5000
+      vertex 2100.0000 -260.0000 346.5000
+    endloop
+  endfacet
+  facet normal -1.000000 0.000000 0.000000
+    outer loop
+      vertex 220.0000 -860.0000 346.5000
+      vertex 220.0000 -860.0000 366.5000
+      vertex 220.0000 -260.0000 366.5000
+    endloop
+  endfacet
+  facet normal -1.000000 0.000000 0.000000
+    outer loop
+      vertex 220.0000 -860.0000 346.5000
+      vertex 220.0000 -260.0000 366.5000
+      vertex 220.0000 -260.0000 346.5000
+    endloop
+  endfacet
+  facet normal 1.000000 0.000000 0.000000
+    outer loop
+      vertex 2100.0000 -860.0000 346.5000
+      vertex 2100.0000 -260.0000 346.5000
+      vertex 2100.0000 -260.0000 366.5000
+    endloop
+  endfacet
+  facet normal 1.000000 0.000000 0.000000
+    outer loop
+      vertex 2100.0000 -860.0000 346.5000
+      vertex 2100.0000 -260.0000 366.5000
+      vertex 2100.0000 -860.0000 366.5000
+    endloop
+  endfacet
+endsolid cinta_extension_banda.stl

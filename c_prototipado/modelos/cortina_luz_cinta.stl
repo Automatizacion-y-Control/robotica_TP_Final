@@ -1,0 +1,170 @@
+solid cortina_luz_cinta.stl
+  facet normal 0.000000 0.000000 -1.000000
+    outer loop
+      vertex -20.0000 -1040.0000 0.0000
+      vertex -20.0000 -1000.0000 0.0000
+      vertex 20.0000 -1000.0000 0.0000
+    endloop
+  endfacet
+  facet normal 0.000000 0.000000 -1.000000
+    outer loop
+      vertex -20.0000 -1040.0000 0.0000
+      vertex 20.0000 -1000.0000 0.0000
+      vertex 20.0000 -1040.0000 0.0000
+    endloop
+  endfacet
+  facet normal 0.000000 0.000000 1.000000
+    outer loop
+      vertex -20.0000 -1040.0000 700.0000
+      vertex 20.0000 -1040.0000 700.0000
+      vertex 20.0000 -1000.0000 700.0000
+    endloop
+  endfacet
+  facet normal 0.000000 0.000000 1.000000
+    outer loop
+      vertex -20.0000 -1040.0000 700.0000
+      vertex 20.0000 -1000.0000 700.0000
+      vertex -20.0000 -1000.0000 700.0000
+    endloop
+  endfacet
+  facet normal 0.000000 -1.000000 0.000000
+    outer loop
+      vertex -20.0000 -1040.0000 0.0000
+      vertex 20.0000 -1040.0000 0.0000
+      vertex 20.0000 -1040.0000 700.0000
+    endloop
+  endfacet
+  facet normal 0.000000 -1.000000 0.000000
+    outer loop
+      vertex -20.0000 -1040.0000 0.0000
+      vertex 20.0000 -1040.0000 700.0000
+      vertex -20.0000 -1040.0000 700.0000
+    endloop
+  endfacet
+  facet normal 0.000000 1.000000 0.000000
+    outer loop
+      vertex -20.0000 -1000.0000 0.0000
+      vertex -20.0000 -1000.0000 700.0000
+      vertex 20.0000 -1000.0000 700.0000
+    endloop
+  endfacet
+  facet normal 0.000000 1.000000 0.000000
+    outer loop
+      vertex -20.0000 -1000.0000 0.0000
+      vertex 20.0000 -1000.0000 700.0000
+      vertex 20.0000 -1000.0000 0.0000
+    endloop
+  endfacet
+  facet normal -1.000000 0.000000 0.000000
+    outer loop
+      vertex -20.0000 -1040.0000 0.0000
+      vertex -20.0000 -1040.0000 700.0000
+      vertex -20.0000 -1000.0000 700.0000
+    endloop
+  endfacet
+  facet normal -1.000000 0.000000 0.000000
+    outer loop
+      vertex -20.0000 -1040.0000 0.0000
+      vertex -20.0000 -1000.0000 700.0000
+      vertex -20.0000 -1000.0000 0.0000
+    endloop
+  endfacet
+  facet normal 1.000000 0.000000 0.000000
+    outer loop
+      vertex 20.0000 -1040.0000 0.0000
+      vertex 20.0000 -1000.0000 0.0000
+      vertex 20.0000 -1000.0000 700.0000
+    endloop
+  endfacet
+  facet normal 1.000000 0.000000 0.000000
+    outer loop
+      vertex 20.0000 -1040.0000 0.0000
+      vertex 20.0000 -1000.0000 700.0000
+      vertex 20.0000 -1040.0000 700.0000
+    endloop
+  endfacet
+  facet normal 0.000000 0.000000 -1.000000
+    outer loop
+      vertex -20.0000 -120.0000 0.0000
+      vertex -20.0000 -80.0000 0.0000
+      vertex 20.0000 -80.0000 0.0000
+    endloop
+  endfacet
+  facet normal 0.000000 0.000000 -1.000000
+    outer loop
+      vertex -20.0000 -120.0000 0.0000
+      vertex 20.0000 -80.0000 0.0000
+      vertex 20.0000 -120.0000 0.0000
+    endloop
+  endfacet
+  facet normal 0.000000 0.000000 1.000000
+    outer loop
+      vertex -20.0000 -120.0000 700.0000
+      vertex 20.0000 -120.0000 700.0000
+      vertex 20.0000 -80.0000 700.0000
+    endloop
+  endfacet
+  facet normal 0.000000 0.000000 1.000000
+    outer loop
+      vertex -20.0000 -120.0000 700.0000
+      vertex 20.0000 -80.0000 700.0000
+      vertex -20.0000 -80.0000 700.0000
+    endloop
+  endfacet
+  facet normal 0.000000 -1.000000 0.000000
+    outer loop
+      vertex -20.0000 -120.0000 0.0000
+      vertex 20.0000 -120.0000 0.0000
+      vertex 20.0000 -120.0000 700.0000
+    endloop
+  endfacet
+  facet normal 0.000000 -1.000000 0.000000
+    outer loop
+      vertex -20.0000 -120.0000 0.0000
+      vertex 20.0000 -120.0000 700.0000
+      vertex -20.0000 -120.0000 700.0000
+    endloop
+  endfacet
+  facet normal 0.000000 1.000000 0.000000
+    outer loop
+      vertex -20.0000 -80.0000 0.0000
+      vertex -20.0000 -80.0000 700.0000
+      vertex 20.0000 -80.0000 700.0000
+    endloop
+  endfacet
+  facet normal 0.000000 1.000000 0.000000
+    outer loop
+      vertex -20.0000 -80.0000 0.0000
+      vertex 20.0000 -80.0000 700.0000
+      vertex 20.0000 -80.0000 0.0000
+    endloop
+  endfacet
+  facet normal -1.000000 0.000000 0.000000
+    outer loop
+      vertex -20.0000 -120.0000 0.0000
+      vertex -20.0000 -120.0000 700.0000
+      vertex -20.0000 -80.0000 700.0000
+    endloop
+  endfacet
+  facet normal -1.000000 0.000000 0.000000
+    outer loop
+      vertex -20.0000 -120.0000 0.0000
+      vertex -20.0000 -80.0000 700.0000
+      vertex -20.0000 -80.0000 0.0000
+    endloop
+  endfacet
+  facet normal 1.000000 0.000000 0.000000
+    outer loop
+      vertex 20.0000 -120.0000 0.0000
+      vertex 20.0000 -80.0000 0.0000
+      vertex 20.0000 -80.0000 700.0000
+    endloop
+  endfacet
+  facet normal 1.000000 0.000000 0.000000
+    outer loop
+      vertex 20.0000 -120.0000 0.0000
+      vertex 20.0000 -80.0000 700.0000
+      vertex 20.0000 -120.0000 700.0000
+    endloop
+  endfacet
+endsolid cortina_luz_cinta.stl

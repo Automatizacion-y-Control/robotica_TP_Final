@@ -234,18 +234,20 @@ def _pared_y(y, xa, xb, tri):
     tri += tri_caja_ext(xa, xb, y - t / 2, y + t / 2, 0, H)
 
 
-def cerramiento():
-    """Cerramiento rectangular de CERR_ALTO con tres aberturas.
+def cerramiento(sufijo="", huecos_este=None):
+    """Cerramiento rectangular de CERR_ALTO con aberturas en las caras oeste y este.
 
-    Oeste: túnel de entrada de la cinta. Este: ventana del pallet (con cortina)
-    y vano de la puerta. Origen en el origen de la celda.
+    Oeste: túnel de entrada de la cinta. Este: los huecos indicados más el vano
+    de la puerta. Por defecto (v02), la ventana del pallet. Origen en el origen
+    de la celda.
     """
     (x0, x1), (y0, y1) = P.CERR_X, P.CERR_Y
     p, H = P.CERR_POSTE, P.CERR_ALTO
+    if huecos_este is None:
+        huecos_este = [(*P.CERR_VENTANA_PALLET_Y, *P.CERR_VENTANA_PALLET_Z)]
     paneles, estructura = [], []
     _pared_x(x0, y0, y1, [(*P.CERR_ABERTURA_CINTA_Y, 0.0, P.CERR_ABERTURA_CINTA_Z)], paneles)
-    _pared_x(x1, y0, y1, [(*P.CERR_VENTANA_PALLET_Y, *P.CERR_VENTANA_PALLET_Z),
-                          (*P.CERR_PUERTA_Y, 0.0, H)], paneles)
+    _pared_x(x1, y0, y1, huecos_este + [(*P.CERR_PUERTA_Y, 0.0, H)], paneles)
     _pared_y(y0, x0, x1, paneles)
     _pared_y(y1, x0, x1, paneles)
     # Postes en las esquinas, en los bordes de la puerta y cada ~1 m en las paredes largas.
@@ -259,8 +261,8 @@ def cerramiento():
     estructura += tri_caja_ext(x0, x1, y1 - p / 2, y1 + p / 2, H - p, H)
     estructura += tri_caja_ext(x0 - p / 2, x0 + p / 2, y0, y1, H - p, H)
     estructura += tri_caja_ext(x1 - p / 2, x1 + p / 2, y0, y1, H - p, H)
-    escribir_stl("cerramiento_paneles.stl", paneles)
-    escribir_stl("cerramiento_estructura.stl", estructura)
+    escribir_stl(f"cerramiento_paneles{sufijo}.stl", paneles)
+    escribir_stl(f"cerramiento_estructura{sufijo}.stl", estructura)
 
 
 def puerta():
@@ -283,12 +285,60 @@ def cortina_luz():
     escribir_stl("cortina_luz.stl", tri)
 
 
+# ---------------------------------------------------------------------------
+# Mejora 01 (v03): tramo de salida de la cinta y cortinas de entrada y salida
+# ---------------------------------------------------------------------------
+def cinta_extension():
+    """Tramo de salida que prolonga la banda del modelo ConveyorA hasta afuera.
+
+    Coordenadas de Frame_Celda. Empieza en el final de la banda del modelo y
+    termina en CINTA_EXT_FIN_X. Mantiene la altura (cara superior de la banda a
+    CINTA_ALTURA_BANDA) y el ancho de la banda, con largueros laterales y patas.
+    Es geometría fija: lo que viaja sobre la banda lo mueve el eje del mecanismo.
+    """
+    x_base = P.CINTA_TOMA[0] + 250.0 - P.CINTA_LARGO          # misma base que en construir_celda.py
+    y_eje = P.CINTA_TOMA[1]
+    x0, x1 = x_base + P.CINTA_BANDA_FIN_REL, P.CINTA_EXT_FIN_X
+    zt = P.CINTA_ALTURA_BANDA
+    a = P.CINTA_ANCHO_BANDA / 2
+    banda = tri_caja_ext(x0, x1, y_eje - a, y_eje + a, zt - 20.0, zt)
+    estructura = []
+    for lado in (-1, 1):                                        # largueros laterales
+        yb = y_eje + lado * (a + 20.0)
+        estructura += tri_caja_ext(x0, x1, yb - 20.0, yb + 20.0, zt - 110.0, zt + 5.0)
+    x = x0 + 150.0
+    while x < x1 - 50.0:                                        # patas cada 600 mm
+        for lado in (-1, 1):
+            yb = y_eje + lado * (a + 20.0)
+            estructura += tri_caja_ext(x - 30.0, x + 30.0, yb - 30.0, yb + 30.0, 0.0, zt - 110.0)
+        x += 600.0
+    escribir_stl("cinta_extension_banda.stl", banda)
+    escribir_stl("cinta_extension_estructura.stl", estructura)
+
+
+def cortina_cinta():
+    """Emisor y receptor de una cortina de luz en el paso de la cinta por el cerramiento.
+
+    Dos columnas verticales en los bordes del túnel (CERR_ABERTURA_CINTA_Y),
+    hasta CERR_ABERTURA_CINTA_Z. Origen sobre la cara de la pared; se instancia
+    una vez en la entrada (oeste) y otra en la salida (este).
+    """
+    ya, yb = P.CERR_ABERTURA_CINTA_Y
+    zt = P.CERR_ABERTURA_CINTA_Z
+    tri = tri_caja_ext(-20, 20, ya - 40, ya, 0, zt)             # emisor
+    tri += tri_caja_ext(-20, 20, yb, yb + 40, 0, zt)            # receptor
+    escribir_stl("cortina_luz_cinta.stl", tri)
+
+
 if __name__ == "__main__":
     paquete_estator()
     pallet()
     soporte_pallet()
     antorcha_tig()
     estacion_servicio()
-    cerramiento()
+    cerramiento()                                               # v02: ventana del pallet
+    cerramiento("_v03", [(*P.CERR_ABERTURA_SALIDA_Y, 0.0, P.CERR_ABERTURA_SALIDA_Z)])
     puerta()
     cortina_luz()
+    cinta_extension()
+    cortina_cinta()

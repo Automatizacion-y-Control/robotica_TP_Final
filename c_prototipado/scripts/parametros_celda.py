@@ -101,3 +101,21 @@ CERR_PUERTA_Y = (1000.0, 1700.0)
 # ---------------------------------------------------------------------------
 IRB_REPOSO = [0.0, -20.0, 30.0, 0.0, 80.0, 0.0]
 CRB_REPOSO = [0.0, -10.0, 10.0, 0.0, 60.0, 0.0]
+
+# ---------------------------------------------------------------------------
+# Mejora 01 (v03): cinta pasante, entrada y salida por la misma cinta
+# ---------------------------------------------------------------------------
+# El modelo ConveyorA termina a ~2050 mm de su base; se prolonga con un tramo
+# propio que atraviesa la cara este del cerramiento. Todo lo que está sobre la
+# banda (Frame_Banda) avanza con el mismo eje del mecanismo.
+CINTA_BANDA_FIN_REL = 2050.0      # final de la banda del modelo, desde su base
+CINTA_ANCHO_BANDA = 600.0         # ancho útil de la banda (medido sobre el modelo)
+CINTA_EXT_FIN_X = 2100.0          # final del tramo de salida, en Frame_Celda (afuera del cerramiento)
+# Toma y depósito sobre la misma banda, simétricos respecto de la base del manipulador.
+V3_TOMA_X = -150.0
+V3_DEPOSITO_X = 150.0             # = toma + CINTA_PASO: cada avance deja libre el depósito
+# Avance final del lote: lleva el último estator soldado afuera del cerramiento.
+V3_AVANCE_EVACUACION = 1750.0     # posición del eje de la cinta al terminar el lote
+# Abertura de salida en la cara este, igual a la de entrada en la cara oeste.
+CERR_ABERTURA_SALIDA_Y = CERR_ABERTURA_CINTA_Y
+CERR_ABERTURA_SALIDA_Z = CERR_ABERTURA_CINTA_Z
