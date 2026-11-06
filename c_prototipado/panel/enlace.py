@@ -3,6 +3,7 @@
 Solo usa setParam y lecturas. Las órdenes pendientes se descartan al perder la conexión:
 no se reenvían al reconectar.
 """
+import os
 from pathlib import Path
 import queue
 import socket
@@ -17,9 +18,12 @@ from robodk.robolink import Robolink, ITEM_TYPE_PROGRAM
 from sensores_modos import SensoresModos
 
 ESTACION = "Celda_Soldadura_Estator_Grupo4_v05"
+COORDINADOR = "Coordinador_Panel"
 PERIODO_S = 0.1
 REINTENTO_S = 1.0
-PUERTOS = (20500, 20501)
+# RoboDK informa su puerto a los programas que ejecuta.
+PUERTOS = ((int(os.environ["ROBODK_API_PORT"]),) if os.environ.get("ROBODK_API_PORT")
+           else (20500, 20501))
 SENALES = (
     "AUTO_ACTIVO", "ESTADO_CONTROL", "CAUSA_RECHAZO", "PROXIMA_PIEZA", "PIEZA_ACTIVA",
     "PIEZAS_COMPLETADAS", "LOTES_COMPLETADOS", "ARRANQUE_ACK", "PARADA_ACK", "PARADA_ID",
@@ -100,7 +104,7 @@ class Enlace(QThread):
         if self.estacion != activa or self.sensores is None:
             self.estacion = activa
             self.sensores = SensoresModos(self.rdk)
-            self.principal = self.rdk.Item("Programa_Principal", ITEM_TYPE_PROGRAM)
+            self.principal = self.rdk.Item(COORDINADOR, ITEM_TYPE_PROGRAM)
         return True
 
     def _escribir(self, orden):

@@ -1,7 +1,12 @@
 {
   "version": "6.1.1.26991",
-  "segundos_reales": 84.03099999995902,
+  "segundos_reales": 116.76600000006147,
   "pruebas": [
+    {
+      "prueba": "Programa_Principal suelda un lote sin panel ni señales",
+      "estatores": 4,
+      "colisiones": 0
+    },
     {
       "prueba": "Arranque sin permiso rechazado",
       "causa": 1,

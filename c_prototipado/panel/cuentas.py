@@ -7,6 +7,7 @@ from dataclasses import dataclass
 import hashlib
 import hmac
 import os
+from pathlib import Path
 import sqlite3
 import time
 
@@ -24,6 +25,13 @@ CUENTAS_INICIALES = (
     ("produccion", "Producción", PRODUCCION, "produccion"),
 )
 FALLO_ACCESO = "Usuario o contraseña incorrectos, o acceso bloqueado temporalmente."
+
+
+def ruta_datos():
+    """La estación se entrega sola: la base se crea en los datos de quien usa el panel."""
+    base = Path(os.environ.get("LOCALAPPDATA") or Path.home()) / "Celda_Soldadura_Grupo4"
+    base.mkdir(parents=True, exist_ok=True)
+    return base / "panel.db"
 
 
 class ErrorCuenta(Exception):

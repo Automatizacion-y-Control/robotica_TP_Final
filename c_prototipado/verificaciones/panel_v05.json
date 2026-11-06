@@ -56,8 +56,16 @@
       "puerto": 20599
     },
     {
+      "prueba": "Clics reales en casillas y botones",
+      "controles": 11
+    },
+    {
+      "prueba": "El panel empaquetado no depende de archivos del repositorio",
+      "kb": 52
+    },
+    {
       "prueba": "Sin coordinador iniciado el panel lo indica y no lo inicia",
-      "aviso": "El coordinador está detenido: iniciar Programa_Principal desde RoboDK."
+      "aviso": "El coordinador está detenido: doble clic en Coordinador_Panel, en RoboDK."
     },
     {
       "prueba": "Inicio y cierre de sesión no arrancan ni mueven"
@@ -87,6 +95,10 @@
     {
       "prueba": "Cerrar el panel en producción completa la pieza",
       "siguiente": 4
+    },
+    {
+      "prueba": "Panel_Operador arranca desde el .rdk y conecta",
+      "segundos": 1.0
     }
   ]
 }

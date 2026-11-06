@@ -1,7 +1,8 @@
-"""Genera v05 desde v04: arranque y parada entre piezas con índice retenido.
+"""Genera v05 desde v04: coordinador con índice retenido y panel embebido.
 
-El coordinador se ejecuta desde RoboDK y solo consulta señales. El panel
-posterior no debe ejecutar programas ni decidir la secuencia de movimientos.
+Programa_Principal sigue siendo el ciclo nativo, que funciona solo. Coordinador_Panel se
+ejecuta desde RoboDK y solo consulta señales; el panel no ejecuta programas ni decide la
+secuencia de movimientos. Se entrega solo el .rdk: Panel_Operador va embebido.
 Esta etapa no implementa interrupción inmediata ni recuperación desde fallas.
 """
 from pathlib import Path
@@ -11,8 +12,9 @@ import sys
 import tempfile
 
 sys.path.insert(0, r"C:\RoboDK\Python")
+from empaquetar_panel import generar
 from modos_nativos import instalar, INICIALES_MODOS
-from robodk.robolink import (Robolink, ITEM_TYPE_PROGRAM, INSTRUCTION_INSERT_CODE,
+from robodk.robolink import (Robolink, ITEM_TYPE_PROGRAM, ITEM_TYPE_PROGRAM_PYTHON, INSTRUCTION_INSERT_CODE,
                             INSTRUCTION_CALL_PROGRAM, INSTRUCTION_COMMENT)
 
 RAIZ = Path(__file__).resolve().parent.parent
@@ -50,10 +52,12 @@ def construir():
     estacion = rdk.AddFile(str(base))
     estacion.setName("Celda_Soldadura_Estator_Grupo4_v05")
     assert estacion.setParam("FlowControl", "1") == "OK"
-    anterior = rdk.Item("Programa_Principal", ITEM_TYPE_PROGRAM)
-    anterior.setName("Produccion_Lote_Completo_Antecedente")
+    principal = rdk.Item("Programa_Principal", ITEM_TYPE_PROGRAM)
+    principal.InstructionSelect(0)
+    principal.RunInstruction("Ciclo nativo de un lote de 4 estatores; no necesita el panel", INSTRUCTION_COMMENT)
+    principal.InstructionDelete(2)  # Comentario heredado sobre el pallet y el bucle.
     instalar(rdk)
-    p = rdk.AddProgram("Programa_Principal")
+    p = rdk.AddProgram("Coordinador_Panel")
 
     def codigo(texto):
         p.RunInstruction(texto, INSTRUCTION_INSERT_CODE)
@@ -76,8 +80,8 @@ def construir():
     # Prevalece la parada: se descarta el arranque pendiente al detectarla. El que llegue
     # después, durante la parada, es una orden posterior y se atiende en la vuelta siguiente.
     codigo("IF ARRANQUE_ID != ARRANQUE_ACK")
-    codigo("ARRANQUE_ACK = ARRANQUE_ID")
     salida("CAUSA_RECHAZO", 13)
+    codigo("ARRANQUE_ACK = ARRANQUE_ID")
     codigo("END")
     codigo("IF AUTO_ACTIVO == 1")
     llamar("Parada_Entre_Piezas")
@@ -93,13 +97,14 @@ def construir():
     # Una vuelta dura ~0,3 s: un arranque llegado junto a una parada espera a la siguiente.
     codigo("IF PEDIDO_PARADA == 0")
     codigo("IF ARRANQUE_ID != ARRANQUE_ACK")
-    codigo("ARRANQUE_ACK = ARRANQUE_ID")
     salida("CAUSA_RECHAZO", 0)
     # Sin ELSE validado: cada condición escribe su causa y la última escrita prevalece.
     for condicion, causa in CONDICIONES_ARRANQUE:
         codigo("IF " + condicion)
         salida("CAUSA_RECHAZO", causa)
         codigo("END")
+    # El acuse va después de la causa: quien lo lee debe encontrar el resultado ya escrito.
+    codigo("ARRANQUE_ACK = ARRANQUE_ID")
     codigo("IF CAUSA_RECHAZO == 0")
     codigo("IF CELDA_INICIALIZADA == 0")
     llamar("Inicio_Celda")
@@ -152,10 +157,11 @@ def construir():
     salida("AUTO_ACTIVO", 0)
     for nombre, valor in {**INICIALES, **INICIALES_MODOS}.items():
         rdk.setParam(nombre, valor)
+    panel = rdk.AddFile(str(generar(carpeta_temporal / "Panel_Operador.py")), estacion)
+    assert panel.Valid() and panel.Type() == ITEM_TYPE_PROGRAM_PYTHON
     ruta = RAIZ / "Celda_Soldadura_Estator_Grupo4_v05.rdk"
     estacion.Save(str(ruta))
-    base.unlink()
-    carpeta_temporal.rmdir()
+    shutil.rmtree(carpeta_temporal)
     print("Guardada", ruta, flush=True)
     return rdk, estacion
 

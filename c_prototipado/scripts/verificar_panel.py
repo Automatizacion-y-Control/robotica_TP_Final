@@ -16,6 +16,7 @@ import time
 
 RAIZ = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(RAIZ / "panel"))
+sys.path.insert(0, str(RAIZ / "scripts"))
 sys.path.insert(0, r"C:\RoboDK\Python")
 os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
 # La plataforma offscreen no ve las fuentes del sistema si no se le indica la carpeta.
@@ -203,7 +204,7 @@ def probar_arranque_prohibido():
 
 def probar_interfaz(carpeta):
     """Pulsa los controles reales: llamar a los métodos no prueba las conexiones de las señales."""
-    from PySide2.QtWidgets import QApplication, QPushButton
+    from PySide2.QtWidgets import QApplication, QPushButton, QTextBrowser
     from permisos import ENTRADAS_SIMULADAS
     from ventana import Ventana
 
@@ -253,6 +254,10 @@ def probar_interfaz(carpeta):
         v.bt_arranque.click()
         assert ordenes == [("id", "ARRANQUE_ID")], ordenes
         v.bt_salir.click()
+        v.bt_ayuda.click()
+        texto = v.dialogo_ayuda.findChild(QTextBrowser).toPlainText()
+        assert "Coordinador_Panel" in texto and "mantenimiento / mantenimiento" in texto
+        v.dialogo_ayuda.close()
         entrar("admin")
         v.in_nuevo.setText("operario")
         v.in_inicial.setText("clave1234")
@@ -264,6 +269,40 @@ def probar_interfaz(carpeta):
         sys.excepthook = anterior
         v.close()
         c.db.close()
+
+
+def probar_paquete(carpeta):
+    """El script embebido no puede depender del repositorio."""
+    from empaquetar_panel import LOCALES, generar
+    ruta = generar(carpeta / "Panel_Operador.py")
+    texto = ruta.read_text(encoding="utf-8")
+    assert "c_prototipado" not in texto and "sys.path.insert" not in texto
+    assert not [m for m in LOCALES if f"import {m}" in texto or f"from {m} import" in texto]
+    registrar("El panel empaquetado no depende de archivos del repositorio", kb=len(texto) // 1024)
+
+
+def probar_embebido(puerto):
+    """Ejecuta Panel_Operador como un doble clic: los sensores deben empezar a escribir."""
+    from robodk.robolink import ITEM_TYPE_PROGRAM, ITEM_TYPE_PROGRAM_PYTHON, Robolink
+    r = Robolink(port=puerto)
+    estacion = r.ActiveStation()
+    item = r.Item("Panel_Operador", ITEM_TYPE_PROGRAM_PYTHON)
+    assert item.Valid() and estacion.Name() == "Celda_Soldadura_Estator_Grupo4_v05"
+    assert float(r.getParam("SENSORES_VALIDOS")) == 0
+    item.RunProgram()
+    try:
+        t = time.monotonic()
+        while float(r.getParam("SENSORES_VALIDOS")) != 1:
+            assert time.monotonic() - t < 25, "El panel embebido no arrancó"
+            time.sleep(.2)
+        assert float(r.getParam("AUTO_ACTIVO")) == 0
+        registrar("Panel_Operador arranca desde el .rdk y conecta", segundos=round(time.monotonic() - t, 1))
+    finally:
+        item.Stop()
+        time.sleep(.5)
+        ruta = RAIZ / "Celda_Soldadura_Estator_Grupo4_v05.rdk"
+        estacion.Delete()
+        r.setActiveStation(r.AddFile(str(ruta)))
 
 
 def probar_integracion(puerto, carpeta):
@@ -283,7 +322,7 @@ def probar_integracion(puerto, carpeta):
     assert estacion.Name() == "Celda_Soldadura_Estator_Grupo4_v05"
     enlace, cuentas, _, v = modulo.crear(carpeta / "integracion.db", (puerto,))
     v.confirmar = lambda texto: True
-    principal = r.Item("Programa_Principal", ITEM_TYPE_PROGRAM)
+    principal = r.Item("Coordinador_Panel", ITEM_TYPE_PROGRAM)
 
     def val(n):
         return float(r.getParam(n))
@@ -439,8 +478,10 @@ def main():
         auditar_codigo()
         probar_arranque_prohibido()
         probar_interfaz(carpeta)
+        probar_paquete(carpeta)
         if args.puerto:
             probar_integracion(args.puerto, carpeta)
+            probar_embebido(args.puerto)
         exito = True
     finally:
         shutil.rmtree(carpeta, ignore_errors=True)

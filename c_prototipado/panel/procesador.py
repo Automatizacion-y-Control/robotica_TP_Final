@@ -87,10 +87,7 @@ class Procesador:
         return "-"
 
     def actualizar(self, estado):
-        """Registra la confirmación nativa, separada de la hora de la solicitud.
-
-        El acuse se escribe antes que la causa: el resultado se lee en la lectura siguiente.
-        """
+        """Registra la confirmación nativa, separada de la hora de la solicitud."""
         anterior, self.estado = self.estado, estado
         senales = estado.get("senales", {})
         if not operativo(estado):

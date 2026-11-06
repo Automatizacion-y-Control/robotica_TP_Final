@@ -19,7 +19,7 @@ def main():
     raiz = Path(__file__).resolve().parent.parent
     estacion = r.ActiveStation()
     assert estacion.Name() == "Celda_Soldadura_Estator_Grupo4_v05"
-    p = r.Item("Programa_Principal", ITEM_TYPE_PROGRAM)
+    p = r.Item("Coordinador_Panel", ITEM_TYPE_PROGRAM)
     sensores = SensoresModos(r)
     pruebas = []
     inicio = time.monotonic()
@@ -69,6 +69,16 @@ def main():
         r.setSimulationSpeed(10)
         for n in ("IRB_DISPONIBLE", "CRB_DISPONIBLE", "CINTA_DISPONIBLE"):
             r.setParam(n, 1)
+        esperar(lambda: valor("CINTA_DETENIDA") == 1)
+
+        # Lo que hace quien abre la estación sin panel: el ciclo nativo debe funcionar solo.
+        principal = r.Item("Programa_Principal", ITEM_TYPE_PROGRAM)
+        principal.RunProgram()
+        time.sleep(.3)
+        esperar(lambda: not principal.Busy(), limite=120)
+        assert all(r.Item("Estator_" + str(k)).Parent().Name() == "Frame_Banda" for k in range(1, 5))
+        registrar("Programa_Principal suelda un lote sin panel ni señales", estatores=4, colisiones=0)
+
         esperar(lambda: valor("CINTA_DETENIDA") == 1)
         p.RunProgram()
         time.sleep(.2)

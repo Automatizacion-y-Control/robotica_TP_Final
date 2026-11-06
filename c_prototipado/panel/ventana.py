@@ -2,11 +2,11 @@
 from datetime import datetime
 
 from PySide2.QtCore import QEvent, Qt, QTimer
-from PySide2.QtWidgets import (QAbstractItemView, QCheckBox, QComboBox, QFormLayout, QFrame,
+from PySide2.QtWidgets import (QAbstractItemView, QCheckBox, QComboBox, QDialog, QFormLayout, QFrame,
                                QGridLayout, QGroupBox, QHBoxLayout, QHeaderView, QInputDialog,
                                QLabel, QLineEdit, QMainWindow, QMessageBox, QPushButton,
                                QStackedWidget, QTableWidget, QTableWidgetItem, QTabWidget,
-                               QVBoxLayout, QWidget)
+                               QTextBrowser, QVBoxLayout, QWidget)
 
 from cuentas import ErrorCuenta, FALLO_ACCESO
 from permisos import (ADMINISTRADOR, ENTRADAS_SIMULADAS, MANTENIMIENTO, MODOS, PERFILES, PRODUCCION,
@@ -22,6 +22,38 @@ SENSORES = (("IRB_EN_REPOSO", "IRB en reposo"), ("CRB_EN_REPOSO", "CRB en reposo
             ("PIEZA_SUJETA_SENSOR", "Pieza sujeta"), ("SENSORES_VALIDOS", "Sensores en ejecución"))
 ETIQUETAS_ENTRADA = {"PERMISO_OPERACION": "Permiso de operación", "IRB_DISPONIBLE": "IRB disponible",
                      "CRB_DISPONIBLE": "CRB disponible", "CINTA_DISPONIBLE": "Cinta disponible"}
+
+AYUDA = """
+<h3>Cómo usar la celda</h3>
+<p><b>Ciclo completo sin panel:</b> doble clic en <code>Programa_Principal</code>. Suelda un lote de
+cuatro estatores y termina.</p>
+<p><b>Con el panel:</b></p>
+<ol>
+<li>Doble clic en <code>Coordinador_Panel</code>: queda esperando órdenes y nada se mueve.</li>
+<li>Doble clic en <code>Panel_Operador</code>, si no está abierto.</li>
+<li>Entrar como mantenimiento y marcar las cuatro entradas de simulación.</li>
+<li>Cerrar sesión, entrar como producción y pulsar Arranque.</li>
+</ol>
+<p>No mezclar: para pasar de un programa a otro, reabrir la estación sin guardar.</p>
+<h3>Cuentas de puesta en marcha</h3>
+{cuentas}
+<h3>Perfiles</h3>
+<ul>
+<li><b>Producción:</b> arranque y parada normal.</li>
+<li><b>Mantenimiento:</b> preparar modos, regresar, entradas de simulación y parada normal.</li>
+<li><b>Administrador:</b> cuentas y parada normal; no opera la celda.</li>
+</ul>
+<h3>Mantenimiento</h3>
+<p>Elegir equipo y pulsar Preparar. Si había producción, se detiene al terminar la pieza: pulsar
+Preparar otra vez. Al terminar, Confirmar restitución y regresar; la celda no arranca sola.</p>
+<h3>Límites</h3>
+<ul>
+<li>Parada normal termina la pieza en curso: no es una parada de emergencia.</li>
+<li>Las entradas de simulación no son protecciones.</li>
+<li>El panel solo envía solicitudes: los movimientos son programas nativos de RoboDK.</li>
+<li>Al cerrar RoboDK, no guardar: se conservaría el estado de la simulación.</li>
+</ul>
+"""
 
 ESTILO = """
 QMainWindow, QWidget#fondo { background: #eef0f2; }
@@ -156,6 +188,9 @@ class Ventana(QMainWindow):
         capa.addSpacing(18)
         self.et_usuario = QLabel()
         capa.addWidget(self.et_usuario)
+        self.bt_ayuda = QPushButton("Ayuda")
+        self.bt_ayuda.clicked.connect(self._ayuda)
+        capa.addWidget(self.bt_ayuda)
         self.bt_clave = QPushButton("Cambiar contraseña")
         self.bt_clave.clicked.connect(self._cambiar_clave)
         capa.addWidget(self.bt_clave)
@@ -323,6 +358,22 @@ class Ventana(QMainWindow):
         self.pag_registro = self._pestana_registro()
         self.pag_administracion = self._pestana_administracion()
 
+    def _ayuda(self):
+        # Solo lista las claves que siguen vigentes: al actualizarlas dejan de mostrarse.
+        vigentes = [c["usuario"] for c in self.cuentas.listar()
+                    if c["clave_por_defecto"] and c["activo"]]
+        cuentas = ("<ul>" + "".join(f"<li><code>{u}</code> / <code>{u}</code></li>" for u in vigentes)
+                   + "</ul><p>Actualizarlas al pasar la celda a operación.</p>") if vigentes else \
+            "<p>Las contraseñas de fábrica ya fueron actualizadas.</p>"
+        self.dialogo_ayuda = QDialog(self)
+        self.dialogo_ayuda.setWindowTitle("Ayuda")
+        self.dialogo_ayuda.resize(620, 620)
+        capa = QVBoxLayout(self.dialogo_ayuda)
+        texto = QTextBrowser()
+        texto.setHtml(AYUDA.format(cuentas=cuentas))
+        capa.addWidget(texto)
+        self.dialogo_ayuda.show()
+
     # Sesión
 
     def _entrar(self):
@@ -378,7 +429,7 @@ class Ventana(QMainWindow):
         elif not self.estado.get("estacion_ok"):
             texto = "La estación activa de RoboDK no es la v05: los mandos están bloqueados."
         elif not self.estado.get("coordinador"):
-            texto = "El coordinador está detenido: iniciar Programa_Principal desde RoboDK."
+            texto = "El coordinador está detenido: doble clic en Coordinador_Panel, en RoboDK."
         elif self.sesion is not None and self.sesion.clave_por_defecto:
             texto = "Esta cuenta usa la contraseña de fábrica: actualizarla al pasar la celda a operación."
         elif self.sesion is not None and self.sesion.perfil == ADMINISTRADOR \

@@ -17,7 +17,7 @@ def main():
     s = r.ActiveStation()
     assert s.Name() == "Celda_Soldadura_Estator_Grupo4_v05"
     sensores = SensoresModos(r)
-    p = r.Item("Programa_Principal", ITEM_TYPE_PROGRAM)
+    p = r.Item("Coordinador_Panel", ITEM_TYPE_PROGRAM)
     resultados = []
     exito = False
 
