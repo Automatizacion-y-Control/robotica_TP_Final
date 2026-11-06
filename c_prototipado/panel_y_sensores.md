@@ -317,6 +317,7 @@ Ensayos de aceptación que deben quedar registrados:
 | 2026-11-06 | Ensayo sobre copia descartable de v04: retirar permiso con eje a 155 mm no detiene el avance a 2050 mm. No atribuir función de protección inmediata a WAIT ni al panel. |
 | 2026-11-06 | Separar cinta detenida, zona de robots sin piezas y banda vacía. Evacuación a 1750 mm no despeja el lote inicial; 2050 mm sí despeja ese caso, pero no representa retirada de piezas. |
 | 2026-11-06 | Modos 1 a 5 integrados en v05 con confirmación por sensores geométricos; pedirlos durante producción detiene al terminar la pieza y exige reenviar la solicitud. |
+| 2026-11-06 | Se agrega el modo 6, correctivo sin movimiento; cada modo exige solo los equipos que mueve y la parada del coordinador no ordena mover equipos no disponibles. Causas de rechazo enumeradas. |
 
 Cada implementación posterior debe actualizar la tabla de pasos, señales definitivas y pruebas,
 indicando versión de estación y resultado. No marcar como implementado un requisito por disponer
@@ -483,7 +484,7 @@ Contrato de señales de esta etapa:
 | `PERMISO_OPERACION` | Lógica de sensores futura | Habilitación inicial; por defecto 0. Su pérdida se atiende entre subprogramas, no interrumpe un movimiento. |
 | `AUTO_ACTIVO` | Coordinador | Producción habilitada, incluidos intervalos entre piezas. |
 | `ESTADO_CONTROL` | Coordinador | 0 inicial, 1 automático, 2 parada normal, 3 permiso perdido. |
-| `CAUSA_RECHAZO` | Coordinador | 0 arranque aceptado, 1 condiciones de arranque no satisfechas. |
+| `CAUSA_RECHAZO` | Coordinador | 0 arranque aceptado; otro valor, causa según la [tabla de causas](#modos-nativos-y-sensores-geométricos). |
 | `PROXIMA_PIEZA` | Coordinador | 1–4 siguiente pieza; 5 fin de lote pendiente. |
 | `PIEZA_ACTIVA` | Coordinador | 0 sin pieza en ejecución; 1–4 subprograma de pieza activo. |
 | `CELDA_INICIALIZADA` | Coordinador | Inicio_Celda ya ejecutado; no reiniciarlo al continuar una parada normal. |
@@ -503,8 +504,14 @@ se describe a continuación; el panel sigue pendiente y la v05 es una versión e
 Implementación: [modos_nativos.py](scripts/modos_nativos.py) instala `Atender_Solicitud_Modo`,
 `Confirmar_Posicion_Modo` y `Preparar_Servicio_Antorcha`;
 [sensores_modos.py](scripts/sensores_modos.py) calcula las lecturas sin mover elementos ni lanzar
-programas. Banco: [verificar_modos_v05.py](scripts/verificar_modos_v05.py).
-[Resultados](verificaciones/modos_v05.json), a ×10 y con colisiones activas.
+programas. Bancos: [verificar_modos_v05.py](scripts/verificar_modos_v05.py) y
+[verificar_coordinacion_v05.py](scripts/verificar_coordinacion_v05.py).
+Resultados de [modos](verificaciones/modos_v05.json) y de
+[coordinación](verificaciones/coordinacion_v05.json), a ×10 y con colisiones activas.
+
+El coordinador llama a `Parada_Entre_Piezas` en lugar de `Parada_Ciclo`: apaga el arco y lleva a
+reposo solo los robots disponibles. Cada modo exige la disponibilidad de los equipos que mueve;
+una avería ajena a la tarea no la impide.
 
 | `MODO_SOLICITADO` | Preparación | Postura confirmada | Regreso |
 |---|---|---|---|
@@ -514,6 +521,19 @@ programas. Banco: [verificar_modos_v05.py](scripts/verificar_modos_v05.py).
 | 3 · Ambos | IRB y después CRB | Ambos en mantenimiento | CRB y después IRB |
 | 4 · Cinta | Sin movimiento | Ambos en reposo | Sin movimiento |
 | 5 · Antorcha | `Preparar_Servicio_Antorcha` | IRB en reposo, CRB en servicio | `Sold_Servicio_Antorcha` |
+| 6 · Correctivo | Sin movimiento; admite equipo averiado, sin permiso y cualquier postura | Sin postura requerida | Sin movimiento; exige equipos disponibles y ambos robots en reposo |
+
+Causas, comunes a `CAUSA_RECHAZO` y `MODO_CAUSA`. Si hay varias, se informa la de mayor prioridad:
+
+| Código | Causa | Código | Causa |
+|---|---|---|---|
+| 0 | Sin causa de rechazo | 7 | Equipo no disponible |
+| 1 | Sin permiso de operación | 8 | Hay un modo activo |
+| 2 | Cambio de modo en curso | 9 | No hay modo del cual regresar |
+| 3 | Sensores no válidos | 10 | Falta confirmar la restitución |
+| 4 | Equipo fuera de la posición requerida | 11 | Modo desconocido |
+| 5 | Pieza sujeta | 12 | Producción activa |
+| 6 | Cinta en movimiento | | |
 
 Señales agregadas al contrato:
 
@@ -524,6 +544,7 @@ Señales agregadas al contrato:
 | `MODO_OBJETIVO` / `MODO_CONFIRMADO` | Coordinador | Modo en preparación y modo confirmado por los sensores. |
 | `MODO_EN_TRANSICION` | Coordinador | Preparación o regreso sin confirmar todavía. |
 | `MODO_RESULTADO` | Coordinador | 1 aceptado, 2 rechazado, 3 producción detenida: reenviar la solicitud. |
+| `MODO_CAUSA` | Coordinador | Causa del rechazo de la última solicitud de modo. |
 | `CONF_RESTITUCION` | Panel futuro | Restitución declarada; el regreso la exige y la borra. No es una medición. |
 | `IRB_DISPONIBLE`, `CRB_DISPONIBLE`, `CINTA_DISPONIBLE` | Entradas de simulación | Disponibilidad de cada equipo; 0 por defecto. |
 | `IRB_EN_REPOSO`, `CRB_EN_REPOSO`, `IRB_EN_MANT`, `CRB_EN_MANT` | Sensores | Articulaciones a ±0,5° del target. |
@@ -537,25 +558,38 @@ Señales agregadas al contrato:
 | Caso | Resultado |
 |---|---|
 | Servicio de antorcha, ida y regreso | Ratio 1 sin colisiones con muestreo de 1 mm/1°. |
-| IRB no disponible | Solicitud del modo 1 rechazada, sin movimiento. |
+| Parada con CRB fuera de reposo y no disponible | El CRB no se mueve; disponible, va a reposo. |
+| IRB no disponible | Modos 1 y 3 y arranque rechazados con causa 7, sin movimiento. |
+| Correctivo con IRB no disponible | Modo 6 confirmado sin variación articular; regreso rechazado con causa 7 hasta la reparación. |
+| CRB no disponible | El modo 1 se confirma y regresa: la avería es ajena a la tarea. |
+| Cinta no disponible | El modo 4 se confirma y regresa; arranque rechazado con causa 7. |
+| Sin permiso | Modo 1 y arranque rechazados con causa 1; el modo 6 se admite. |
 | Modos 1 a 5 | Confirmados por sensores, con la postura de la tabla. |
-| Arranque con modo confirmado | Rechazado. |
-| Regreso sin `CONF_RESTITUCION` | Rechazado; el modo se mantiene. |
+| Arranque u otro modo con modo confirmado | Rechazados con causa 8. |
+| Regreso sin `CONF_RESTITUCION` | Rechazado con causa 10; el modo se mantiene. |
 | Regreso con restitución | Modo 0 confirmado; no hay autoarranque. |
+| Modo desconocido o regreso sin modo, en reposo y durante producción | Rechazados con causas 11 y 9; la producción sigue. |
+| Mantenimiento del CRB con lote parcial (dos piezas) | Se conserva el índice; el arranque siguiente continúa desde la pieza 3. |
 | Modo pedido durante la pieza 4 del segundo lote | Termina la pieza, detiene y pide reenviar; el estado del lote se conserva. |
+| Arranque después de esa intervención | Ejecuta el `Fin_Lote` diferido y continúa con el lote siguiente. |
+| CRB no disponible durante producción | Detención al terminar la pieza; correctivo, reparación y regreso sin perder el índice. |
 
 Las trayectorias de los modos se monitorearon por consultas durante la ejecución; salvo el servicio
 de antorcha, el muestreo de 1 mm/1° proviene de los ensayos de la v04. `Programa_Principal` ya no
 produce por sí solo: necesita solicitudes, sensores en ejecución y disponibilidad de los equipos.
 
+**Latencia del coordinador.** Con la celda detenida, el acuse de una solicitud demoró entre 0,17 y
+0,27 s a ×10 y entre 0,33 y 0,47 s a ×1. Durante una pieza, las solicitudes esperan a que esta
+termine. Un primer ensayo de esta revisión detectó que un arranque enviado durante la vuelta de
+una parada se rechazaba y la celda quedaba detenida; ahora ese arranque espera a la vuelta siguiente.
+Por eso, una solicitud de arranque simultánea con una parada se atiende después de la parada y
+reanuda la producción; ese caso no tiene un ensayo específico.
+
 Limitaciones conocidas de esta revisión:
 
-1. Con un robot no disponible no se puede ingresar a ningún modo, incluido un correctivo sin movimiento.
-2. Durante producción, cualquier `MODO_ID` nuevo detiene la celda, aunque el modo sea 0 o desconocido.
-3. El ensayo con mantenimiento corrió con `Fin_Lote` pendiente: no se probó un lote parcial ni el
-   arranque posterior a una intervención.
-4. `CAUSA_RECHAZO` no distingue el motivo del rechazo.
-5. `SENSORES_VALIDOS` no acredita vigencia; si el proceso termina de forma abrupta, queda en 1.
+1. `SENSORES_VALIDOS` no acredita vigencia; si el proceso termina de forma abrupta, queda en 1.
+2. El rechazo por pieza sujeta (causa 5) no se ensayó: requiere una falla con pieza en la pinza.
+3. Si un equipo queda fuera de reposo, el correctivo no puede cerrarse: falta la recuperación supervisada.
 
 ## 11. Referencias
 
