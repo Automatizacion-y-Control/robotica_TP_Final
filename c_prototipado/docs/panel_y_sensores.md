@@ -223,8 +223,19 @@ Incorporación a la implementación, todavía pendiente:
 - Documentar que la autenticación del panel no protege contra otro cliente con acceso directo a
   los parámetros de RoboDK; no presentar el login como UAS del controlador.
 
-Decisiones técnicas por cerrar antes del código: biblioteca de contraseñas, política de sesión,
-almacenamiento y creación/recuperación de la primera cuenta administradora.
+Decisiones técnicas cerradas el 2026-11-06:
+
+| Tema | Decisión |
+|---|---|
+| Contraseñas | `hashlib.scrypt` con salt por cuenta; sin dependencias adicionales. Argon2id no está en el Python de RoboDK. |
+| Sesión | Cierre a los 15 min de inactividad y bloqueo temporal tras 5 intentos fallidos. |
+| Almacenamiento | `panel.db` en SQLite, para cuentas y registro; dentro del proyecto y fuera de git. El panel la crea si no existe. |
+| Cuentas iniciales | `admin`, `mantenimiento` y `produccion`, con clave por defecto para la puesta en marcha. El panel avisa mientras sigan vigentes; se actualizan al pasar la celda a operación. |
+| Tecnología | PySide2, incluido en el Python de RoboDK. |
+| Arranque y parada simultáneos | Prevalece la parada; el arranque se descarta con causa 13. |
+| Pérdida de conexión | El panel bloquea los mandos e indica "sin conexión"; no reenvía órdenes al reconectar. La celda sigue con lo que estaba haciendo. `PANEL_VIGENTE` queda para más adelante. |
+
+Borrar `panel.db` restablece las cuentas iniciales y elimina el registro de operaciones.
 
 Requisito incorporado el 2026-11-06: el panel tendrá perfiles diferenciados. La siguiente matriz
 es una propuesta de diseño, todavía sin autenticación ni autorización implementadas:
@@ -239,8 +250,7 @@ La cuenta identificará a la persona y el perfil sus permisos. Registrar usuario
 aceptación/rechazo y cambio de modo. Ocultar botones no alcanza: las órdenes deben validarse también
 en la capa que procesa las solicitudes. Las condiciones nativas de movimiento se aplicarán a todos
 los perfiles. La selección de un perfil en una demostración no debe presentarse como autenticación
-real. Definir antes de implementar: credenciales, almacenamiento, sesión, cierre por inactividad,
-gestión de cuentas y comportamiento ante pérdida de conexión. No guardar contraseñas en texto plano.
+real. No guardar contraseñas en texto plano.
 
 ### Manual del panel
 
@@ -317,6 +327,7 @@ Ensayos de aceptación que deben quedar registrados:
 | 2026-11-06 | Ensayo sobre copia descartable de v04: retirar permiso con eje a 155 mm no detiene el avance a 2050 mm. No atribuir función de protección inmediata a WAIT ni al panel. |
 | 2026-11-06 | Separar cinta detenida, zona de robots sin piezas y banda vacía. Evacuación a 1750 mm no despeja el lote inicial; 2050 mm sí despeja ese caso, pero no representa retirada de piezas. |
 | 2026-11-06 | Modos 1 a 5 integrados en v05 con confirmación por sensores geométricos; pedirlos durante producción detiene al terminar la pieza y exige reenviar la solicitud. |
+| 2026-11-06 | Cerradas las decisiones técnicas del panel: ver [Usuarios y permisos](#usuarios-y-permisos). |
 | 2026-11-06 | Se agrega el modo 6, correctivo sin movimiento; cada modo exige solo los equipos que mueve y la parada del coordinador no ordena mover equipos no disponibles. Causas de rechazo enumeradas. |
 
 Cada implementación posterior debe actualizar la tabla de pasos, señales definitivas y pruebas,
@@ -533,7 +544,7 @@ Causas, comunes a `CAUSA_RECHAZO` y `MODO_CAUSA`. Si hay varias, se informa la d
 | 3 | Sensores no válidos | 10 | Falta confirmar la restitución |
 | 4 | Equipo fuera de la posición requerida | 11 | Modo desconocido |
 | 5 | Pieza sujeta | 12 | Producción activa |
-| 6 | Cinta en movimiento | | |
+| 6 | Cinta en movimiento | 13 | Arranque simultáneo con una parada |
 
 Señales agregadas al contrato:
 
@@ -569,6 +580,7 @@ Señales agregadas al contrato:
 | Regreso sin `CONF_RESTITUCION` | Rechazado con causa 10; el modo se mantiene. |
 | Regreso con restitución | Modo 0 confirmado; no hay autoarranque. |
 | Modo desconocido o regreso sin modo, en reposo y durante producción | Rechazados con causas 11 y 9; la producción sigue. |
+| Arranque y parada pendientes durante una pieza | Prevalece la parada; arranque descartado con causa 13. |
 | Mantenimiento del CRB con lote parcial (dos piezas) | Se conserva el índice; el arranque siguiente continúa desde la pieza 3. |
 | Modo pedido durante la pieza 4 del segundo lote | Termina la pieza, detiene y pide reenviar; el estado del lote se conserva. |
 | Arranque después de esa intervención | Ejecuta el `Fin_Lote` diferido y continúa con el lote siguiente. |
@@ -582,8 +594,9 @@ produce por sí solo: necesita solicitudes, sensores en ejecución y disponibili
 0,27 s a ×10 y entre 0,33 y 0,47 s a ×1. Durante una pieza, las solicitudes esperan a que esta
 termine. Un primer ensayo de esta revisión detectó que un arranque enviado durante la vuelta de
 una parada se rechazaba y la celda quedaba detenida; ahora ese arranque espera a la vuelta siguiente.
-Por eso, una solicitud de arranque simultánea con una parada se atiende después de la parada y
-reanuda la producción; ese caso no tiene un ensayo específico.
+Si arranque y parada están pendientes al detectar la parada, prevalece la parada y el arranque se
+descarta con causa 13. Un arranque que llega después, mientras la parada se ejecuta, es una orden
+posterior y se atiende en la vuelta siguiente.
 
 Limitaciones conocidas de esta revisión:
 
