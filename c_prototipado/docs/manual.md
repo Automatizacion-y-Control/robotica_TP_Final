@@ -38,10 +38,10 @@ Comisión 2LA1 · Año 2026
 
 ## Prólogo
 
-Este manual explica cómo operar la celda v05 desde el panel. Está dirigido a quien la opera, la
-mantiene o administra sus cuentas, y a quien evalúa la simulación. Describe únicamente funciones
-probadas; los resultados están en [panel_v05.json](../verificaciones/panel_v05.json). Fecha de
-revisión: **2026-11-06**.
+Este manual explica cómo operar la celda v05, con el panel o sin él. Está dirigido a quien la
+opera, la mantiene o administra sus cuentas, y a quien evalúa la simulación. Describe únicamente
+funciones probadas; los resultados están en [panel_v05.json](../verificaciones/panel_v05.json). Fecha
+de revisión: **2026-11-06**. Versión de RoboDK utilizada: **6.1.1**.
 
 ## 1. Alcance y límites
 
@@ -59,23 +59,32 @@ cada solicitud se ejecuta.
 
 ## 2. Puesta en marcha
 
-1. Abrir RoboDK **como administrador** y cargar `Celda_Soldadura_Estator_Grupo4_v05.rdk`.
-2. En RoboDK, iniciar `Programa_Principal`. El panel no lo inicia: queda esperando solicitudes y
-   ningún equipo se mueve.
-3. Abrir el panel desde la carpeta del proyecto:
+La celda se entrega en un solo archivo: `Celda_Soldadura_Estator_Grupo4_v05.rdk`. El panel va
+dentro de la estación, y no hace falta ningún otro archivo ni usar una terminal. En el árbol de
+RoboDK, un programa se ejecuta con doble clic.
 
-```text
-C:\RoboDK\Python-Embedded\python.exe c_prototipado\panel\panel.py
-```
+**Ciclo sin panel.** Doble clic en `Programa_Principal`. Es el ciclo nativo: suelda un lote de cuatro
+estatores y termina. No usa Python ni el panel.
 
-El panel busca RoboDK en los puertos 20500 y 20501. Para fijar uno, agregar `--puerto 20501`.
-Si RoboDK no está abierto, el panel lo indica y espera: no lo abre.
+**Con el panel:**
 
-Al terminar, cerrar RoboDK sin guardar: guardar conserva el estado de la simulación en el archivo.
+1. Doble clic en `Coordinador_Panel`. Queda esperando solicitudes y ningún equipo se mueve. El panel
+   no lo inicia: los programas de la celda se ejecutan desde RoboDK.
+2. Doble clic en `Panel_Operador`. Se abre la ventana del panel.
+
+Si un programa queda a medias, reabrir la estación antes de usar el otro. El botón **Ayuda** resume
+estos pasos, también sin iniciar sesión.
+
+Al terminar, cerrar RoboDK **sin guardar**: guardar conserva el estado de la simulación en el archivo.
+
+**Para desarrollo.** Desde el repositorio, el panel también se abre con
+`C:\RoboDK\Python-Embedded\python.exe c_prototipado\panel\panel.py`, opcionalmente con
+`--puerto 20501`. Cambiar `panel/` no modifica el `.rdk`: hay que regenerar la v05.
 
 ## 3. Inicio de sesión y perfiles
 
-Al abrir por primera vez, el panel crea la base `panel.db` con estas cuentas de puesta en marcha:
+Al abrir por primera vez, el panel crea su base de datos en la máquina del usuario, con estas
+cuentas de puesta en marcha:
 
 | Usuario | Contraseña inicial | Perfil |
 |---|---|---|
@@ -194,8 +203,10 @@ Con el perfil de administrador:
 Una cuenta no puede cambiar sus propios privilegios, y siempre debe quedar una cuenta administradora
 activa. El perfil de administrador no da permisos de producción ni de mantenimiento.
 
-**Recuperación.** Si se pierde el acceso de administrador, cerrar el panel y borrar `panel.db`: al
-abrir, se recrean las cuentas iniciales. **Esto borra también el registro de operaciones.**
+**Datos y recuperación.** Las cuentas y el registro se guardan en
+`%LOCALAPPDATA%\Celda_Soldadura_Grupo4\panel.db`, y son propios de cada máquina. Si se pierde el acceso
+de administrador, cerrar el panel y borrar ese archivo: al abrir, se recrean las cuentas iniciales.
+**Esto borra también el registro de operaciones.**
 
 ## 9. Causas de rechazo
 
@@ -221,7 +232,11 @@ abrir, se recrean las cuentas iniciales. **Esto borra también el registro de op
 mandos. Las órdenes sin confirmar se descartan y no se reenvían al reconectar. La celda sigue con lo
 que estaba haciendo: para detenerla, usar RoboDK.
 
-**Coordinador detenido.** La franja amarilla lo indica. Iniciar `Programa_Principal` desde RoboDK.
+**Coordinador detenido.** La franja amarilla lo indica. Doble clic en `Coordinador_Panel`.
+
+**Sin PySide2.** Si el Python configurado en RoboDK no la trae, el panel intenta usar el de la
+instalación de RoboDK; si tampoco está, avisa con un mensaje. El ciclo de `Programa_Principal` no
+depende de esto.
 
 **Avería durante la producción.** Al desmarcar una disponibilidad, la celda se detiene al terminar
 la pieza y no ordena mover el equipo no disponible. Usar **Correctivo sin movimiento**.

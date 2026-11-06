@@ -223,6 +223,10 @@ antes de aplicar el LOTO.
 
 ## 10. Requisitos para la v04 y para el panel
 
+> **Estado:** la disposición está implementada en la v04 ([mejora 02](mejora_02_modos_mantenimiento.md)).
+> Los modos y el panel están implementados en la v05 ([manual](manual.md)), con estos límites: el
+> rearme, las paradas de emergencia y las de protección no se representan en el panel.
+
 **Disposición (mejora 02):**
 
 1. Un **pasillo de mantenimiento** a lo largo de la cinta, del lado sur, **fuera** del cerramiento
@@ -241,7 +245,7 @@ antes de aplicar el LOTO.
 La propuesta y el seguimiento de implementación se registran en
 [Panel de operador y sensores](panel_y_sensores.md). Se derivan de los lineamientos de
 `a_requisitos/` y los conceptos de `b_investigacion/`; el panel v01 se conserva como antecedente.
-Los requisitos de señales y transiciones de modo de esta sección todavía no están integrados.
+El detalle de lo implementado y de lo pendiente está en ese documento.
 
 - selector de modo (§4) y estado de cada zona y equipo;
 - arranque, parada de ciclo y rearme;

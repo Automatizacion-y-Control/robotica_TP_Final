@@ -77,6 +77,9 @@ que es la fuente única de valores.
 | v02 | [`Celda_Soldadura_Estator_Grupo4_v02.rdk`](../Celda_Soldadura_Estator_Grupo4_v02.rdk) | Manipulador + soldador TIG; paquete de estator real; entrada por cinta y salida por pallet | Este documento |
 | v03 | [`Celda_Soldadura_Estator_Grupo4_v03.rdk`](../Celda_Soldadura_Estator_Grupo4_v03.rdk) | **Cinta pasante:** la misma cinta trae y saca las piezas; se elimina el pallet y su ventana | [mejora 01](mejora_01_cinta_pasante.md) |
 
+| v04 | [`Celda_Soldadura_Estator_Grupo4_v04.rdk`](../Celda_Soldadura_Estator_Grupo4_v04.rdk) | **Mantenimiento:** pasillo, cara sur desmontable, accionamiento y equipos afuera, posiciones de mantenimiento | [mejora 02](mejora_02_modos_mantenimiento.md) |
+| **v05** | [`Celda_Soldadura_Estator_Grupo4_v05.rdk`](../Celda_Soldadura_Estator_Grupo4_v05.rdk) | **Versión actual.** Coordinador, modos, sensores y panel embebido; `Programa_Principal` sigue siendo el ciclo nativo | [panel y sensores](panel_y_sensores.md) y [manual](manual.md) |
+
 Este documento define la **v02**. En las secciones que cambian con la v03 hay una nota
 **"v03"** al final, con el resumen del cambio; el detalle y la justificación están en la [mejora 01](mejora_01_cinta_pasante.md).
 

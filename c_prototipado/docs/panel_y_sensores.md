@@ -229,9 +229,11 @@ Decisiones técnicas cerradas el 2026-11-06:
 |---|---|
 | Contraseñas | `hashlib.scrypt` con salt por cuenta; sin dependencias adicionales. Argon2id no está en el Python de RoboDK. |
 | Sesión | Cierre a los 15 min de inactividad y bloqueo temporal tras 5 intentos fallidos. |
-| Almacenamiento | `panel.db` en SQLite, para cuentas y registro; dentro del proyecto y fuera de git. El panel la crea si no existe. |
+| Almacenamiento | `panel.db` en SQLite, para cuentas y registro, en la carpeta de datos del usuario (`%LOCALAPPDATA%\Celda_Soldadura_Grupo4`). El panel la crea si no existe. |
 | Cuentas iniciales | `admin`, `mantenimiento` y `produccion`, con clave por defecto para la puesta en marcha. El panel avisa mientras sigan vigentes; se actualizan al pasar la celda a operación. |
 | Tecnología | PySide2, incluido en el Python de RoboDK. |
+| Entrega | El entregable es el `.rdk`, el informe y el video: el panel va embebido en la estación como `Panel_Operador`. |
+| Programas | `Programa_Principal` es el ciclo nativo, que funciona sin panel; `Coordinador_Panel` atiende al panel. |
 | Arranque y parada simultáneos | Prevalece la parada; el arranque se descarta con causa 13. |
 | Pérdida de conexión | El panel bloquea los mandos e indica "sin conexión"; no reenvía órdenes al reconectar. La celda sigue con lo que estaba haciendo. `PANEL_VIGENTE` queda para más adelante. |
 
@@ -297,7 +299,7 @@ en [modos y mantenimiento, §§6–7 y 11](modos_y_mantenimiento.md).
 | 6 | Implementar coordinación nativa sin perder eventos de la estación anterior | Parcial: v05 con arranque/parada entre piezas, continuación y modos de mantenimiento verificados; ver [modos nativos](#modos-nativos-y-sensores-geométricos). Faltan fallas con pieza sostenida y vaciado de cinta. |
 | 7 | Implementar sensores y comprobar detecciones antes/durante/después de toma y depósito | Parcial: posición de robots, cinta detenida y pieza sujeta. Faltan presencia en toma, pinza, posición de cinta, entradas de resguardo y vigencia. |
 | 8 | Construir panel propio con solicitudes e indicadores | Implementado; ver [implementación del panel](#implementación-del-panel). |
-| 9 | Ensayos integrados y documentación de resultados | Pendiente. |
+| 9 | Ensayos integrados y documentación de resultados | Parcial: coordinación, modos y panel ensayados sobre la v05 final. Faltan los casos de los pasos 6 y 7. |
 
 Ensayos de aceptación que deben quedar registrados:
 
@@ -326,6 +328,7 @@ Ensayos de aceptación que deben quedar registrados:
 | 2026-11-06 | Ensayo sobre copia descartable de v04: retirar permiso con eje a 155 mm no detiene el avance a 2050 mm. No atribuir función de protección inmediata a WAIT ni al panel. |
 | 2026-11-06 | Separar cinta detenida, zona de robots sin piezas y banda vacía. Evacuación a 1750 mm no despeja el lote inicial; 2050 mm sí despeja ese caso, pero no representa retirada de piezas. |
 | 2026-11-06 | Modos 1 a 5 integrados en v05 con confirmación por sensores geométricos; pedirlos durante producción detiene al terminar la pieza y exige reenviar la solicitud. |
+| 2026-11-06 | `Panel_Operador` embebido en la v05; el coordinador pasa a llamarse `Coordinador_Panel` y `Programa_Principal` vuelve a ser el ciclo nativo. El acuse de arranque se escribe después de la causa. |
 | 2026-11-06 | Cerradas las decisiones técnicas del panel: ver [Usuarios y permisos](#usuarios-y-permisos). |
 | 2026-11-06 | Se agrega el modo 6, correctivo sin movimiento; cada modo exige solo los equipos que mueve y la parada del coordinador no ordena mover equipos no disponibles. Causas de rechazo enumeradas. |
 
@@ -456,8 +459,8 @@ las llamadas a la API. Después se conectó a la instancia administrativa en **2
 `Free (Trial)`, y se completaron generación, guardado, reapertura y ensayos dinámicos.
 
 El generador ahora comprueba que ya exista servidor y consulta la licencia antes de construir,
-y trabaja desde una copia temporal del archivo v04. Su propuesta conserva el ciclo productivo
-anterior como antecedente y agrega un coordinador nativo con:
+y trabaja desde una copia temporal del archivo v04. Conserva `Programa_Principal` como ciclo nativo y agrega el coordinador nativo
+`Coordinador_Panel`, con:
 
 - solicitudes numeradas de arranque y parada, con acuse de recepción;
 - `PROXIMA_PIEZA` retenida entre paradas, sin repetir `Inicio_Celda` al continuar;
@@ -471,6 +474,7 @@ Banco: [verificar_coordinacion_v05.py](../scripts/verificar_coordinacion_v05.py)
 
 | Caso | Resultado |
 |---|---|
+| `Programa_Principal` sin panel ni señales | Suelda un lote; los cuatro estatores quedan en la banda, sin colisiones detectadas. Después el coordinador funciona normalmente. |
 | Arranque sin permiso | Rechazado; siguiente pieza = 1. |
 | Restituir permiso después del rechazo | No arranca hasta recibir un nuevo identificador de arranque. |
 | Parada durante soldadura de pieza 1 | Completa y deposita pieza 1; siguiente = 2, contador = 1. |
@@ -490,7 +494,7 @@ Contrato de señales de esta etapa:
 | Señal | Escritor en operación | Significado |
 |---|---|---|
 | `ARRANQUE_ID` / `PARADA_ID` | Panel futuro | Identificadores crecientes de solicitudes; no pulsos efímeros. |
-| `ARRANQUE_ACK` / `PARADA_ACK` | Coordinador nativo | Solicitud atendida; acuse no implica aceptación. Consultar causa/estado. |
+| `ARRANQUE_ACK` / `PARADA_ACK` | Coordinador nativo | Solicitud atendida; acuse no implica aceptación. El de arranque se escribe después de la causa, que ya está disponible al leerlo. |
 | `PERMISO_OPERACION` | Lógica de sensores futura | Habilitación inicial; por defecto 0. Su pérdida se atiende entre subprogramas, no interrumpe un movimiento. |
 | `AUTO_ACTIVO` | Coordinador | Producción habilitada, incluidos intervalos entre piezas. |
 | `ESTADO_CONTROL` | Coordinador | 0 inicial, 1 automático, 2 parada normal, 3 permiso perdido. |
@@ -586,7 +590,7 @@ Señales agregadas al contrato:
 | CRB no disponible durante producción | Detención al terminar la pieza; correctivo, reparación y regreso sin perder el índice. |
 
 Las trayectorias de los modos se monitorearon por consultas durante la ejecución; salvo el servicio
-de antorcha, el muestreo de 1 mm/1° proviene de los ensayos de la v04. `Programa_Principal` ya no
+de antorcha, el muestreo de 1 mm/1° proviene de los ensayos de la v04. `Coordinador_Panel` no
 produce por sí solo: necesita solicitudes, sensores en ejecución y disponibilidad de los equipos.
 
 **Latencia del coordinador.** Con la celda detenida, el acuse de una solicitud demoró entre 0,17 y
@@ -606,6 +610,9 @@ Limitaciones conocidas de esta revisión:
 ### Implementación del panel
 
 Código en [panel/](../panel/): `cuentas.py`, `permisos.py`, `procesador.py`, `enlace.py`, `ventana.py` y `panel.py`. Uso en el [manual](manual.md).
+[empaquetar_panel.py](../scripts/empaquetar_panel.py) los une en un solo script, y el generador de la
+v05 lo embebe en la estación: el código queda dentro del `.rdk`, sin rutas externas. Cambiar
+`panel/` no modifica la estación hasta regenerarla.
 Banco: [verificar_panel.py](../scripts/verificar_panel.py). [Resultados](../verificaciones/panel_v05.json), con la v05 a ×10 y colisiones activas.
 
 Las órdenes siguen este camino: interfaz → procesador (sesión y permiso) → enlace → señal → coordinador nativo → confirmación → registro. El enlace es el único hilo que habla con RoboDK, ejecuta los sensores y no puede abrir RoboDK. Las entradas de simulación quedaron en el perfil de mantenimiento. El bloqueo por intentos dura 5 minutos.
@@ -617,6 +624,9 @@ Las órdenes siguen este camino: interfaz → procesador (sesión y permiso) →
 | Cuentas | Hash con salt individual, bloqueo temporal y última cuenta administradora protegida. |
 | Código | Sin llamadas de ejecución ni movimiento en `panel/` y `sensores_modos.py`. |
 | Sin servidor | El enlace falla sin abrir RoboDK. |
+| Clics reales | Casillas y botones principales pulsados en la interfaz. |
+| Paquete | Sin dependencias del repositorio; 53 kB. |
+| `Panel_Operador` | Ejecutado desde el `.rdk`: arranca y conecta. |
 | Coordinador detenido | El panel lo indica y no lo inicia. |
 | Inicio y cierre de sesión | No arrancan ni mueven equipos. |
 | Botones de arranque y parada | Completan la pieza y conservan el índice. |
@@ -624,6 +634,9 @@ Las órdenes siguen este camino: interfaz → procesador (sesión y permiso) →
 | Preparar y regresar | Modo 2 confirmado; regreso sin autoarranque. |
 | Rechazo nativo | El panel muestra la causa. |
 | Registro | Distingue solicitud y confirmación nativa. |
+
+No se probó el panel con otra licencia, versión de RoboDK o máquina. Con licencia gratuita, RoboDK
+limita las llamadas a la API y el panel podría no funcionar; `Programa_Principal` no depende de eso.
 
 Pendiente: reconocimiento de alarmas y rearme, entradas de puerta, cortinas y emergencia, vigencia de señales, más de un perfil por cuenta y evacuación de la cinta. No se ensayó la caída real de RoboDK con el panel abierto.
 

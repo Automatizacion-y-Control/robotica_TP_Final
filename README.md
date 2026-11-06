@@ -86,7 +86,7 @@ en bucle.
 | Requisito | Cómo se cumple | Detalle |
 |---|---|---|
 | MoveJ, MoveL y MoveC bien elegidos | MoveJ en traslados, MoveL en entradas, salidas y cordones, MoveC en la transición entre aristas | [definición, §8](c_prototipado/docs/definicion_celda.md#8-tipos-de-movimiento) |
-| Sin Python en los movimientos | Todos los movimientos y eventos son instrucciones nativas de RoboDK. Los scripts solo construyen y verifican la estación | [definición, §7](c_prototipado/docs/definicion_celda.md#7-estructura-de-programas) |
+| Sin Python en los movimientos | Todos los movimientos y eventos son instrucciones nativas de RoboDK. Los scripts solo construyen y verifican la estación, y el panel solo lee y escribe señales | [definición, §7](c_prototipado/docs/definicion_celda.md#7-estructura-de-programas) |
 | C1 · Frames y TCP propios | `Frame_Soldadura`, `Frame_Toma_Cinta`, `Frame_Deposito_Cinta`, `Frame_Banda` y otros; TCP en la punta del tungsteno y en los dedos de la pinza | [definición, §5](c_prototipado/docs/definicion_celda.md#5-sistemas-de-referencia-y-tcp) |
 | C2 · Programa principal y subprogramas | `Programa_Principal` → `Inicio_Celda`, `Ciclo_Pieza_1…4`, `Fin_Lote` | [definición, §7](c_prototipado/docs/definicion_celda.md#7-estructura-de-programas) |
 | C3 · Cinta, segundo robot o variantes | Cinta transportadora (mecanismo, sin Python) y segundo robot | [mejora 01, §6](c_prototipado/docs/mejora_01_cinta_pasante.md#6-requisitos-de-la-cátedra) |
@@ -106,15 +106,18 @@ proyectoRobotica/
 │   ├── img/                           Fotos del motor de referencia
 │   └── biblio/                        Libros y clases (no se versiona)
 ├── c_prototipado/                   Diseño, construcción y verificación de la celda
-│   ├── docs/                          Definición de la celda, mejoras, modos y panel
-│   ├── panel/                         Panel de operador (PySide2)
+│   ├── docs/                          Definición de la celda, mejoras, modos, panel y manual
+│   ├── panel/                         Código del panel de operador; va embebido en la v05
 │   ├── Celda_Soldadura_Estator_Grupo4_v01.rdk
 │   ├── Celda_Soldadura_Estator_Grupo4_v02.rdk
 │   ├── Celda_Soldadura_Estator_Grupo4_v03.rdk
+│   ├── Celda_Soldadura_Estator_Grupo4_v04.rdk
+│   ├── Celda_Soldadura_Estator_Grupo4_v05.rdk   Versión actual
 │   ├── Componentes_Grupo4.rdk         Estación de trabajo con los componentes
 │   ├── scripts/                       Parámetros, generación de modelos, construcción y verificación
 │   ├── modelos/                       Modelos 3D propios y de la biblioteca de RoboDK
-│   └── imagenes/                      Capturas de la celda (v02 y v03)
+│   ├── verificaciones/                Resultados de los ensayos
+│   └── imagenes/                      Capturas de la celda y del panel
 └── d_presentacion/                  Productos finales: celda, informe y video
 ```
 
@@ -125,18 +128,22 @@ proyectoRobotica/
 | v01 | [`Celda_Soldadura_Estator_Grupo4_v01.rdk`](c_prototipado/Celda_Soldadura_Estator_Grupo4_v01.rdk) | Versión original: posicionador ABB MTD 250 y cilindro de 6 cordones |
 | v02 | [`Celda_Soldadura_Estator_Grupo4_v02.rdk`](c_prototipado/Celda_Soldadura_Estator_Grupo4_v02.rdk) | Manipulador + soldador TIG sobre el paquete de estator; entrada por cinta y salida por pallet |
 | v03 | [`Celda_Soldadura_Estator_Grupo4_v03.rdk`](c_prototipado/Celda_Soldadura_Estator_Grupo4_v03.rdk) | Cinta pasante: la misma cinta trae y saca las piezas; sin pallet |
-| **v04** | [`Celda_Soldadura_Estator_Grupo4_v04.rdk`](c_prototipado/Celda_Soldadura_Estator_Grupo4_v04.rdk) | **Base verificada.** Disposición y posiciones de mantenimiento; integración funcional de modos pendiente |
-| v05 | [`Celda_Soldadura_Estator_Grupo4_v05.rdk`](c_prototipado/Celda_Soldadura_Estator_Grupo4_v05.rdk) | **En desarrollo.** Coordinador nativo con arranque y parada entre piezas e índice de lote retenido. Panel, sensores y modos completos pendientes; ver [seguimiento](c_prototipado/docs/panel_y_sensores.md) |
+| v04 | [`Celda_Soldadura_Estator_Grupo4_v04.rdk`](c_prototipado/Celda_Soldadura_Estator_Grupo4_v04.rdk) | Disposición y posiciones de mantenimiento |
+| **v05** | [`Celda_Soldadura_Estator_Grupo4_v05.rdk`](c_prototipado/Celda_Soldadura_Estator_Grupo4_v05.rdk) | **Versión actual.** Coordinador, modos de mantenimiento, sensores y panel de operador embebido |
 
 ## Cómo abrir y reproducir la celda
 
-**Requisitos:** RoboDK 6.1.1 o posterior.
+**Requisitos:** RoboDK 6.1.1.
 
 > RoboDK tiene que ejecutarse **como administrador** y con conexión a internet. Si no, la licencia
 > de prueba no se valida y no permite guardar estaciones con más de un robot.
 
-**Para ver la celda:** abrir `c_prototipado/Celda_Soldadura_Estator_Grupo4_v03.rdk` en RoboDK y
-ejecutar `Programa_Principal`.
+**Para ver la celda:** abrir `c_prototipado/Celda_Soldadura_Estator_Grupo4_v05.rdk` en RoboDK. El
+archivo es autosuficiente:
+
+- **Sin panel:** doble clic en `Programa_Principal`.
+- **Con panel:** doble clic en `Coordinador_Panel` y después en `Panel_Operador`. Ver el
+  [manual](c_prototipado/docs/manual.md).
 
 **Para reproducirla desde los scripts** (con RoboDK abierto):
 
@@ -145,7 +152,11 @@ cd c_prototipado/scripts
 python generar_modelos.py                                                   # modelos 3D propios
 C:\RoboDK\Python-Embedded\python.exe construir_celda.py                     # estación v02
 C:\RoboDK\Python-Embedded\python.exe mejora_01_cinta_pasante.py             # estación v03, a partir de la v02
-C:\RoboDK\Python-Embedded\python.exe verificar_celda.py --colisiones --con-pieza --estacion Celda_Soldadura_Estator_Grupo4_v03
+C:\RoboDK\Python-Embedded\python.exe mejora_02_modos_mantenimiento.py       # estación v04, a partir de la v03
+C:\RoboDK\Python-Embedded\python.exe mejora_03_coordinacion.py              # estación v05, a partir de la v04
+C:\RoboDK\Python-Embedded\python.exe verificar_coordinacion_v05.py --puerto 20500   # ensayos de la v05
+C:\RoboDK\Python-Embedded\python.exe verificar_modos_v05.py --puerto 20500
+C:\RoboDK\Python-Embedded\python.exe verificar_panel.py --puerto 20500
 ```
 
 Los eventos de simulación (tomar y soltar la pieza, reponer el lote) no se pueden crear desde la API
@@ -165,5 +176,7 @@ celda y en el documento de la mejora 01.
 | [Catálogo de componentes](b_investigacion/componentesRDK.md) | Datos, justificación e imágenes de cada componente |
 | [Definición de la celda](c_prototipado/docs/definicion_celda.md) | Diseño completo de la celda y su justificación |
 | [Mejora 01 · Cinta pasante](c_prototipado/docs/mejora_01_cinta_pasante.md) | Cambio de la v02 a la v03 |
+| [Modos y mantenimiento](c_prototipado/docs/modos_y_mantenimiento.md) | Paradas, LOTO, energías, zonas, modos y tareas |
+| [Mejora 02 · Modos y mantenimiento](c_prototipado/docs/mejora_02_modos_mantenimiento.md) | Cambio de la v03 a la v04 |
 | [Panel de operador y sensores](c_prototipado/docs/panel_y_sensores.md) | Trazabilidad desde los requisitos y la investigación, revisión del antecedente v01 y propuesta de modos, mantenimiento y señales; implementación pendiente |
-| [Manual del panel](c_prototipado/docs/manual.md) | Puesta en marcha y operación del panel de la v05 |
+| [Manual del panel](c_prototipado/docs/manual.md) | Puesta en marcha y operación de la v05, con el panel o sin él |

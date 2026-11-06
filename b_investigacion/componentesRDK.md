@@ -44,7 +44,8 @@ Comisión 2LA1 · Año 2026
 - [13. Verificaciones de carga y alcance](#13-verificaciones-de-carga-y-alcance)
 - [14. Archivos y cómo regenerarlos](#14-archivos-y-cómo-regenerarlos)
 - [15. Cambios en la v03 (mejora 01)](#15-cambios-en-la-v03-mejora-01)
-- [16. Referencias](#16-referencias)
+- [16. Cambios en la v04 (mejora 02)](#16-cambios-en-la-v04-mejora-02)
+- [17. Referencias](#17-referencias)
 
 ---
 
@@ -426,7 +427,26 @@ mecanismo de la cinta, como en una cinta real con un solo accionamiento.
 |---|
 | ![Salida v03](../c_prototipado/imagenes/v03/v03_salida_cortina.png) |
 
-## 16. Referencias
+## 16. Cambios en la v04 (mejora 02)
+
+La v04 agrega lo necesario para el mantenimiento (ver
+[`mejora_02_modos_mantenimiento.md`](../c_prototipado/docs/mejora_02_modos_mantenimiento.md)). La v05 no
+agrega modelos.
+
+| Componente | Función | Archivo |
+|---|---|---|
+| Cerramiento v04 | Cara sur acercada a la cinta | `cerramiento_estructura_v04.stl`, `cerramiento_paneles_v04.stl` |
+| Paneles desmontables | Forman la cara sur | `paneles_desmontables_sur.stl`, `paneles_desmontables_manijas.stl` |
+| Cortinas de luz de la cinta | Adaptadas a los nuevos túneles | `cortina_luz_cinta_v04.stl` |
+| Pasillo de mantenimiento | Marcado en el piso, del lado sur | `pasillo_mantenimiento.stl` |
+| Accionamiento de la cinta | Extremo oeste, afuera, con resguardo | `accionamiento_cinta.stl`, `accionamiento_cinta_resguardo.stl` |
+| Tablero de aislamiento | Puntos con candado, afuera | `tablero_loto.stl`, `tablero_loto_manijas.stl` |
+| Panel de operador | Afuera del cerramiento | `panel_operador.stl` |
+| Pulsadores de emergencia | Puerta, entrada y salida de la cinta | `parada_emergencia_poste.stl`, `parada_emergencia_hongo.stl` |
+| Gabinetes de los controladores | Detrás de la cara norte | `gabinete_controlador.stl` |
+| Fuente TIG y argón | Detrás de la cara norte | `fuente_tig.stl`, `cilindro_argon.stl` |
+
+## 17. Referencias
 
 - RoboDK. *ABB CRB 1300-10/1.15*. Biblioteca de robots. <https://robodk.com/robot/ABB/CRB-1300-10-1-15>
 - RoboDK. *ABB IRB 1200-7/0.7*. Biblioteca de robots. <https://robodk.com/robot/ABB/IRB-1200-7-0-7>
