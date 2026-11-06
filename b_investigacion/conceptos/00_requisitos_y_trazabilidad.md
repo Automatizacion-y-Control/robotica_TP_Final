@@ -115,6 +115,7 @@ la sección 6 tiene que tener su evidencia en la estación (`.rdk`) y en el info
 | Justificación del robot y la herramienta | [03](03_seleccion_de_equipos.md), [02](02_soldadura_robotizada.md) | — | E2-c |
 | Seguridad de la celda (complejidad justificada) | [07](07_seguridad_y_normativa.md) | Cerramiento, puerta, parada de emergencia y habilitaciones | E2-b, E2-f |
 | Tiempo de ciclo | [08](08_tiempo_de_ciclo_y_validacion.md) | Tiempo estimado del programa principal | E2-e |
+| Interfaz y acceso restringido (mejora justificada, no exigencia explícita) | [09](09_interfaz_de_operacion_usuarios_y_permisos.md) | Login, permisos por operación/modo y manual coherente con las funciones verificadas; implementación pendiente | E2-b, E2-d, E2-f |
 
 ## 7. Documentos de conceptos
 
@@ -129,6 +130,7 @@ la sección 6 tiene que tener su evidencia en la estación (`.rdk`) y en el info
 | 06 | [06_estructura_de_programas_y_senales.md](06_estructura_de_programas_y_senales.md) | Programa principal, subprogramas, señales y sincronización |
 | 07 | [07_seguridad_y_normativa.md](07_seguridad_y_normativa.md) | Riesgos, medidas de seguridad y normas |
 | 08 | [08_tiempo_de_ciclo_y_validacion.md](08_tiempo_de_ciclo_y_validacion.md) | Tiempo de ciclo, producción y validación de la simulación |
+| 09 | [09_interfaz_de_operacion_usuarios_y_permisos.md](09_interfaz_de_operacion_usuarios_y_permisos.md) | HMI, cuentas, perfiles, permisos, modos, sesiones y criterios para el manual |
 
 ## 8. Referencias
 

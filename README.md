@@ -100,7 +100,7 @@ proyectoRobotica/
 ├── b_investigacion/                 Investigación previa al diseño
 │   ├── despiece_motor_lavarropas.md   Motor de referencia y ubicación de los cordones
 │   ├── bibliografia.md                Bibliografía de la cátedra y normativa
-│   ├── conceptos/                     Documentos de conceptos de implementación 00 a 08
+│   ├── conceptos/                     Documentos de conceptos de implementación 00 a 09
 │   ├── componentesRDK.md              Catálogo de componentes de RoboDK
 │   ├── componentes/                   Imágenes del catálogo
 │   ├── img/                           Fotos del motor de referencia
@@ -158,7 +158,8 @@ celda y en el documento de la mejora 01.
 | Documento | Contenido |
 |---|---|
 | [Requisitos y trazabilidad](b_investigacion/conceptos/00_requisitos_y_trazabilidad.md) | Requisitos de la cátedra y documento que cubre cada uno |
-| [Documentos de conceptos 01 a 08](b_investigacion/conceptos/) | Célula robotizada, soldadura, selección de equipos, frames y TCP, movimientos, programas, seguridad, tiempo de ciclo |
+| [Documentos de conceptos 01 a 09](b_investigacion/conceptos/) | Célula robotizada, soldadura, equipos, frames/TCP, movimientos, programas, seguridad, tiempos e interfaz de operación |
+| [09 · Interfaz de operación, usuarios y permisos](b_investigacion/conceptos/09_interfaz_de_operacion_usuarios_y_permisos.md) | Investigación de HMI, perfiles, sesiones y relación con modos; fundamento del panel y su manual |
 | [Despiece del motor](b_investigacion/despiece_motor_lavarropas.md) | Motor de referencia y ubicación de los cordones en el paquete de estator |
 | [Bibliografía](b_investigacion/bibliografia.md) | Barrientos, Groover, Craig, clases de la cátedra y normativa |
 | [Catálogo de componentes](b_investigacion/componentesRDK.md) | Datos, justificación e imágenes de cada componente |

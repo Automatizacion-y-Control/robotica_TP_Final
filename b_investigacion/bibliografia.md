@@ -1,7 +1,39 @@
+<div align="center">
+
+**UNIVERSIDAD TECNOLÓGICA NACIONAL · Facultad Regional Córdoba**<br>
+Licenciatura en Automatización y Control<br>
+**Cátedra: Robótica Industrial**
+
 # Bibliografía: celdas robotizadas y normativa
+
+**Grupo 4**<br>
+Casali Emiliano · Ferrero Facundo · Vera Gonzalo<br>
+**Docentes:** Ing. Julián Luque · Lic. Sergio Perassi<br>
+Comisión 2LA1 · Año 2026
+
+</div>
+
+## Índice
+
+- [Prólogo](#prólogo)
+- [Material de la cátedra](#material-catedra)
+- [Barrientos](#barrientos)
+- [Groover](#groover)
+- [Otros libros](#otros-libros)
+- [Normas aplicables](#normas-aplicables)
+- [Fuentes complementarias de interfaz y usuarios](#fuentes-interfaz)
+
+## Prólogo
+
+Se reúne la bibliografía que fundamenta la investigación, indicando apartados y páginas cuando
+corresponden. Las fuentes complementarias de fabricantes y software permiten desarrollar el panel
+sin atribuir a los libros decisiones particulares del proyecto. Las normas ISO se incluyen solo
+como referencia: no se tuvo acceso a su texto.
 
 Los PDF de la cátedra y los libros están en `biblio/`, que no se versiona (material con derechos
 de autor).
+
+<a id="material-catedra"></a>
 
 ## 1. Material de la cátedra (en `biblio/`)
 
@@ -22,8 +54,11 @@ de autor).
   operador.
 - **Integración:** todos los sensores reportan a un PLC de seguridad. El robot pide permiso para
   moverse (*Request to Move*), el PLC verifica puertas y cortinas y devuelve *Enable*. Si algo cambia
-  durante el movimiento, retira el *Enable* (parada de emergencia). El panel Python de la estación
-  hace un papel parecido y puede justificarse con este esquema.
+  durante el movimiento, retira la habilitación según la función de protección correspondiente.
+  El panel Python no sustituye ese circuito; en RoboDK las señales deben declarar el alcance
+  de la reacción realmente implementada.
+
+<a id="barrientos"></a>
 
 ## 2. Barrientos, *Fundamentos de Robótica* (en `biblio/`)
 
@@ -108,6 +143,8 @@ Estas versiones ya están reemplazadas. Las vigentes son la **ISO 10218-1/2** (l
 - Algunos robots usan sensores láser para encontrar el comienzo del cordón y seguirlo, con
   precisiones de 0,5 mm a 40 mm/s.
 
+<a id="groover"></a>
+
 ## 3. Groover, *Automation, Production Systems, and CIM* (en `biblio/`)
 
 **Groover, M. P. *Automation, Production Systems, and Computer-Integrated Manufacturing*, 4.ª ed.
@@ -184,6 +221,8 @@ Si la celda produce **piezas distintas**, además necesita identificar cada piez
 que le corresponde y cambiar rápido de utillaje. Esto aplica si agregamos dos variantes de paquete
 de estator.
 
+<a id="otros-libros"></a>
+
 ## 4. Otros libros
 
 1. **Barrientos et al., *Fundamentos de Robótica*, 2.ª ed. (McGraw-Hill, 2007).** Es la versión
@@ -195,7 +234,11 @@ de estator.
 
 > Para confirmar de qué libro es la cita "Cap. 11.1" de la clase 2, conviene preguntarle al docente.
 
+<a id="normas-aplicables"></a>
+
 ## 5. Normas aplicables
+
+Las fuentes específicas para la interfaz se incorporan en §6 y se desarrollan en el concepto 09.
 
 | Norma | Tema | Uso en la celda |
 |---|---|---|
@@ -211,3 +254,20 @@ de estator.
 | IEC 60204-1 | Equipo eléctrico de las máquinas | Tablero y circuito de mando |
 | ISO 25980 | Cortinas y pantallas para soldadura (protección contra el arco) | Paneles opacos frente a la zona de arco |
 | Ley 19.587 y Decreto 351/79 (Argentina) | Higiene y seguridad en el trabajo | Marco legal local |
+
+<a id="fuentes-interfaz"></a>
+
+## 6. Fuentes complementarias de interfaz y usuarios
+
+Investigación desarrollada en [09 · Interfaz de operación, usuarios y permisos](conceptos/09_interfaz_de_operacion_usuarios_y_permisos.md).
+Consulta: 2026-11-06. Fuentes HTML sin paginación; se identifican apartados en lugar de páginas.
+
+| Fuente primaria | Apartados consultados | Aporte |
+|---|---|---|
+| [ABB, FlexPendant Developer Support: User Authorization System](https://developercenter.robotstudio.com/api/fpsdk/html/6460854b-d939-4bc1-b553-60420e6a227f.htm) | Overview; Accessing UAS from custom applications; Grants and Groups | Usuarios, grupos y permisos del controlador; comprobación por operación. |
+| [Siemens, Unified Basic Panels V20, publicación 12/2024: User management](https://docs.tia.siemens.cloud/r/unified_basic_panels_enus_20/operating-the-control-panel/security/user-management) | Security / User management; Current user; Users | Roles, derechos de función y sesiones de la HMI. |
+| [OWASP, Authorization Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Authorization_Cheat_Sheet.html) | Recommendations: mínimos privilegios, rechazo por defecto, comprobación por solicitud, registro y pruebas | Criterios de autorización del software. |
+| [OWASP, Password Storage Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html) | Introduction; Methods for Enhancing Password Storage / Salting | Protección de credenciales; no constituye seguridad funcional. |
+
+Las funciones particulares de esas plataformas no se atribuyen a RoboDK. La matriz de perfiles
+producción/mantenimiento/administración es una propuesta del proyecto fundamentada en la investigación.

@@ -205,6 +205,26 @@ física de arco establecido ni `SOLDADURA_TERMINADA=1` con calidad metalúrgica.
 
 ### Usuarios y permisos
 
+Fundamento rector de esta parte: [09 · Interfaz de operación, usuarios y permisos](../b_investigacion/conceptos/09_interfaz_de_operacion_usuarios_y_permisos.md).
+La aplicación debe seguir su distinción entre identidad, permiso, modo y condición de ejecución.
+La matriz de §4 del concepto 09 amplía la propuesta inicial de esta sección y prevalece para
+cerrar el diseño: administración no implica permiso de producción o mantenimiento.
+
+Incorporación a la implementación, todavía pendiente:
+
+- Cuentas individuales y perfiles explícitos; login → inicio del perfil → pantallas autorizadas.
+- Validar cada solicitud en su procesador, además de adaptar botones; conservar condiciones nativas.
+- Separar reconocer alarma, rearmar y arrancar; no dar permisos técnicos implícitos al administrador.
+- Gestionar alta/baja, cambio de credencial, sesión vencida y desconexión; cierre con parada normal
+  solicitada y sin apertura de pinza ni reinicio de lote. Hace falta lógica de vigencia de sesión.
+- Mantener parada normal disponible sin sesión; nunca condicionar emergencia física a un login.
+- Registrar identidad, operación y resultado; verificar matriz positiva y negativa antes del manual.
+- Documentar que la autenticación del panel no protege contra otro cliente con acceso directo a
+  los parámetros de RoboDK; no presentar el login como UAS del controlador.
+
+Decisiones técnicas por cerrar antes del código: biblioteca de contraseñas, política de sesión,
+almacenamiento y creación/recuperación de la primera cuenta administradora.
+
 Requisito incorporado el 2026-11-06: el panel tendrá perfiles diferenciados. La siguiente matriz
 es una propuesta de diseño, todavía sin autenticación ni autorización implementadas:
 
