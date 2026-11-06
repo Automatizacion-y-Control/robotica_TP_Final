@@ -511,8 +511,8 @@ se carga la pieza siguiente. Es la idea de los dos utillajes de Groover [Groover
 Queda fuera del alcance de este trabajo.
 
 > **v03:** verificada sin colisiones, también ejecutando el `Programa_Principal` con los eventos:
-> las 4 piezas terminan afuera de la celda. Ciclo de 73,6 a 75,2 s por pieza, lote de ≈ 317 s
-> (≈ 45 piezas/h), igual que la v02.
+> las 4 piezas salen de la celda y, con la reposición del lote, el programa se repite en bucle.
+> Ciclo de 73,6 a 75,2 s por pieza, lote de ≈ 315 s (≈ 45 piezas/h), igual que la v02.
 
 ## 13. Pendientes
 
@@ -538,9 +538,10 @@ Queda fuera del alcance de este trabajo.
    anterior. Solo puede habilitar o detener el ciclo, nunca mover los robots.
 6. **Volver a verificar** con `verificar_celda.py --colisiones --con-pieza` después de los cambios.
 
-> **v03:** la reposición del lote se resuelve con eventos nativos: *Ajustar las articulaciones
-> al inicio* (cinta) y *Fijar la posición del objeto (relativa)* (cada estator). Están indicados
-> como `EVENTO:` al final de `Fin_Lote`.
+> **v03:** la reposición del lote está resuelta con eventos nativos al final de `Fin_Lote`:
+> *Ajustar las articulaciones al inicio* (cinta) y *Fijar la posición del objeto (relativa)* (los
+> 4 estatores). El `Programa_Principal` se verificó en bucle, con dos lotes seguidos sin
+> colisiones y volviendo al estado inicial.
 
 ## 14. Archivos y reproducción
 

@@ -207,15 +207,19 @@ misma altura (366,5 mm). Todo lo que viaja sobre la banda cuelga de `Frame_Banda
   Celda_Soldadura_Estator_Grupo4_v03`: todos los programas válidos y sin colisiones, con muestreo
   de 1 mm.
 - **Ejecución real del `Programa_Principal` con los eventos:** sin colisiones. Cada estator recorre
-  `Frame_Banda` → `TCP_Pinza` → `Frame_Piezas_Soldadas` y termina **afuera** de la celda, en
-  x = 1000 a 1900 mm (la pared este está en x = 850 mm).
+  `Frame_Banda` → `TCP_Pinza` → `Frame_Piezas_Soldadas` y sale de la celda por la cara este
+  (x = 850 mm) hasta x = 1000 a 1900 mm.
+- **Bucle (requisito C4):** con los eventos de reposición cargados, se ejecutaron **dos lotes
+  seguidos** sin colisiones. Al terminar cada lote, la cinta vuelve a 0 y los 4 estatores quedan en
+  la misma posición relativa de inicio (1680, 1380, 1080 y 780 mm sobre la banda), así que el lote
+  siguiente arranca desde el mismo estado.
 
 | Medida | v02 | v03 |
 |---|---|---|
 | Ciclo de una pieza | 75,7 s | 73,6 a 75,2 s |
 | Fin de lote | 12,7 s | 18,1 s (incluye la evacuación) |
-| Lote de 4 piezas | 321,4 s | ≈ 317 s |
-| Tc por pieza | 80,4 s | ≈ 79,7 s |
+| Lote de 4 piezas | 321,4 s | ≈ 315 s (311 a 318 s en tres mediciones) |
+| Tc por pieza | 80,4 s | ≈ 79 s |
 | Tasa de ciclo | ≈ 45 piezas/h | ≈ 45 piezas/h |
 
 **La mejora no busca velocidad:** el tiempo de ciclo es prácticamente el mismo. Lo que mejora es la
@@ -224,16 +228,20 @@ proceso para cambiar un pallet).
 
 ## 9. Pendientes
 
-1. **Reposición del lote para el bucle.** Al final de `Fin_Lote` hay instrucciones de comentario
-   `EVENTO:` con los eventos a cargar desde la interfaz (*Instrucción de Simulación de Evento*):
-   - **Ajustar las articulaciones al inicio** de `Cinta_Pasante`: vuelve el eje de la cinta a 0 de
-     forma instantánea, sin que se vea a la banda retroceder;
-   - **Fijar la posición del objeto (relativa)** para cada `Estator_k`, con la pose indicada en el
-     comentario: lo reubica aguas arriba de la toma.
+1. ✔ **Reposición del lote para el bucle.** Cargada al final de `Fin_Lote` con dos eventos de
+   simulación nativos (*Instrucción de Simulación de Evento*):
+   - **Ajustar las articulaciones al inicio** de `Cinta_Pasante` ("Inicio Cinta_Pasante"): vuelve
+     el eje de la cinta a 0 de forma instantánea, sin que se vea a la banda retroceder;
+   - **Fijar la posición del objeto (relativa)** ("Mover objetos"), con los 4 estatores: guarda su
+     posición de inicio de lote respecto de la banda y la restaura al ejecutarse.
 
-   Representan al operario que, afuera, retira las piezas soldadas y carga el lote siguiente. Con
-   esto el `Programa_Principal` puede ejecutarse en bucle (requisito C4).
+   Representan al operario que, afuera, retira las piezas soldadas y carga el lote siguiente. El
+   `Programa_Principal` puede ejecutarse en bucle (§8).
 2. **Medidas reales** del estator, igual que en la v02.
+
+**Nota sobre la licencia de RoboDK:** la licencia de prueba solo se valida, y permite guardar
+estaciones con varios robots, si RoboDK se ejecuta **como administrador** y con conexión a
+internet. Sin eso, RoboDK aplica los límites de la licencia gratuita y no guarda la estación.
 
 ## 10. Archivos
 
