@@ -137,7 +137,8 @@ por señal. El ciclo de movimientos debe seguir definido íntegramente en la est
 
 ## 5. Modos y transiciones
 
-**Propuesta pendiente de implementación.** Separar modo solicitado, modo confirmado y estado de
+**Propuesta; la implementación parcial en v05 se describe en
+[modos nativos](#modos-nativos-y-sensores-geométricos).** Separar modo solicitado, modo confirmado y estado de
 ejecución: seleccionar mantenimiento no significa que el equipo ya esté posicionado o aislado.
 
 | Modo | Entrada y comportamiento esperado | Salida |
@@ -284,8 +285,8 @@ en [modos y mantenimiento, §§6–7 y 11](modos_y_mantenimiento.md).
 | 3 | Comprobar condiciones/saltos y monitoreo durante movimiento en RoboDK 6.1.1 | IF, WHILE, E/S y ejecución paralela probados; ELSE no validado. Retirar permiso durante MoveJ de cinta no detiene el movimiento. Interrupción inmediata nativa no demostrada. |
 | 4 | Verificar preparación/retorno individual, conjunta y de cinta | IRB de regreso y ambos órdenes conjuntos pasan. Ensayada cinta sin evacuación y evacuación del lote inicial; banda vacía y lotes parciales requieren procedimiento específico. |
 | 5 | Fijar contrato de E/S, escritor único, acuses, tolerancias y tiempos máximos | Propuesta de señales; pendiente de cerrar. |
-| 6 | Implementar coordinación nativa sin perder eventos de la estación anterior | Parcial: v05 con arranque/parada entre piezas y continuación verificados; modos completos pendientes. |
-| 7 | Implementar sensores y comprobar detecciones antes/durante/después de toma y depósito | Pendiente. |
+| 6 | Implementar coordinación nativa sin perder eventos de la estación anterior | Parcial: v05 con arranque/parada entre piezas, continuación y modos de mantenimiento verificados; ver [modos nativos](#modos-nativos-y-sensores-geométricos). Faltan fallas con pieza sostenida y vaciado de cinta. |
+| 7 | Implementar sensores y comprobar detecciones antes/durante/después de toma y depósito | Parcial: posición de robots, cinta detenida y pieza sujeta. Faltan presencia en toma, pinza, posición de cinta, entradas de resguardo y vigencia. |
 | 8 | Construir panel propio con solicitudes e indicadores | Pendiente; antecedente revisado. |
 | 9 | Ensayos integrados y documentación de resultados | Pendiente. |
 
@@ -315,6 +316,7 @@ Ensayos de aceptación que deben quedar registrados:
 | 2026-11-06 | IRB ida/vuelta y mantenimiento conjunto en ambos órdenes: ratio 1 sin colisiones con muestreo 1 mm/1°. Orden propuesto: IRB, CRB; regreso CRB, IRB. |
 | 2026-11-06 | Ensayo sobre copia descartable de v04: retirar permiso con eje a 155 mm no detiene el avance a 2050 mm. No atribuir función de protección inmediata a WAIT ni al panel. |
 | 2026-11-06 | Separar cinta detenida, zona de robots sin piezas y banda vacía. Evacuación a 1750 mm no despeja el lote inicial; 2050 mm sí despeja ese caso, pero no representa retirada de piezas. |
+| 2026-11-06 | Modos 1 a 5 integrados en v05 con confirmación por sensores geométricos; pedirlos durante producción detiene al terminar la pieza y exige reenviar la solicitud. |
 
 Cada implementación posterior debe actualizar la tabla de pasos, señales definitivas y pruebas,
 indicando versión de estación y resultado. No marcar como implementado un requisito por disponer
@@ -493,8 +495,67 @@ se corrigió `PEDIDO_PARADA` para fijar valores numéricos 0/1 mediante E/S dent
 
 Pendiente: parada durante depósito como caso específico, pérdida de permiso durante pieza,
 solicitudes simultáneas y recuperación tras cierre/reinicio del coordinador. No usar este
-coordinador como recuperación de fallas o función de seguridad. Mantenimiento, sensores y panel
-todavía deben integrarse; la v05 es una versión en desarrollo.
+coordinador como recuperación de fallas o función de seguridad. La integración de modos y sensores
+se describe a continuación; el panel sigue pendiente y la v05 es una versión en desarrollo.
+
+### Modos nativos y sensores geométricos
+
+Implementación: [modos_nativos.py](scripts/modos_nativos.py) instala `Atender_Solicitud_Modo`,
+`Confirmar_Posicion_Modo` y `Preparar_Servicio_Antorcha`;
+[sensores_modos.py](scripts/sensores_modos.py) calcula las lecturas sin mover elementos ni lanzar
+programas. Banco: [verificar_modos_v05.py](scripts/verificar_modos_v05.py).
+[Resultados](verificaciones/modos_v05.json), a ×10 y con colisiones activas.
+
+| `MODO_SOLICITADO` | Preparación | Postura confirmada | Regreso |
+|---|---|---|---|
+| 0 | Regreso a producción | IRB y CRB en reposo | No aplica. |
+| 1 · IRB | `Man_Ir_Mantenimiento` | IRB en mantenimiento, CRB en reposo | `Man_Ir_Reposo` |
+| 2 · CRB | `Sold_Ir_Mantenimiento` | IRB en reposo, CRB en mantenimiento | `Sold_Ir_Reposo` |
+| 3 · Ambos | IRB y después CRB | Ambos en mantenimiento | CRB y después IRB |
+| 4 · Cinta | Sin movimiento | Ambos en reposo | Sin movimiento |
+| 5 · Antorcha | `Preparar_Servicio_Antorcha` | IRB en reposo, CRB en servicio | `Sold_Servicio_Antorcha` |
+
+Señales agregadas al contrato:
+
+| Señal | Escritor en operación | Significado |
+|---|---|---|
+| `MODO_ID` / `MODO_ACK` | Panel futuro / coordinador | Solicitud numerada y acuse; el acuse no implica aceptación. |
+| `MODO_SOLICITADO` | Panel futuro | Selección de la tabla anterior. |
+| `MODO_OBJETIVO` / `MODO_CONFIRMADO` | Coordinador | Modo en preparación y modo confirmado por los sensores. |
+| `MODO_EN_TRANSICION` | Coordinador | Preparación o regreso sin confirmar todavía. |
+| `MODO_RESULTADO` | Coordinador | 1 aceptado, 2 rechazado, 3 producción detenida: reenviar la solicitud. |
+| `CONF_RESTITUCION` | Panel futuro | Restitución declarada; el regreso la exige y la borra. No es una medición. |
+| `IRB_DISPONIBLE`, `CRB_DISPONIBLE`, `CINTA_DISPONIBLE` | Entradas de simulación | Disponibilidad de cada equipo; 0 por defecto. |
+| `IRB_EN_REPOSO`, `CRB_EN_REPOSO`, `IRB_EN_MANT`, `CRB_EN_MANT` | Sensores | Articulaciones a ±0,5° del target. |
+| `CRB_EN_SERVICIO` | Sensores | TCP a 1 mm y 1° o menos del target de servicio. |
+| `CINTA_DETENIDA` | Sensores | Eje con variación menor a 0,1 mm durante 0,2 s. |
+| `PIEZA_SUJETA_SENSOR` | Sensores | Algún estator cuelga de `TCP_Pinza`; representa agarre en simulación, no fuerza. |
+| `SENSORES_VALIDOS` | Sensores | 1 mientras el proceso escribe; no detecta una señal congelada. |
+
+`ESTADO_CONTROL` suma 4 preparando modo, 5 regresando de modo y 6 modo confirmado.
+
+| Caso | Resultado |
+|---|---|
+| Servicio de antorcha, ida y regreso | Ratio 1 sin colisiones con muestreo de 1 mm/1°. |
+| IRB no disponible | Solicitud del modo 1 rechazada, sin movimiento. |
+| Modos 1 a 5 | Confirmados por sensores, con la postura de la tabla. |
+| Arranque con modo confirmado | Rechazado. |
+| Regreso sin `CONF_RESTITUCION` | Rechazado; el modo se mantiene. |
+| Regreso con restitución | Modo 0 confirmado; no hay autoarranque. |
+| Modo pedido durante la pieza 4 del segundo lote | Termina la pieza, detiene y pide reenviar; el estado del lote se conserva. |
+
+Las trayectorias de los modos se monitorearon por consultas durante la ejecución; salvo el servicio
+de antorcha, el muestreo de 1 mm/1° proviene de los ensayos de la v04. `Programa_Principal` ya no
+produce por sí solo: necesita solicitudes, sensores en ejecución y disponibilidad de los equipos.
+
+Limitaciones conocidas de esta revisión:
+
+1. Con un robot no disponible no se puede ingresar a ningún modo, incluido un correctivo sin movimiento.
+2. Durante producción, cualquier `MODO_ID` nuevo detiene la celda, aunque el modo sea 0 o desconocido.
+3. El ensayo con mantenimiento corrió con `Fin_Lote` pendiente: no se probó un lote parcial ni el
+   arranque posterior a una intervención.
+4. `CAUSA_RECHAZO` no distingue el motivo del rechazo.
+5. `SENSORES_VALIDOS` no acredita vigencia; si el proceso termina de forma abrupta, queda en 1.
 
 ## 11. Referencias
 
