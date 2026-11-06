@@ -203,6 +203,46 @@ física de arco establecido ni `SOLDADURA_TERMINADA=1` con calidad metalúrgica.
 
 ## 8. Organización del panel
 
+### Usuarios y permisos
+
+Requisito incorporado el 2026-11-06: el panel tendrá perfiles diferenciados. La siguiente matriz
+es una propuesta de diseño, todavía sin autenticación ni autorización implementadas:
+
+| Perfil | Operaciones previstas | Restricciones |
+|---|---|---|
+| Producción | Consultar estados y alarmas; solicitar arranque, parada de ciclo y rearme cuando las condiciones lo permitan. | Sin modificación de parámetros, entradas de ensayo ni preparación de mantenimiento. |
+| Mantenimiento | Consultar diagnóstico; solicitar preparación por equipo, servicio y recuperación supervisada; registrar intervención y restitución. | Sin anular protecciones, acreditar energía cero por software ni reiniciar una pieza interrumpida automáticamente. |
+| Administrador | Gestionar usuarios/perfiles y configuración permitida; consultar registros. | El perfil no evita interlocks ni autoriza movimientos por fuera de los programas nativos. |
+
+La cuenta identificará a la persona y el perfil sus permisos. Registrar usuario, solicitud,
+aceptación/rechazo y cambio de modo. Ocultar botones no alcanza: las órdenes deben validarse también
+en la capa que procesa las solicitudes. Las condiciones nativas de movimiento se aplicarán a todos
+los perfiles. La selección de un perfil en una demostración no debe presentarse como autenticación
+real. Definir antes de implementar: credenciales, almacenamiento, sesión, cierre por inactividad,
+gestión de cuentas y comportamiento ante pérdida de conexión. No guardar contraseñas en texto plano.
+
+### Manual del panel
+
+El panel deberá entregarse con su correspondiente **`manual.md`**, ubicado junto a su implementación
+cuando se cierre la estructura de archivos. Se redactará y actualizará durante el desarrollo y
+se validará contra el funcionamiento real antes de la entrega. Debe respetar portada, índice,
+prólogo, referencias y rutas relativas del proyecto.
+
+Contenido previsto:
+
+1. Alcance de la simulación, versión compatible de estación y requisitos para iniciar el panel.
+2. Inicio/cierre de sesión, perfiles y matriz de permisos efectivamente implementada.
+3. Pantallas, indicadores, sensores y significado de estados y causas de bloqueo.
+4. Producción: preparación, arranque, parada entre piezas, continuación y fin de lote.
+5. Mantenimiento: selección de equipo/tarea, preparación, límites del panel respecto de LOTO,
+   registro de intervención, restitución y comprobaciones.
+6. Alarmas, solicitudes rechazadas, pérdida de conexión y recuperación supervisada.
+7. Administración de usuarios y configuración, con límites y registro de cambios.
+8. Ejemplos de operación por perfil, capturas y referencias a las pruebas de aceptación.
+
+El manual distinguirá funciones implementadas de limitaciones conocidas; no describirá como
+disponibles la parada inmediata por señales, los sensores o los modos todavía pendientes.
+
 - **Estado general:** conexión, modo confirmado, estado de ejecución, pieza/lote y causa de bloqueo.
 - **Operación:** solicitudes de arranque, parada de ciclo y rearme con acuse de recepción.
 - **Mantenimiento:** equipo, preventivo/correctivo, tarea, condiciones pendientes y preparación.
