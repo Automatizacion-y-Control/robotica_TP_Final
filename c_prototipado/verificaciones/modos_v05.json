@@ -1,0 +1,115 @@
+{
+  "version": "6.1.1.26991",
+  "exito": true,
+  "pruebas": [
+    {
+      "prueba": "Servicio ida y regreso",
+      "resultado": [
+        2.0,
+        10.218510880964626,
+        3555.708145796868,
+        1.0,
+        "No se han encontrado problemas para esta trayectoria<br>No hay colisiones detectadas."
+      ]
+    },
+    {
+      "prueba": "Equipo averiado rechaza preparación",
+      "resultado": 2
+    },
+    {
+      "prueba": "Modo confirmado",
+      "modo": 1,
+      "sensores": {
+        "IRB_EN_REPOSO": false,
+        "CRB_EN_REPOSO": true,
+        "IRB_EN_MANT": true,
+        "CRB_EN_MANT": false,
+        "CRB_EN_SERVICIO": false,
+        "CINTA_DETENIDA": true,
+        "PIEZA_SUJETA_SENSOR": false,
+        "SENSORES_VALIDOS": true
+      }
+    },
+    {
+      "prueba": "Retorno sin autoarranque",
+      "desde": 1,
+      "siguiente": 1.0
+    },
+    {
+      "prueba": "Modo confirmado",
+      "modo": 2,
+      "sensores": {
+        "IRB_EN_REPOSO": true,
+        "CRB_EN_REPOSO": false,
+        "IRB_EN_MANT": false,
+        "CRB_EN_MANT": true,
+        "CRB_EN_SERVICIO": false,
+        "CINTA_DETENIDA": true,
+        "PIEZA_SUJETA_SENSOR": false,
+        "SENSORES_VALIDOS": true
+      }
+    },
+    {
+      "prueba": "Retorno sin autoarranque",
+      "desde": 2,
+      "siguiente": 1.0
+    },
+    {
+      "prueba": "Modo confirmado",
+      "modo": 3,
+      "sensores": {
+        "IRB_EN_REPOSO": false,
+        "CRB_EN_REPOSO": false,
+        "IRB_EN_MANT": true,
+        "CRB_EN_MANT": true,
+        "CRB_EN_SERVICIO": false,
+        "CINTA_DETENIDA": true,
+        "PIEZA_SUJETA_SENSOR": false,
+        "SENSORES_VALIDOS": true
+      }
+    },
+    {
+      "prueba": "Retorno sin autoarranque",
+      "desde": 3,
+      "siguiente": 1.0
+    },
+    {
+      "prueba": "Modo confirmado",
+      "modo": 4,
+      "sensores": {
+        "IRB_EN_REPOSO": true,
+        "CRB_EN_REPOSO": true,
+        "IRB_EN_MANT": false,
+        "CRB_EN_MANT": false,
+        "CRB_EN_SERVICIO": false,
+        "CINTA_DETENIDA": true,
+        "PIEZA_SUJETA_SENSOR": false,
+        "SENSORES_VALIDOS": true
+      }
+    },
+    {
+      "prueba": "Retorno sin autoarranque",
+      "desde": 4,
+      "siguiente": 1.0
+    },
+    {
+      "prueba": "Modo confirmado",
+      "modo": 5,
+      "sensores": {
+        "IRB_EN_REPOSO": true,
+        "CRB_EN_REPOSO": false,
+        "IRB_EN_MANT": false,
+        "CRB_EN_MANT": false,
+        "CRB_EN_SERVICIO": true,
+        "CINTA_DETENIDA": true,
+        "PIEZA_SUJETA_SENSOR": false,
+        "SENSORES_VALIDOS": true
+      }
+    },
+    {
+      "prueba": "Retorno sin autoarranque",
+      "desde": 5,
+      "siguiente": 1.0
+    }
+  ]
+}

@@ -11,6 +11,7 @@ import sys
 import tempfile
 
 sys.path.insert(0, r"C:\RoboDK\Python")
+from modos_nativos import instalar, INICIALES_MODOS
 from robodk.robolink import (Robolink, ITEM_TYPE_PROGRAM, INSTRUCTION_INSERT_CODE,
                             INSTRUCTION_CALL_PROGRAM, INSTRUCTION_COMMENT)
 
@@ -42,6 +43,7 @@ def construir():
     assert estacion.setParam("FlowControl", "1") == "OK"
     anterior = rdk.Item("Programa_Principal", ITEM_TYPE_PROGRAM)
     anterior.setName("Produccion_Lote_Completo_Antecedente")
+    instalar(rdk)
     p = rdk.AddProgram("Programa_Principal")
 
     def codigo(texto):
@@ -70,12 +72,21 @@ def construir():
     codigo("PARADA_ACK = PARADA_ID")
     codigo("END")
 
+    llamar("Atender_Solicitud_Modo")
+    llamar("Confirmar_Posicion_Modo")
+
     codigo("IF ARRANQUE_ID != ARRANQUE_ACK")
     codigo("ARRANQUE_ACK = ARRANQUE_ID")
     salida("CAUSA_RECHAZO", 1)
     codigo("IF PEDIDO_PARADA == 0")
     codigo("IF AUTO_ACTIVO == 0")
     codigo("IF PERMISO_OPERACION == 1")
+    codigo("IF MODO_CONFIRMADO == 0")
+    codigo("IF MODO_EN_TRANSICION == 0")
+    for condicion in ("SENSORES_VALIDOS == 1", "IRB_EN_REPOSO == 1", "CRB_EN_REPOSO == 1",
+                      "PIEZA_SUJETA_SENSOR == 0", "CINTA_DETENIDA == 1",
+                      "IRB_DISPONIBLE == 1", "CRB_DISPONIBLE == 1", "CINTA_DISPONIBLE == 1"):
+        codigo("IF " + condicion)
     salida("CAUSA_RECHAZO", 0)
     codigo("IF CELDA_INICIALIZADA == 0")
     llamar("Inicio_Celda")
@@ -83,6 +94,10 @@ def construir():
     codigo("END")
     salida("AUTO_ACTIVO", 1)
     salida("ESTADO_CONTROL", 1)
+    for _ in range(8):
+        codigo("END")
+    codigo("END")
+    codigo("END")
     codigo("END")
     codigo("END")
     codigo("END")
@@ -96,6 +111,16 @@ def construir():
     salida("ESTADO_CONTROL", 3)
     codigo("END")
     codigo("END")
+
+    for condicion in ("SENSORES_VALIDOS == 0", "IRB_DISPONIBLE == 0",
+                      "CRB_DISPONIBLE == 0", "CINTA_DISPONIBLE == 0"):
+        codigo("IF AUTO_ACTIVO == 1")
+        codigo("IF " + condicion)
+        llamar("Parada_Ciclo")
+        salida("AUTO_ACTIVO", 0)
+        salida("ESTADO_CONTROL", 3)
+        codigo("END")
+        codigo("END")
 
     codigo("IF AUTO_ACTIVO == 1")
     codigo("INDICE_CAPTURADO = PROXIMA_PIEZA")
@@ -117,7 +142,7 @@ def construir():
     codigo("END")
     # Salir del coordinador no ejecuta una recuperación ni abre la pinza.
     salida("AUTO_ACTIVO", 0)
-    for nombre, valor in INICIALES.items():
+    for nombre, valor in {**INICIALES, **INICIALES_MODOS}.items():
         rdk.setParam(nombre, valor)
     ruta = RAIZ / "Celda_Soldadura_Estator_Grupo4_v05.rdk"
     estacion.Save(str(ruta))

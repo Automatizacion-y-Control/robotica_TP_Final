@@ -10,6 +10,7 @@ import time
 
 sys.path.insert(0, r"C:\RoboDK\Python")
 from robodk.robolink import Robolink, ITEM_TYPE_PROGRAM, COLLISION_ON
+from sensores_modos import SensoresModos
 
 
 def main():
@@ -19,6 +20,7 @@ def main():
     estacion = r.ActiveStation()
     assert estacion.Name() == "Celda_Soldadura_Estator_Grupo4_v05"
     p = r.Item("Programa_Principal", ITEM_TYPE_PROGRAM)
+    sensores = SensoresModos(r)
     pruebas = []
     inicio = time.monotonic()
 
@@ -28,6 +30,7 @@ def main():
     def esperar(condicion, limite=40):
         t = time.monotonic()
         while time.monotonic() - t < limite:
+            sensores.actualizar()
             if r.Collisions():
                 raise AssertionError("Colisión en prueba de coordinación")
             if condicion():
@@ -43,6 +46,9 @@ def main():
     try:
         r.setCollisionActive(COLLISION_ON)
         r.setSimulationSpeed(10)
+        for n in ("IRB_DISPONIBLE", "CRB_DISPONIBLE", "CINTA_DISPONIBLE"):
+            r.setParam(n, 1)
+        esperar(lambda: valor("CINTA_DETENIDA") == 1)
         p.RunProgram()
         time.sleep(.2)
         r.setParam("ARRANQUE_ID", 1)
@@ -61,8 +67,14 @@ def main():
             esperar(lambda: valor("PIEZA_ACTIVA") == pieza and
                     (valor("ARCO_TIG") == 1 if fase != "toma" else
                      r.Item("Estator_2").Parent().Name() == "TCP_Pinza"), limite=70)
-            r.setParam("PARADA_ID", orden)
-            esperar(lambda: valor("PARADA_ACK") == orden and valor("AUTO_ACTIVO") == 0)
+            if fase == "segundo lote":
+                r.setParam("MODO_SOLICITADO", 1)
+                r.setParam("MODO_ID", 1)
+                esperar(lambda: valor("MODO_ACK") == 1 and valor("AUTO_ACTIVO") == 0)
+                assert valor("MODO_RESULTADO") == 3
+            else:
+                r.setParam("PARADA_ID", orden)
+                esperar(lambda: valor("PARADA_ACK") == orden and valor("AUTO_ACTIVO") == 0)
             assert valor("PROXIMA_PIEZA") == pieza + 1
             assert valor("PIEZA_ACTIVA") == 0 and valor("ARCO_TIG") == 0
             assert all(r.Item("Estator_" + str(k)).Parent().Name() != "TCP_Pinza" for k in range(1,5))
@@ -75,8 +87,19 @@ def main():
         assert valor("LOTES_COMPLETADOS") == 1
         registrar("Dos lotes soldados sin repetir piezas", completadas=8,
                   fin_segundo_lote_diferido=True, colisiones=0)
+        r.setParam("MODO_ID", 2)
+        esperar(lambda: valor("MODO_CONFIRMADO") == 1)
+        assert valor("PROXIMA_PIEZA") == 5 and valor("PIEZAS_COMPLETADAS") == 8
+        r.setParam("CONF_RESTITUCION", 1)
+        r.setParam("MODO_SOLICITADO", 0)
+        r.setParam("MODO_ID", 3)
+        esperar(lambda: valor("MODO_CONFIRMADO") == 0 and valor("MODO_ACK") == 3)
+        assert valor("PROXIMA_PIEZA") == 5 and valor("AUTO_ACTIVO") == 0
+        registrar("Mantenimiento y retorno conservan lote parcial", siguiente=5, completadas=8,
+                  solicitud_desde_auto_requiere_repeticion=True)
     finally:
         r.setParam("COORDINADOR_ACTIVO", 0)
+        r.setParam("SENSORES_VALIDOS", 0)
         time.sleep(.25)
         if p.Busy():
             p.Stop()

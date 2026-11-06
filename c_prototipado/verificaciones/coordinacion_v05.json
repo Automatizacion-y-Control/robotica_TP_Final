@@ -1,6 +1,6 @@
 {
   "version": "6.1.1.26991",
-  "segundos_reales": 64.89099999982864,
+  "segundos_reales": 72.78099999995902,
   "pruebas": [
     {
       "prueba": "Arranque sin permiso rechazado",
@@ -43,6 +43,12 @@
       "completadas": 8,
       "fin_segundo_lote_diferido": true,
       "colisiones": 0
+    },
+    {
+      "prueba": "Mantenimiento y retorno conservan lote parcial",
+      "siguiente": 5,
+      "completadas": 8,
+      "solicitud_desde_auto_requiere_repeticion": true
     }
   ]
 }
