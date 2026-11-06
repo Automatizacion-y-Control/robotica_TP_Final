@@ -156,7 +156,7 @@ CRB_REPOSO = [0.0, -10.0, 10.0, 0.0, 60.0, 0.0]
 # ---------------------------------------------------------------------------
 # Mejora 01 (v03): cinta pasante, entrada y salida por la misma cinta  DISEÑO
 # ---------------------------------------------------------------------------
-# Ver c_prototipado/mejora_01_cinta_pasante.md.
+# Ver c_prototipado/docs/mejora_01_cinta_pasante.md.
 # El modelo ConveyorA termina a ~2050 mm de su base; se prolonga con un tramo
 # propio que atraviesa la cara este del cerramiento. Todo lo que está sobre la
 # banda (Frame_Banda) avanza con el mismo eje del mecanismo.
@@ -175,7 +175,7 @@ CERR_ABERTURA_SALIDA_Z = CERR_ABERTURA_CINTA_Z
 # ---------------------------------------------------------------------------
 # Mejora 02 (v04): modos de operación y mantenimiento                 DISEÑO
 # ---------------------------------------------------------------------------
-# Ver c_prototipado/modos_y_mantenimiento.md (§10) y mejora_02_modos_mantenimiento.md.
+# Ver c_prototipado/docs/modos_y_mantenimiento.md (§10) y mejora_02_modos_mantenimiento.md.
 # La pared sur se acerca a la cinta y afuera queda un pasillo de mantenimiento;
 # la pared sur a lo largo de la cinta se arma con paneles desmontables para
 # sacar la banda por ese costado.

@@ -1,6 +1,6 @@
 """Mejora 02: modos de operación y mantenimiento. Genera la v04 a partir de la v03.
 
-Aplica los requisitos de c_prototipado/modos_y_mantenimiento.md (§10):
+Aplica los requisitos de c_prototipado/docs/modos_y_mantenimiento.md (§10):
     1. Pasillo de mantenimiento del lado sur, afuera: la cara sur del cerramiento
        se acerca a la cinta y se arma con paneles desmontables, para sacar la
        banda por ese costado.

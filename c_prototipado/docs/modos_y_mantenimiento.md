@@ -57,7 +57,7 @@ programación**, y solo el 10 % en funcionamiento normal [Barrientos, 9.3.2, p. 
 no prevé cómo se interviene empuja a intervenirla de manera insegura.
 
 Las normas citadas (ISO 10218-1/2, ISO 13850, ISO 14119 y otras) se usan **como referencia**: el
-grupo no tuvo acceso a su texto (ver [07](../b_investigacion/conceptos/07_seguridad_y_normativa.md)).
+grupo no tuvo acceso a su texto (ver [07](../../b_investigacion/conceptos/07_seguridad_y_normativa.md)).
 
 ---
 
@@ -276,4 +276,4 @@ Los requisitos de señales y transiciones de modo de esta sección todavía no e
   351/79.
 - Grupo 4. [`definicion_celda.md`](definicion_celda.md),
   [`mejora_01_cinta_pasante.md`](mejora_01_cinta_pasante.md) y
-  [07 · Seguridad y normativa](../b_investigacion/conceptos/07_seguridad_y_normativa.md).
+  [07 · Seguridad y normativa](../../b_investigacion/conceptos/07_seguridad_y_normativa.md).

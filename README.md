@@ -85,12 +85,12 @@ en bucle.
 
 | Requisito | Cómo se cumple | Detalle |
 |---|---|---|
-| MoveJ, MoveL y MoveC bien elegidos | MoveJ en traslados, MoveL en entradas, salidas y cordones, MoveC en la transición entre aristas | [definición, §8](c_prototipado/definicion_celda.md#8-tipos-de-movimiento) |
-| Sin Python en los movimientos | Todos los movimientos y eventos son instrucciones nativas de RoboDK. Los scripts solo construyen y verifican la estación | [definición, §7](c_prototipado/definicion_celda.md#7-estructura-de-programas) |
-| C1 · Frames y TCP propios | `Frame_Soldadura`, `Frame_Toma_Cinta`, `Frame_Deposito_Cinta`, `Frame_Banda` y otros; TCP en la punta del tungsteno y en los dedos de la pinza | [definición, §5](c_prototipado/definicion_celda.md#5-sistemas-de-referencia-y-tcp) |
-| C2 · Programa principal y subprogramas | `Programa_Principal` → `Inicio_Celda`, `Ciclo_Pieza_1…4`, `Fin_Lote` | [definición, §7](c_prototipado/definicion_celda.md#7-estructura-de-programas) |
-| C3 · Cinta, segundo robot o variantes | Cinta transportadora (mecanismo, sin Python) y segundo robot | [mejora 01, §6](c_prototipado/mejora_01_cinta_pasante.md#6-requisitos-de-la-cátedra) |
-| C4 · Simulación válida | Sin colisiones ni puntos fuera de alcance; dos lotes seguidos en bucle | [mejora 01, §8](c_prototipado/mejora_01_cinta_pasante.md#8-verificación-y-resultados) |
+| MoveJ, MoveL y MoveC bien elegidos | MoveJ en traslados, MoveL en entradas, salidas y cordones, MoveC en la transición entre aristas | [definición, §8](c_prototipado/docs/definicion_celda.md#8-tipos-de-movimiento) |
+| Sin Python en los movimientos | Todos los movimientos y eventos son instrucciones nativas de RoboDK. Los scripts solo construyen y verifican la estación | [definición, §7](c_prototipado/docs/definicion_celda.md#7-estructura-de-programas) |
+| C1 · Frames y TCP propios | `Frame_Soldadura`, `Frame_Toma_Cinta`, `Frame_Deposito_Cinta`, `Frame_Banda` y otros; TCP en la punta del tungsteno y en los dedos de la pinza | [definición, §5](c_prototipado/docs/definicion_celda.md#5-sistemas-de-referencia-y-tcp) |
+| C2 · Programa principal y subprogramas | `Programa_Principal` → `Inicio_Celda`, `Ciclo_Pieza_1…4`, `Fin_Lote` | [definición, §7](c_prototipado/docs/definicion_celda.md#7-estructura-de-programas) |
+| C3 · Cinta, segundo robot o variantes | Cinta transportadora (mecanismo, sin Python) y segundo robot | [mejora 01, §6](c_prototipado/docs/mejora_01_cinta_pasante.md#6-requisitos-de-la-cátedra) |
+| C4 · Simulación válida | Sin colisiones ni puntos fuera de alcance; dos lotes seguidos en bucle | [mejora 01, §8](c_prototipado/docs/mejora_01_cinta_pasante.md#8-verificación-y-resultados) |
 
 ## Estructura del repositorio
 
@@ -106,8 +106,7 @@ proyectoRobotica/
 │   ├── img/                           Fotos del motor de referencia
 │   └── biblio/                        Libros y clases (no se versiona)
 ├── c_prototipado/                   Diseño, construcción y verificación de la celda
-│   ├── definicion_celda.md            Definición y justificación de la celda
-│   ├── mejora_01_cinta_pasante.md     Mejora 01: de la v02 a la v03
+│   ├── docs/                          Definición de la celda, mejoras, modos y panel
 │   ├── Celda_Soldadura_Estator_Grupo4_v01.rdk
 │   ├── Celda_Soldadura_Estator_Grupo4_v02.rdk
 │   ├── Celda_Soldadura_Estator_Grupo4_v03.rdk
@@ -126,7 +125,7 @@ proyectoRobotica/
 | v02 | [`Celda_Soldadura_Estator_Grupo4_v02.rdk`](c_prototipado/Celda_Soldadura_Estator_Grupo4_v02.rdk) | Manipulador + soldador TIG sobre el paquete de estator; entrada por cinta y salida por pallet |
 | v03 | [`Celda_Soldadura_Estator_Grupo4_v03.rdk`](c_prototipado/Celda_Soldadura_Estator_Grupo4_v03.rdk) | Cinta pasante: la misma cinta trae y saca las piezas; sin pallet |
 | **v04** | [`Celda_Soldadura_Estator_Grupo4_v04.rdk`](c_prototipado/Celda_Soldadura_Estator_Grupo4_v04.rdk) | **Base verificada.** Disposición y posiciones de mantenimiento; integración funcional de modos pendiente |
-| v05 | [`Celda_Soldadura_Estator_Grupo4_v05.rdk`](c_prototipado/Celda_Soldadura_Estator_Grupo4_v05.rdk) | **En desarrollo.** Coordinador nativo con arranque y parada entre piezas e índice de lote retenido. Panel, sensores y modos completos pendientes; ver [seguimiento](c_prototipado/panel_y_sensores.md) |
+| v05 | [`Celda_Soldadura_Estator_Grupo4_v05.rdk`](c_prototipado/Celda_Soldadura_Estator_Grupo4_v05.rdk) | **En desarrollo.** Coordinador nativo con arranque y parada entre piezas e índice de lote retenido. Panel, sensores y modos completos pendientes; ver [seguimiento](c_prototipado/docs/panel_y_sensores.md) |
 
 ## Cómo abrir y reproducir la celda
 
@@ -163,6 +162,6 @@ celda y en el documento de la mejora 01.
 | [Despiece del motor](b_investigacion/despiece_motor_lavarropas.md) | Motor de referencia y ubicación de los cordones en el paquete de estator |
 | [Bibliografía](b_investigacion/bibliografia.md) | Barrientos, Groover, Craig, clases de la cátedra y normativa |
 | [Catálogo de componentes](b_investigacion/componentesRDK.md) | Datos, justificación e imágenes de cada componente |
-| [Definición de la celda](c_prototipado/definicion_celda.md) | Diseño completo de la celda y su justificación |
-| [Mejora 01 · Cinta pasante](c_prototipado/mejora_01_cinta_pasante.md) | Cambio de la v02 a la v03 |
-| [Panel de operador y sensores](c_prototipado/panel_y_sensores.md) | Trazabilidad desde los requisitos y la investigación, revisión del antecedente v01 y propuesta de modos, mantenimiento y señales; implementación pendiente |
+| [Definición de la celda](c_prototipado/docs/definicion_celda.md) | Diseño completo de la celda y su justificación |
+| [Mejora 01 · Cinta pasante](c_prototipado/docs/mejora_01_cinta_pasante.md) | Cambio de la v02 a la v03 |
+| [Panel de operador y sensores](c_prototipado/docs/panel_y_sensores.md) | Trazabilidad desde los requisitos y la investigación, revisión del antecedente v01 y propuesta de modos, mantenimiento y señales; implementación pendiente |

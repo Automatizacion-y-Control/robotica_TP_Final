@@ -48,19 +48,19 @@ para explicar la progresión de las mejoras; no sustituyen a los requisitos.
 
 ## 1. Documentos rectores y trazabilidad
 
-Fuente primaria: [lineamientos de la cátedra](../a_requisitos/Lineamiento_Trabajo_Final_Robotica.pdf).
+Fuente primaria: [lineamientos de la cátedra](../../a_requisitos/Lineamiento_Trabajo_Final_Robotica.pdf).
 Los identificadores siguientes corresponden a la
-[matriz de investigación, §§2–6](../b_investigacion/conceptos/00_requisitos_y_trazabilidad.md),
+[matriz de investigación, §§2–6](../../b_investigacion/conceptos/00_requisitos_y_trazabilidad.md),
 que desarrolla los lineamientos. No se atribuye al PDF una paginación no verificada.
 
 | Requisito o criterio | Fundamento de investigación | Decisión y evidencia prevista |
 |---|---|---|
-| M5: movimientos sin Python | [06, §7](../b_investigacion/conceptos/06_estructura_de_programas_y_senales.md#7-el-papel-de-python) | Panel y sensores intercambian señales; movimientos y secuencia en programas nativos. Revisar código y ejecutar desde RoboDK. |
-| C2: principal y subprogramas | [06, §§3–5](../b_investigacion/conceptos/06_estructura_de_programas_y_senales.md#3-programa-principal-y-subprogramas) | Coordinación con estados iniciales/finales definidos y confirmaciones de E/S. |
-| C3: cinta como mecanismo | [06, §6](../b_investigacion/conceptos/06_estructura_de_programas_y_senales.md#6-sincronización-del-robot-con-un-eje-externo) | Avance y evacuación mediante programas nativos de cinta. |
-| C4: repetibilidad, alcance y colisiones | [08, §§4–7](../b_investigacion/conceptos/08_tiempo_de_ciclo_y_validacion.md#4-la-simulación-como-herramienta-de-validación) | Probar producción y nuevas secuencias de mantenimiento, incluidos sus estados intermedios. |
-| Complejidad agregada justificada | [07, §§6–7 y 10](../b_investigacion/conceptos/07_seguridad_y_normativa.md) | Modos, permisos, causas de bloqueo y recuperación como representación académica. |
-| Coherencia entre informe y estación | [00, §§4–6](../b_investigacion/conceptos/00_requisitos_y_trazabilidad.md) | Registrar qué está propuesto, implementado y verificado. |
+| M5: movimientos sin Python | [06, §7](../../b_investigacion/conceptos/06_estructura_de_programas_y_senales.md#7-el-papel-de-python) | Panel y sensores intercambian señales; movimientos y secuencia en programas nativos. Revisar código y ejecutar desde RoboDK. |
+| C2: principal y subprogramas | [06, §§3–5](../../b_investigacion/conceptos/06_estructura_de_programas_y_senales.md#3-programa-principal-y-subprogramas) | Coordinación con estados iniciales/finales definidos y confirmaciones de E/S. |
+| C3: cinta como mecanismo | [06, §6](../../b_investigacion/conceptos/06_estructura_de_programas_y_senales.md#6-sincronización-del-robot-con-un-eje-externo) | Avance y evacuación mediante programas nativos de cinta. |
+| C4: repetibilidad, alcance y colisiones | [08, §§4–7](../../b_investigacion/conceptos/08_tiempo_de_ciclo_y_validacion.md#4-la-simulación-como-herramienta-de-validación) | Probar producción y nuevas secuencias de mantenimiento, incluidos sus estados intermedios. |
+| Complejidad agregada justificada | [07, §§6–7 y 10](../../b_investigacion/conceptos/07_seguridad_y_normativa.md) | Modos, permisos, causas de bloqueo y recuperación como representación académica. |
+| Coherencia entre informe y estación | [00, §§4–6](../../b_investigacion/conceptos/00_requisitos_y_trazabilidad.md) | Registrar qué está propuesto, implementado y verificado. |
 
 El detalle de aplicación a esta celda está en
 [modos y mantenimiento, §§4–11](modos_y_mantenimiento.md). El panel es una mejora de diseño:
@@ -100,7 +100,7 @@ La inspección de instrucciones nativas confirmó:
 
 Se exportó, sin ejecutarlo, el programa Python embebido
 `Panel_Operador_RoboDK_Con_Sensor_Pieza_CORREGIDO` de la v01. Se conserva como
-[referencia de código](referencias/panel_v01_referencia.py.txt), con extensión de texto para no
+[referencia de código](../referencias/panel_v01_referencia.py.txt), con extensión de texto para no
 confundirlo con una implementación vigente. El archivo `.rdk` original no se modificó.
 
 | Elemento observado | Evaluación para la nueva celda |
@@ -206,7 +206,7 @@ física de arco establecido ni `SOLDADURA_TERMINADA=1` con calidad metalúrgica.
 
 ### Usuarios y permisos
 
-Fundamento rector de esta parte: [09 · Interfaz de operación, usuarios y permisos](../b_investigacion/conceptos/09_interfaz_de_operacion_usuarios_y_permisos.md).
+Fundamento rector de esta parte: [09 · Interfaz de operación, usuarios y permisos](../../b_investigacion/conceptos/09_interfaz_de_operacion_usuarios_y_permisos.md).
 La aplicación debe seguir su distinción entre identidad, permiso, modo y condición de ejecución.
 La matriz de §4 del concepto 09 amplía la propuesta inicial de esta sección y prevalece para
 cerrar el diseño: administración no implica permiso de producción o mantenimiento.
@@ -325,7 +325,7 @@ solamente de geometría o de una descripción.
 
 ## Ensayos de control nativo
 
-Banco reproducible: [probar_control_nativo.py](scripts/probar_control_nativo.py). Construye una
+Banco reproducible: [probar_control_nativo.py](../scripts/probar_control_nativo.py). Construye una
 estación temporal sin robots, inyecta entradas y observa salidas; elimina la estación de ensayo
 y restaura la estación activa y la velocidad. No guarda ni altera el ciclo de la v04.
 Las llamadas de ejecución desde Python pertenecen exclusivamente al banco de prueba.
@@ -337,7 +337,7 @@ C:\RoboDK\Python-Embedded\python.exe c_prototipado/scripts/probar_control_nativo
 ```
 
 Para la segunda variante se usa la configuración de
-[FlowControlTest_oficial.rdk](referencias/FlowControlTest_oficial.rdk), descargado del
+[FlowControlTest_oficial.rdk](../referencias/FlowControlTest_oficial.rdk), descargado del
 [ejemplo del soporte de RoboDK](https://robodk.com/forum/Thread-Conditional-call-to-a-program-from-custom-code-instruction?pid=16753).
 Se eliminan sus programas antes del ensayo; no se ejecuta código del adjunto.
 El soporte indica habilitar **Station Parameters → Enable flow control statements** y usar
@@ -355,9 +355,9 @@ instrucciones de llamada separadas de las líneas insertadas de control de flujo
 | Start Thread | El padre termina mientras el hijo espera; una señal libera al hijo. | Posible separar coordinador y tareas, con confirmaciones explícitas. |
 | Retirar permiso después de WAIT | La pausa posterior termina y se alcanza etapa 2 aun con permiso 0. | WAIT es puntual. Esto no demuestra interrupción durante movimiento ni función de seguridad. |
 
-Evidencia: [sin flujo](verificaciones/control_nativo_6_1_1_sin_flujo.json),
-[con flujo](verificaciones/control_nativo_6_1_1_con_flujo.json).
-El [primer ensayo](verificaciones/control_nativo_6_1_1.json) conserva el resultado de código RAPID
+Evidencia: [sin flujo](../verificaciones/control_nativo_6_1_1_sin_flujo.json),
+[con flujo](../verificaciones/control_nativo_6_1_1_con_flujo.json).
+El [primer ensayo](../verificaciones/control_nativo_6_1_1.json) conserva el resultado de código RAPID
 insertado sin habilitar el flujo; no debe interpretarse como ausencia general de bifurcaciones.
 La correspondencia de E/S con parámetros también está descrita en la
 [documentación oficial Set/Wait IO](https://robodk.com/doc/en/Robot-Programs-SetWait-IO.html).
@@ -372,7 +372,7 @@ no se logró una interrupción nativa inmediata.
 
 ### Verificación geométrica complementaria
 
-[Resultados](verificaciones/mantenimiento_conjunto_v04.json), obtenidos con programas temporales
+[Resultados](../verificaciones/mantenimiento_conjunto_v04.json), obtenidos con programas temporales
 de llamadas nativas y `Update(COLLISION_ON, 3600, 1, 1)` desde reposo:
 
 - IRB a mantenimiento y regreso: ratio 1.
@@ -386,8 +386,8 @@ restableció el reposo; la v04 no se guardó con cambios de este ensayo.
 
 ### Cinta y retirada de permiso durante movimiento
 
-Banco: [probar_cinta_y_permisos.py](scripts/probar_cinta_y_permisos.py).
-Evidencia: [cinta_y_permisos_v04.json](verificaciones/cinta_y_permisos_v04.json).
+Banco: [probar_cinta_y_permisos.py](../scripts/probar_cinta_y_permisos.py).
+Evidencia: [cinta_y_permisos_v04.json](../verificaciones/cinta_y_permisos_v04.json).
 Se abrió una copia descartable del archivo v04, conservando eventos y geometría. Se eliminó al
 terminar y se restauró la estación activa y la velocidad. Los movimientos de ensayo fueron
 instrucciones MoveJ nativas, no órdenes de movimiento desde el sensor o el panel.
@@ -425,7 +425,7 @@ simulador es distinta de esa función. No añadir `Stop()` al panel Python para 
 ### Persistencia del control de flujo sobre la base v04
 
 Se comprobó `estacion.setParam("FlowControl", "1")`, con respuesta `OK`, mediante el banco
-`--con-flujo-api`. La [evidencia](verificaciones/control_nativo_6_1_1_flujo_api.json) reproduce
+`--con-flujo-api`. La [evidencia](../verificaciones/control_nativo_6_1_1_flujo_api.json) reproduce
 IF, WHILE, llamadas y ejecución paralela sin depender del ejemplo externo. Es una capacidad
 comprobada experimentalmente en esta versión, no una garantía para otras versiones.
 
@@ -440,7 +440,7 @@ pendiente; la primera implementación del coordinador v05 se describe a continua
 
 ### Implementación inicial de parada entre piezas
 
-Se implementó [mejora_03_coordinacion.py](scripts/mejora_03_coordinacion.py) y se generó la
+Se implementó [mejora_03_coordinacion.py](../scripts/mejora_03_coordinacion.py) y se generó la
 estación v05. El primer intento se interrumpió al abrirse RoboDK con licencia gratuita y limitarse
 las llamadas a la API. Después se conectó a la instancia administrativa en **20501**, con licencia
 `Free (Trial)`, y se completaron generación, guardado, reapertura y ensayos dinámicos.
@@ -456,8 +456,8 @@ anterior como antecedente y agrega un coordinador nativo con:
 - permiso inicial en cero y ningún arranque automático al recuperar ese permiso;
 - pérdida de permiso atendida al retornar del subprograma, sin atribuirle interrupción inmediata.
 
-Banco: [verificar_coordinacion_v05.py](scripts/verificar_coordinacion_v05.py).
-[Resultados](verificaciones/coordinacion_v05.json), con simulación ×10 y colisiones activas:
+Banco: [verificar_coordinacion_v05.py](../scripts/verificar_coordinacion_v05.py).
+[Resultados](../verificaciones/coordinacion_v05.json), con simulación ×10 y colisiones activas:
 
 | Caso | Resultado |
 |---|---|
@@ -501,13 +501,13 @@ se describe a continuación; el panel sigue pendiente y la v05 es una versión e
 
 ### Modos nativos y sensores geométricos
 
-Implementación: [modos_nativos.py](scripts/modos_nativos.py) instala `Atender_Solicitud_Modo`,
+Implementación: [modos_nativos.py](../scripts/modos_nativos.py) instala `Atender_Solicitud_Modo`,
 `Confirmar_Posicion_Modo` y `Preparar_Servicio_Antorcha`;
-[sensores_modos.py](scripts/sensores_modos.py) calcula las lecturas sin mover elementos ni lanzar
-programas. Bancos: [verificar_modos_v05.py](scripts/verificar_modos_v05.py) y
-[verificar_coordinacion_v05.py](scripts/verificar_coordinacion_v05.py).
-Resultados de [modos](verificaciones/modos_v05.json) y de
-[coordinación](verificaciones/coordinacion_v05.json), a ×10 y con colisiones activas.
+[sensores_modos.py](../scripts/sensores_modos.py) calcula las lecturas sin mover elementos ni lanzar
+programas. Bancos: [verificar_modos_v05.py](../scripts/verificar_modos_v05.py) y
+[verificar_coordinacion_v05.py](../scripts/verificar_coordinacion_v05.py).
+Resultados de [modos](../verificaciones/modos_v05.json) y de
+[coordinación](../verificaciones/coordinacion_v05.json), a ×10 y con colisiones activas.
 
 El coordinador llama a `Parada_Entre_Piezas` en lugar de `Parada_Ciclo`: apaga el arco y lleva a
 reposo solo los robots disponibles. Cada modo exige la disponibilidad de los equipos que mueve;
@@ -594,15 +594,15 @@ Limitaciones conocidas de esta revisión:
 ## 11. Referencias
 
 - **[Lineamientos]** Cátedra de Robótica Industrial, UTN FRC, comisión 2LA1, 2026.
-  [Documento rector](../a_requisitos/Lineamiento_Trabajo_Final_Robotica.pdf). Identificadores M5,
-  C2–C4 según la [síntesis de investigación, §§2–6](../b_investigacion/conceptos/00_requisitos_y_trazabilidad.md).
-- **[Investigación 06]** [Estructura de programas y señales](../b_investigacion/conceptos/06_estructura_de_programas_y_senales.md),
+  [Documento rector](../../a_requisitos/Lineamiento_Trabajo_Final_Robotica.pdf). Identificadores M5,
+  C2–C4 según la [síntesis de investigación, §§2–6](../../b_investigacion/conceptos/00_requisitos_y_trazabilidad.md).
+- **[Investigación 06]** [Estructura de programas y señales](../../b_investigacion/conceptos/06_estructura_de_programas_y_senales.md),
   §§3–7: estructura, E/S y límite de Python. Allí se desarrolla Barrientos, §8.2.4, p. 228;
   §8.2.6, p. 230; Groover, §8.5, pp. 231–232. Referencias tomadas de la investigación del repositorio.
-- **[Investigación 07]** [Seguridad y normativa](../b_investigacion/conceptos/07_seguridad_y_normativa.md),
+- **[Investigación 07]** [Seguridad y normativa](../../b_investigacion/conceptos/07_seguridad_y_normativa.md),
   §§4, 6–7 y 10. Fundamento citado allí: Barrientos, §9.3, pp. 271–277. Las normas ISO se
   mantienen solo como referencia; no se consultó su texto ni se afirma cumplimiento.
-- **[Investigación 08]** [Tiempo de ciclo y validación](../b_investigacion/conceptos/08_tiempo_de_ciclo_y_validacion.md),
+- **[Investigación 08]** [Tiempo de ciclo y validación](../../b_investigacion/conceptos/08_tiempo_de_ciclo_y_validacion.md),
   §§4–7. Prueba progresiva: Barrientos, §9.3.2, p. 276, según la investigación del repositorio.
 - **[Aplicación]** [Modos y mantenimiento](modos_y_mantenimiento.md), §§4–11; documento interno sin paginación.
 - **[Antecedente]** Panel Python exportado de la estación v01, apartado 3 de este documento;

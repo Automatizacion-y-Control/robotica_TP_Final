@@ -218,7 +218,7 @@ Los programas tienen que tener **nombres claros** (criterio de evaluación). Rec
 intercambio entre E/S simuladas y parámetros, y el flujo IF/WHILE con la opción de estación
 habilitada. También confirman que un WAIT previo no interrumpe un movimiento al retirarse la señal.
 La aplicación y la evidencia están en
-[Panel y sensores, ensayos de control nativo](../../c_prototipado/panel_y_sensores.md#ensayos-de-control-nativo).
+[Panel y sensores, ensayos de control nativo](../../c_prototipado/docs/panel_y_sensores.md#ensayos-de-control-nativo).
 Esta limitación del simulador no cambia el concepto de monitoreo continuo de §5: obliga a declarar
 qué funciones se representan realmente antes de diseñar el panel.
 

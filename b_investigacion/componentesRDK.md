@@ -408,7 +408,7 @@ robot.
 ## 15. Cambios en la v03 (mejora 01)
 
 La v03 reemplaza la salida por pallet por una **cinta pasante** (ver
-[`mejora_01_cinta_pasante.md`](../c_prototipado/mejora_01_cinta_pasante.md)).
+[`mejora_01_cinta_pasante.md`](../c_prototipado/docs/mejora_01_cinta_pasante.md)).
 
 | Componente | v02 | v03 | Archivo |
 |---|---|---|---|

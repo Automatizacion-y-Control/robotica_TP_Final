@@ -51,9 +51,9 @@ pallet que el operario retira desde la celda.
 
 | Versión | Archivo | Descripción |
 |---|---|---|
-| v01 | [`Celda_Soldadura_Estator_Grupo4_v01.rdk`](Celda_Soldadura_Estator_Grupo4_v01.rdk) | Versión original: posicionador MTD 250, cilindro de 6 cordones |
-| v02 | [`Celda_Soldadura_Estator_Grupo4_v02.rdk`](Celda_Soldadura_Estator_Grupo4_v02.rdk) | Manipulador + soldador; entrada por cinta, salida por pallet |
-| **v03** | [`Celda_Soldadura_Estator_Grupo4_v03.rdk`](Celda_Soldadura_Estator_Grupo4_v03.rdk) | **Esta mejora:** entrada y salida por la misma cinta |
+| v01 | [`Celda_Soldadura_Estator_Grupo4_v01.rdk`](../Celda_Soldadura_Estator_Grupo4_v01.rdk) | Versión original: posicionador MTD 250, cilindro de 6 cordones |
+| v02 | [`Celda_Soldadura_Estator_Grupo4_v02.rdk`](../Celda_Soldadura_Estator_Grupo4_v02.rdk) | Manipulador + soldador; entrada por cinta, salida por pallet |
+| **v03** | [`Celda_Soldadura_Estator_Grupo4_v03.rdk`](../Celda_Soldadura_Estator_Grupo4_v03.rdk) | **Esta mejora:** entrada y salida por la misma cinta |
 
 ---
 
@@ -65,7 +65,7 @@ luz.
 
 | Vista general de la v02 | Depósito en el pallet (v02) |
 |---|---|
-| ![v02](imagenes/celda_vista_general.png) | ![Pallet v02](imagenes/celda_deposito_pallet.png) |
+| ![v02](../imagenes/celda_vista_general.png) | ![Pallet v02](../imagenes/celda_deposito_pallet.png) |
 
 La cortina detiene el robot si se la interrumpe, pero el problema de fondo sigue:
 
@@ -109,7 +109,7 @@ automatizada con transferencia automática de piezas de Groover [Groover, 14.2.1
 
 | Vista general de la v03 | Planta de la v03 |
 |---|---|
-| ![v03](imagenes/v03/v03_vista_general.png) | ![Planta v03](imagenes/v03/v03_planta.png) |
+| ![v03](../imagenes/v03/v03_vista_general.png) | ![Planta v03](../imagenes/v03/v03_planta.png) |
 
 **Lo que no cambia:** robots, herramientas, zona de soldadura, programas de presentación y
 soldadura (incluido el MoveC de transición), estación de servicio y puerta.
@@ -122,7 +122,7 @@ de su base, con 703 mm de alcance).
 
 | Toma (x = −150 mm) | Depósito (x = +150 mm) |
 |---|---|
-| ![Toma](imagenes/v03/v03_toma.png) | ![Depósito](imagenes/v03/v03_deposito.png) |
+| ![Toma](../imagenes/v03/v03_toma.png) | ![Depósito](../imagenes/v03/v03_deposito.png) |
 
 **Secuencia del ciclo k:**
 
@@ -142,7 +142,7 @@ lugar**: la soldada siempre se corre antes de que llegue la siguiente.
 
 | Piezas soldadas saliendo por la cara este |
 |---|
-| ![Salida](imagenes/v03/v03_salida_cortina.png) |
+| ![Salida](../imagenes/v03/v03_salida_cortina.png) |
 
 ## 5. Seguridad
 
@@ -176,7 +176,7 @@ cumpliendo C3 con la cinta y el segundo robot.
 
 ## 7. Implementación
 
-La v03 se genera con [`scripts/mejora_01_cinta_pasante.py`](scripts/mejora_01_cinta_pasante.py)
+La v03 se genera con [`scripts/mejora_01_cinta_pasante.py`](../scripts/mejora_01_cinta_pasante.py)
 **a partir del archivo de la v02**, y no reconstruyendo desde cero. Así se conservan los eventos de
 simulación de tomar y soltar que se cargaron a mano en la interfaz de RoboDK.
 
@@ -190,10 +190,10 @@ simulación de tomar y soltar que se cargaron a mano en la interfaz de RoboDK.
 | 6 | Crea `Man_Depositar_Cinta` y `Cinta_Evacuar`; reescribe `Ciclo_Pieza_1…4` y `Fin_Lote` |
 | 7 | Desactiva solo los contactos previstos (estator apoyado sobre el tramo de salida) y guarda la v03 |
 
-Los modelos nuevos los genera [`scripts/generar_modelos.py`](scripts/generar_modelos.py):
+Los modelos nuevos los genera [`scripts/generar_modelos.py`](../scripts/generar_modelos.py):
 `cinta_extension_banda.stl`, `cinta_extension_estructura.stl`, `cortina_luz_cinta.stl` y el
 cerramiento `*_v03.stl`. Los parámetros están en la sección "Mejora 01" de
-[`scripts/parametros_celda.py`](scripts/parametros_celda.py).
+[`scripts/parametros_celda.py`](../scripts/parametros_celda.py).
 
 **Cómo se prolonga la cinta:** el modelo de la biblioteca tiene una longitud fija (~2,05 m de
 banda). El tramo de salida es geometría fija que continúa la banda con el mismo ancho (600 mm) y la
@@ -261,4 +261,4 @@ internet. Sin eso, RoboDK aplica los límites de la licencia gratuita y no guard
   Manufacturing*, 4.ª ed. Pearson, 2015. Sección 14.2.
 - **[Clase 2]** Luque, J. *Islas robotizadas y seguridad industrial*. UTN FRC, 2026.
 - Grupo 4. [`definicion_celda.md`](definicion_celda.md) y
-  [`componentesRDK.md`](../b_investigacion/componentesRDK.md).
+  [`componentesRDK.md`](../../b_investigacion/componentesRDK.md).

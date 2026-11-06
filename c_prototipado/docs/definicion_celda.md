@@ -50,22 +50,22 @@ Comisión 2LA1 · Año 2026
 ## Prólogo
 
 Este documento define la celda que el grupo construyó en RoboDK y justifica cada decisión de diseño
-con los documentos de conceptos ([`b_investigacion/conceptos/`](../b_investigacion/conceptos/)), el
-catálogo de componentes ([`componentesRDK.md`](../b_investigacion/componentesRDK.md)) y la
+con los documentos de conceptos ([`b_investigacion/conceptos/`](../../b_investigacion/conceptos/)), el
+catálogo de componentes ([`componentesRDK.md`](../../b_investigacion/componentesRDK.md)) y la
 bibliografía de la cátedra.
 
-La estación está en [`Celda_Soldadura_Estator_Grupo4_v02.rdk`](Celda_Soldadura_Estator_Grupo4_v02.rdk).
-Se genera de forma reproducible con los scripts de [`scripts/`](scripts/). Los scripts solo
+La estación está en [`Celda_Soldadura_Estator_Grupo4_v02.rdk`](../Celda_Soldadura_Estator_Grupo4_v02.rdk).
+Se genera de forma reproducible con los scripts de [`scripts/`](../scripts/). Los scripts solo
 **construyen** la estación: todos los movimientos del ciclo son instrucciones nativas de RoboDK
 (MoveJ, MoveL y MoveC), y ningún script mueve los robots durante la ejecución.
 
 Las medidas de la pieza son **medidas de diseño adoptadas** por el grupo (ver
-[`componentesRDK.md`, §6](../b_investigacion/componentesRDK.md)); si se mide un paquete real, se
-reemplazan siguiendo el procedimiento de [`scripts/parametros_celda.py`](scripts/parametros_celda.py).
-Todas las cotas de la celda están en [`scripts/parametros_celda.py`](scripts/parametros_celda.py),
+[`componentesRDK.md`, §6](../../b_investigacion/componentesRDK.md)); si se mide un paquete real, se
+reemplazan siguiendo el procedimiento de [`scripts/parametros_celda.py`](../scripts/parametros_celda.py).
+Todas las cotas de la celda están en [`scripts/parametros_celda.py`](../scripts/parametros_celda.py),
 que es la fuente única de valores.
 
-![Vista general de la celda](imagenes/celda_vista_general.png)
+![Vista general de la celda](../imagenes/celda_vista_general.png)
 
 ---
 
@@ -73,9 +73,9 @@ que es la fuente única de valores.
 
 | Versión | Archivo | Cambio principal | Documento |
 |---|---|---|---|
-| v01 | [`Celda_Soldadura_Estator_Grupo4_v01.rdk`](Celda_Soldadura_Estator_Grupo4_v01.rdk) | Versión original: posicionador MTD 250, cilindro de 6 cordones, sin transporte | Informe de la entrega anterior (`d_presentacion/`) |
-| v02 | [`Celda_Soldadura_Estator_Grupo4_v02.rdk`](Celda_Soldadura_Estator_Grupo4_v02.rdk) | Manipulador + soldador TIG; paquete de estator real; entrada por cinta y salida por pallet | Este documento |
-| v03 | [`Celda_Soldadura_Estator_Grupo4_v03.rdk`](Celda_Soldadura_Estator_Grupo4_v03.rdk) | **Cinta pasante:** la misma cinta trae y saca las piezas; se elimina el pallet y su ventana | [mejora 01](mejora_01_cinta_pasante.md) |
+| v01 | [`Celda_Soldadura_Estator_Grupo4_v01.rdk`](../Celda_Soldadura_Estator_Grupo4_v01.rdk) | Versión original: posicionador MTD 250, cilindro de 6 cordones, sin transporte | Informe de la entrega anterior (`d_presentacion/`) |
+| v02 | [`Celda_Soldadura_Estator_Grupo4_v02.rdk`](../Celda_Soldadura_Estator_Grupo4_v02.rdk) | Manipulador + soldador TIG; paquete de estator real; entrada por cinta y salida por pallet | Este documento |
+| v03 | [`Celda_Soldadura_Estator_Grupo4_v03.rdk`](../Celda_Soldadura_Estator_Grupo4_v03.rdk) | **Cinta pasante:** la misma cinta trae y saca las piezas; se elimina el pallet y su ventana | [mejora 01](mejora_01_cinta_pasante.md) |
 
 Este documento define la **v02**. En las secciones que cambian con la v03 hay una nota
 **"v03"** al final, con el resumen del cambio; el detalle y la justificación están en la [mejora 01](mejora_01_cinta_pasante.md).
@@ -86,7 +86,7 @@ Este documento define la **v02**. En las secciones que cambian con la v03 hay un
 
 La celda **suelda con TIG sin aporte los paquetes de chapa de estator** de un motor universal de
 lavarropas de ~330 W. Cada paquete lleva **4 cordones axiales**, uno por arista, que unen las chapas
-(ver [`despiece_motor_lavarropas.md`, §4](../b_investigacion/despiece_motor_lavarropas.md)).
+(ver [`despiece_motor_lavarropas.md`, §4](../../b_investigacion/despiece_motor_lavarropas.md)).
 
 | Dato | Valor |
 |---|---|
@@ -132,7 +132,7 @@ Se toma como base el ejemplo **17 *Conveyor Swap*** de la biblioteca de RoboDK
 
 ### 2.2 Mejoras respecto de la versión anterior del grupo
 
-La estación anterior ([`Celda_Soldadura_Estator_Grupo4_v01.rdk`](Celda_Soldadura_Estator_Grupo4_v01.rdk))
+La estación anterior ([`Celda_Soldadura_Estator_Grupo4_v01.rdk`](../Celda_Soldadura_Estator_Grupo4_v01.rdk))
 soldaba 6 cordones en un cilindro montado en un posicionador ABB MTD 250. Se conserva su idea
 central: **la pieza gira y el soldador repite el mismo cordón en el mismo lugar del espacio**. Se
 corrige lo siguiente:
@@ -151,7 +151,7 @@ corrige lo siguiente:
 
 ## 3. Disposición
 
-![Planta de la celda](imagenes/celda_planta.png)
+![Planta de la celda](../imagenes/celda_planta.png)
 
 Cotas en el sistema `Frame_Celda` (origen en el piso, bajo la base del manipulador):
 
@@ -186,7 +186,7 @@ Cotas en el sistema `Frame_Celda` (origen en el piso, bajo la base del manipulad
 
 ## 4. Equipos
 
-El detalle de cada componente está en [`componentesRDK.md`](../b_investigacion/componentesRDK.md).
+El detalle de cada componente está en [`componentesRDK.md`](../../b_investigacion/componentesRDK.md).
 
 | Equipo | Función | Justificación resumida |
 |---|---|---|
@@ -207,7 +207,7 @@ a la celda para cargar y descargar. Un posicionador puede reemplazar grados de l
 
 ## 5. Sistemas de referencia y TCP
 
-Requisito C1 [Lineamientos]. Conceptos en [04](../b_investigacion/conceptos/04_sistemas_de_referencia_y_tcp.md).
+Requisito C1 [Lineamientos]. Conceptos en [04](../../b_investigacion/conceptos/04_sistemas_de_referencia_y_tcp.md).
 
 ### 5.1 Frames propios
 
@@ -255,7 +255,7 @@ largo se midió sobre el modelo: las puntas de los dedos quedan a ~160 mm de la 
 
 | Toma en la cinta | Cordón A | Depósito en el pallet |
 |---|---|---|
-| ![Toma](imagenes/celda_toma_cinta.png) | ![Cordón A](imagenes/celda_soldadura_cordon_A.png) | ![Depósito](imagenes/celda_deposito_pallet.png) |
+| ![Toma](../imagenes/celda_toma_cinta.png) | ![Cordón A](../imagenes/celda_soldadura_cordon_A.png) | ![Depósito](../imagenes/celda_deposito_pallet.png) |
 
 ### 6.2 Lote
 
@@ -273,7 +273,7 @@ el TCP.
 
 ## 7. Estructura de programas
 
-Requisito C2 [Lineamientos]. Conceptos en [06](../b_investigacion/conceptos/06_estructura_de_programas_y_senales.md).
+Requisito C2 [Lineamientos]. Conceptos en [06](../../b_investigacion/conceptos/06_estructura_de_programas_y_senales.md).
 
 ```text
 Programa_Principal
@@ -318,7 +318,7 @@ Sold_Cambio_Tungsteno            a pedido: pausa para el operario + Sold_Servici
 
 ## 8. Tipos de movimiento
 
-Conceptos en [05](../b_investigacion/conceptos/05_tipos_de_movimiento.md).
+Conceptos en [05](../../b_investigacion/conceptos/05_tipos_de_movimiento.md).
 
 ### 8.1 Criterio aplicado
 
@@ -347,7 +347,7 @@ pieza. La transición tiene tres tramos:
 
 | Transición en arco |
 |---|
-| ![Transición MoveC](imagenes/celda_transicion_movec.png) |
+| ![Transición MoveC](../imagenes/celda_transicion_movec.png) |
 
 **Por qué un arco y no otro movimiento:**
 - Con un MoveL directo de A a B, la antorcha atravesaría la esquina de la pieza.
@@ -361,7 +361,7 @@ El arco se recorre con el **arco apagado**: es un movimiento de la herramienta, 
 
 ### 8.3 Detalle de un par de cordones
 
-![Detalle de la soldadura](imagenes/celda_soldadura_detalle.png)
+![Detalle de la soldadura](../imagenes/celda_soldadura_detalle.png)
 
 | # | Instrucción | Velocidad | Arco |
 |---|---|---|---|
@@ -385,7 +385,7 @@ El arco se recorre con el **arco apagado**: es un movimiento de la herramienta, 
 
 ## 9. Señales e interlocks
 
-Conceptos en [06](../b_investigacion/conceptos/06_estructura_de_programas_y_senales.md).
+Conceptos en [06](../../b_investigacion/conceptos/06_estructura_de_programas_y_senales.md).
 
 | Señal | La activa | La espera | Significado |
 |---|---|---|---|
@@ -401,7 +401,7 @@ sincronizarían.
 
 ## 10. Seguridad
 
-Conceptos en [07](../b_investigacion/conceptos/07_seguridad_y_normativa.md).
+Conceptos en [07](../../b_investigacion/conceptos/07_seguridad_y_normativa.md).
 
 | Medida | Nivel [Clase 2] | Implementación en la celda | Base |
 |---|---|---|---|
@@ -421,7 +421,7 @@ celda, su programación y su uso son del integrador, es decir, del grupo [Barrie
 
 | Estación de servicio y puerta |
 |---|
-| ![Servicio de la antorcha](imagenes/celda_servicio_antorcha.png) |
+| ![Servicio de la antorcha](../imagenes/celda_servicio_antorcha.png) |
 
 > **v03:** desaparecen la ventana del pallet y su cortina. La cinta atraviesa el cerramiento por
 > dos túneles (oeste y este), cada uno con su cortina de luz. **El operario no entra a la celda en
@@ -443,7 +443,7 @@ Requisito C3 [Lineamientos]: la celda tiene **los tres elementos** que se piden 
 
 Verificación hecha de dos formas:
 
-- con [`scripts/verificar_celda.py`](scripts/verificar_celda.py): detección de colisiones activa,
+- con [`scripts/verificar_celda.py`](../scripts/verificar_celda.py): detección de colisiones activa,
   muestreo de la trayectoria cada 1 mm y 1°, y una pieza de prueba colgada de la pinza;
 - ejecutando `Ciclo_Pieza_1` en la simulación con los eventos de tomar y soltar cargados: el
   estator 1 pasa de `Frame_Banda` a `TCP_Pinza` y termina en `Frame_Pallet`, sin colisiones.
@@ -590,6 +590,6 @@ targets; con `--reiniciar-lote` deja además la simulación en el inicio de lote
 - **[Clase 1]** Perassi, S. *Robótica Industrial – Clase 1*. UTN FRC, 2026.
 - **[Clase 2]** Luque, J. *Islas robotizadas y seguridad industrial*. UTN FRC, 2026.
 - RoboDK. Ejemplo 17 *Conveyor Swap* y ejemplo 06 *Pick and Place*. Biblioteca de RoboDK v6.1.1.
-- Grupo 4. Documentos de conceptos [00 a 08](../b_investigacion/conceptos/00_requisitos_y_trazabilidad.md),
-  [`componentesRDK.md`](../b_investigacion/componentesRDK.md) y
-  [`despiece_motor_lavarropas.md`](../b_investigacion/despiece_motor_lavarropas.md).
+- Grupo 4. Documentos de conceptos [00 a 08](../../b_investigacion/conceptos/00_requisitos_y_trazabilidad.md),
+  [`componentesRDK.md`](../../b_investigacion/componentesRDK.md) y
+  [`despiece_motor_lavarropas.md`](../../b_investigacion/despiece_motor_lavarropas.md).
