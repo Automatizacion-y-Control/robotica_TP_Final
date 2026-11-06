@@ -1,0 +1,252 @@
+{
+  "version": "6.1.1.26991",
+  "error": null,
+  "pruebas": [
+    {
+      "prueba": "Stop al programa principal",
+      "ocupados_antes": [
+        "Man_Tomar_Cinta",
+        "Ciclo_Pieza_1",
+        "Programa_Principal"
+      ],
+      "ocupados_despues": [],
+      "llamada_s": 0.016,
+      "pieza": "TCP_Pinza",
+      "arco": 0.0,
+      "colisiones": 0,
+      "desplazamiento_max": 0.0,
+      "ultimo_movimiento_s": 0.0
+    },
+    {
+      "prueba": "Stop a los robots y la cinta",
+      "ocupados_antes": [
+        "Man_Presentar_Lado1",
+        "Ciclo_Pieza_1",
+        "Programa_Principal"
+      ],
+      "ocupados_despues": [
+        "Ciclo_Pieza_1",
+        "Programa_Principal"
+      ],
+      "llamada_s": 0.031,
+      "pieza": "TCP_Pinza",
+      "arco": 0.0,
+      "colisiones": 0,
+      "desplazamiento_max": 0.0,
+      "ultimo_movimiento_s": 0.0
+    },
+    {
+      "prueba": "Stop a todos los programas y equipos",
+      "ocupados_antes": [
+        "Man_Presentar_Lado1",
+        "Ciclo_Pieza_1",
+        "Programa_Principal"
+      ],
+      "ocupados_despues": [],
+      "llamada_s": 0.156,
+      "pieza": "TCP_Pinza",
+      "arco": 0.0,
+      "colisiones": 0,
+      "desplazamiento_max": 0.0,
+      "ultimo_movimiento_s": 0.0
+    },
+    {
+      "prueba": "Velocidad mínima como pausa",
+      "congelado": {
+        "desplazamiento_max": 2.471,
+        "ultimo_movimiento_s": 1.485
+      },
+      "ocupados": [
+        "Man_Tomar_Cinta",
+        "Ciclo_Pieza_1",
+        "Programa_Principal"
+      ],
+      "retoma": {
+        "desplazamiento_max": 194.995,
+        "ultimo_movimiento_s": 1.5
+      },
+      "deposito_la_pieza": true,
+      "colisiones": 0
+    },
+    {
+      "prueba": "Stop a equipos con el coordinador corriendo",
+      "ocupados_antes": [
+        "Man_Presentar_Lado1",
+        "Ciclo_Pieza_1",
+        "Coordinador_Panel"
+      ],
+      "ocupados_despues": [
+        "Ciclo_Pieza_1",
+        "Coordinador_Panel"
+      ],
+      "pieza_activa": 1.0,
+      "auto": 1.0,
+      "completadas": 0.0,
+      "pieza": "TCP_Pinza",
+      "desplazamiento_max": 0.0,
+      "ultimo_movimiento_s": 0.0
+    },
+    {
+      "prueba": "Collision_Line como sensor",
+      "cruza": false,
+      "objeto": null,
+      "libre": false,
+      "ms": 0.75,
+      "ocupados": []
+    },
+    {
+      "prueba": "Fin_Lote con lote parcial restituye las piezas",
+      "termino": true,
+      "iguales": true,
+      "inicial": {
+        "1": [
+          "Frame_Banda",
+          [
+            -150.0,
+            -560.0,
+            366.5
+          ]
+        ],
+        "2": [
+          "Frame_Banda",
+          [
+            -450.0,
+            -560.0,
+            366.5
+          ]
+        ],
+        "3": [
+          "Frame_Banda",
+          [
+            -750.0,
+            -560.0,
+            366.5
+          ]
+        ],
+        "4": [
+          "Frame_Banda",
+          [
+            -1050.0,
+            -560.0,
+            366.5
+          ]
+        ]
+      },
+      "parcial": {
+        "1": [
+          "Frame_Piezas_Soldadas",
+          [
+            150.0,
+            -560.0,
+            366.5
+          ]
+        ],
+        "2": [
+          "Frame_Banda",
+          [
+            -450.0,
+            -560.0,
+            366.5
+          ]
+        ],
+        "3": [
+          "Frame_Banda",
+          [
+            -750.0,
+            -560.0,
+            366.5
+          ]
+        ],
+        "4": [
+          "Frame_Banda",
+          [
+            -1050.0,
+            -560.0,
+            366.5
+          ]
+        ]
+      },
+      "final": {
+        "1": [
+          "Frame_Banda",
+          [
+            -150.0,
+            -560.0,
+            366.5
+          ]
+        ],
+        "2": [
+          "Frame_Banda",
+          [
+            -450.0,
+            -560.0,
+            366.5
+          ]
+        ],
+        "3": [
+          "Frame_Banda",
+          [
+            -750.0,
+            -560.0,
+            366.5
+          ]
+        ],
+        "4": [
+          "Frame_Banda",
+          [
+            -1050.0,
+            -560.0,
+            366.5
+          ]
+        ]
+      },
+      "eje_cinta": [
+        0.0
+      ],
+      "colisiones": 0
+    },
+    {
+      "prueba": "Recuperación con pieza en la pinza",
+      "pieza_al_detener": "TCP_Pinza",
+      "reposo": true,
+      "colisiones_reposo": 0,
+      "fin_lote": true,
+      "iguales": true,
+      "final": {
+        "1": [
+          "Frame_Banda",
+          [
+            -150.0,
+            -560.0,
+            366.5
+          ]
+        ],
+        "2": [
+          "Frame_Banda",
+          [
+            -450.0,
+            -560.0,
+            366.5
+          ]
+        ],
+        "3": [
+          "Frame_Banda",
+          [
+            -750.0,
+            -560.0,
+            366.5
+          ]
+        ],
+        "4": [
+          "Frame_Banda",
+          [
+            -1050.0,
+            -560.0,
+            366.5
+          ]
+        ]
+      },
+      "colisiones": 0
+    }
+  ]
+}

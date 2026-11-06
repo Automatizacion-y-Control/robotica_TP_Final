@@ -31,6 +31,10 @@ CAUSAS = {
     11: "Modo desconocido",
     12: "Producción activa",
     13: "Arranque simultáneo con una parada",
+    14: "Parada activa sin rearmar",
+    15: "Resguardo abierto",
+    16: "Recuperación pendiente",
+    17: "No hay nada que recuperar",
 }
 
 CORRECTIVO = 6
@@ -143,6 +147,8 @@ def instalar(rdk):
     rechazar(["MODO_CONOCIDO == 1", "CINTA_DETENIDA == 0"], 6)
     rechazar(["MODO_CONOCIDO == 1", "SENSORES_VALIDOS == 0"], 3)
     rechazar(["MODO_CONOCIDO == 1", "MODO_EN_TRANSICION == 1"], 2)
+    rechazar(["MODO_CONOCIDO == 1", "RECUP_PENDIENTE == 1"], 16)
+    rechazar(["MODO_CONOCIDO == 1", "PARO_CAUSA != 0"], 14)
     rechazar(["MODO_CONOCIDO == 0"], 11)
 
     aceptada = ["MODO_DESDE_AUTO == 0", "MODO_CONOCIDO == 1", "MODO_CAUSA == 0"]

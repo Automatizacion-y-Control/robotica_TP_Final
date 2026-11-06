@@ -1,0 +1,86 @@
+{
+  "version": "6.1.1.26991",
+  "exito": true,
+  "pruebas": [
+    {
+      "prueba": "Parada y recuperación",
+      "fase": 1.0,
+      "pieza_en_pinza": false,
+      "retrabajo": 0.0,
+      "y_pieza": -560.0,
+      "siguiente": 2,
+      "lote_completo": true,
+      "colisiones": 0
+    },
+    {
+      "prueba": "Parada y recuperación",
+      "fase": 2.0,
+      "pieza_en_pinza": false,
+      "retrabajo": 0.0,
+      "y_pieza": -560.0,
+      "siguiente": 2,
+      "lote_completo": true,
+      "colisiones": 0
+    },
+    {
+      "prueba": "Parada y recuperación",
+      "fase": 3.0,
+      "pieza_en_pinza": true,
+      "retrabajo": 0.0,
+      "y_pieza": -560.0,
+      "siguiente": 3,
+      "lote_completo": true,
+      "colisiones": 0
+    },
+    {
+      "prueba": "Parada y recuperación",
+      "fase": 4.0,
+      "pieza_en_pinza": true,
+      "retrabajo": 1.0,
+      "y_pieza": -620.0,
+      "siguiente": 3,
+      "lote_completo": true,
+      "colisiones": 0
+    },
+    {
+      "prueba": "Parada y recuperación",
+      "fase": 5.0,
+      "pieza_en_pinza": true,
+      "retrabajo": 0.0,
+      "y_pieza": -560.0,
+      "siguiente": 3,
+      "lote_completo": true,
+      "colisiones": 0
+    },
+    {
+      "prueba": "Parada y recuperación",
+      "fase": 6.0,
+      "pieza_en_pinza": true,
+      "retrabajo": 1.0,
+      "y_pieza": -620.0,
+      "siguiente": 3,
+      "lote_completo": true,
+      "colisiones": 0
+    },
+    {
+      "prueba": "Parada y recuperación",
+      "fase": 7.0,
+      "pieza_en_pinza": true,
+      "retrabajo": 0.0,
+      "y_pieza": -560.0,
+      "siguiente": 3,
+      "lote_completo": true,
+      "colisiones": 0
+    },
+    {
+      "prueba": "Parada y recuperación",
+      "fase": 8.0,
+      "pieza_en_pinza": false,
+      "retrabajo": 0.0,
+      "y_pieza": -560.0,
+      "siguiente": 3,
+      "lote_completo": true,
+      "colisiones": 0
+    }
+  ]
+}

@@ -14,7 +14,10 @@ import tempfile
 sys.path.insert(0, r"C:\RoboDK\Python")
 from empaquetar_panel import generar
 from modos_nativos import instalar, INICIALES_MODOS
-from robodk.robolink import (Robolink, ITEM_TYPE_PROGRAM, ITEM_TYPE_PROGRAM_PYTHON, INSTRUCTION_INSERT_CODE,
+from paradas_nativas import instalar_paradas, INICIALES_PARADAS, RESGUARDOS
+from velocidades_v05 import ajustar_velocidades
+from robodk.robolink import (Robolink, ITEM_TYPE_PROGRAM, ITEM_TYPE_PROGRAM_PYTHON, ITEM_TYPE_ROBOT,
+                            INSTRUCTION_INSERT_CODE,
                             INSTRUCTION_CALL_PROGRAM, INSTRUCTION_COMMENT)
 
 RAIZ = Path(__file__).resolve().parent.parent
@@ -32,7 +35,16 @@ CONDICIONES_ARRANQUE = (
     ("CINTA_DETENIDA == 0", 6), ("PIEZA_SUJETA_SENSOR == 1", 5),
     ("CRB_EN_REPOSO == 0", 4), ("IRB_EN_REPOSO == 0", 4), ("SENSORES_VALIDOS == 0", 3),
     ("MODO_CONFIRMADO != 0", 8), ("MODO_EN_TRANSICION == 1", 2),
-    ("PERMISO_OPERACION == 0", 1), ("AUTO_ACTIVO == 1", 12),
+    ("PERMISO_OPERACION == 0", 1), ("AUTO_ACTIVO == 1", 12), ("RECUP_PENDIENTE == 1", 16),
+    ("CORTINA_ENTRADA_SIM == 1", 15), ("CORTINA_SALIDA_SIM == 1", 15),
+    ("PUERTA_ABIERTA_SIM == 1", 15), ("PARO_CAUSA != 0", 14),
+)
+
+CONDICIONES_RECUPERAR = (
+    ("CRB_DISPONIBLE == 0", 7), ("IRB_DISPONIBLE == 0", 7), ("SENSORES_VALIDOS == 0", 3),
+    ("PERMISO_OPERACION == 0", 1), ("RECUP_PENDIENTE == 0", 17),
+    ("CORTINA_ENTRADA_SIM == 1", 15), ("CORTINA_SALIDA_SIM == 1", 15),
+    ("PUERTA_ABIERTA_SIM == 1", 15), ("PARO_CAUSA != 0", 14),
 )
 
 
@@ -56,7 +68,9 @@ def construir():
     principal.InstructionSelect(0)
     principal.RunInstruction("Ciclo nativo de un lote de 4 estatores; no necesita el panel", INSTRUCTION_COMMENT)
     principal.InstructionDelete(2)  # Comentario heredado sobre el pallet y el bucle.
+    ajustar_velocidades(rdk)
     instalar(rdk)
+    instalar_paradas(rdk)
     p = rdk.AddProgram("Coordinador_Panel")
 
     def codigo(texto):
@@ -70,6 +84,13 @@ def construir():
 
     p.RunInstruction("Coordinador v05: iniciar desde RoboDK; mandos por señales. "
                      "PERMISO_OPERACION no es una parada inmediata de protección.", INSTRUCTION_COMMENT)
+    # Stop no pasa por la salida del bucle: lo que quedó activo revela una parada inmediata.
+    for condicion in ("AUTO_ACTIVO == 1", "PIEZA_ACTIVA != 0", "MODO_EN_TRANSICION == 1"):
+        codigo("IF " + condicion)
+        salida("RECUP_PENDIENTE", 1)
+        salida("AUTO_ACTIVO", 0)
+        salida("ESTADO_CONTROL", 7)
+        codigo("END")
     codigo("WHILE COORDINADOR_ACTIVO == 1")
     # Se capturan solicitudes: dos IF separados no deben modificar su selección entre ramas.
     salida("PEDIDO_PARADA", 0)
@@ -116,6 +137,21 @@ def construir():
     codigo("END")
     codigo("END")
 
+    codigo("IF RECUPERAR_ID != RECUPERAR_ACK")
+    salida("CAUSA_RECHAZO", 0)
+    for condicion, causa in CONDICIONES_RECUPERAR:
+        codigo("IF " + condicion)
+        salida("CAUSA_RECHAZO", causa)
+        codigo("END")
+    codigo("RECUPERAR_ACK = RECUPERAR_ID")
+    codigo("IF CAUSA_RECHAZO == 0")
+    salida("ESTADO_CONTROL", 8)
+    llamar("Recuperar_Pieza")
+    salida("RECUP_PENDIENTE", 0)
+    salida("ESTADO_CONTROL", 2)
+    codigo("END")
+    codigo("END")
+
     # La pérdida de permiso se retiene al volver de la pieza, sin autoarranque al recuperarlo.
     codigo("IF AUTO_ACTIVO == 1")
     codigo("IF PERMISO_OPERACION == 0")
@@ -155,10 +191,19 @@ def construir():
     codigo("END")
     # Salir del coordinador no ejecuta una recuperación ni abre la pinza.
     salida("AUTO_ACTIVO", 0)
-    for nombre, valor in {**INICIALES, **INICIALES_MODOS}.items():
+    for nombre, valor in {**INICIALES, **INICIALES_MODOS, **INICIALES_PARADAS}.items():
         rdk.setParam(nombre, valor)
-    panel = rdk.AddFile(str(generar(carpeta_temporal / "Panel_Operador.py")), estacion)
+    panel = rdk.AddFile(str(generar(carpeta_temporal / "Abrir_Panel_Operador.py")), estacion)
     assert panel.Valid() and panel.Type() == ITEM_TYPE_PROGRAM_PYTHON
+    # Validar deja el estado de los programas al día; el coordinador tiene un bucle y no se valida.
+    # Update deja los equipos donde terminó el programa: la estación debe abrir en reposo.
+    equipos = [(e, e.Joints()) for e in rdk.ItemList(ITEM_TYPE_ROBOT)]
+    for programa in rdk.ItemList(ITEM_TYPE_PROGRAM):
+        if programa.Name() != "Coordinador_Panel":
+            resultado = programa.Update()
+            assert resultado[3] == 1, (programa.Name(), resultado)
+    for equipo, articulaciones in equipos:
+        equipo.setJoints(articulaciones)
     ruta = RAIZ / "Celda_Soldadura_Estator_Grupo4_v05.rdk"
     estacion.Save(str(ruta))
     shutil.rmtree(carpeta_temporal)
