@@ -1,6 +1,6 @@
 {
   "version": "6.1.1.26991",
-  "segundos_reales": 83.34400000004098,
+  "segundos_reales": 84.03099999995902,
   "pruebas": [
     {
       "prueba": "Arranque sin permiso rechazado",
@@ -10,6 +10,10 @@
     {
       "prueba": "Restaurar permiso no arranca",
       "auto": 0.0
+    },
+    {
+      "prueba": "Arranque simultáneo descartado; prevalece la parada",
+      "causa": 13
     },
     {
       "prueba": "Parada durante soldadura",

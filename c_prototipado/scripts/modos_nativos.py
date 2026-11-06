@@ -30,6 +30,7 @@ CAUSAS = {
     10: "Falta confirmar la restitución",
     11: "Modo desconocido",
     12: "Producción activa",
+    13: "Arranque simultáneo con una parada",
 }
 
 CORRECTIVO = 6

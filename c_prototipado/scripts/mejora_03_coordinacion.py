@@ -73,6 +73,12 @@ def construir():
     salida("PEDIDO_PARADA", 1)
     codigo("END")
     codigo("IF PEDIDO_PARADA == 1")
+    # Prevalece la parada: se descarta el arranque pendiente al detectarla. El que llegue
+    # después, durante la parada, es una orden posterior y se atiende en la vuelta siguiente.
+    codigo("IF ARRANQUE_ID != ARRANQUE_ACK")
+    codigo("ARRANQUE_ACK = ARRANQUE_ID")
+    salida("CAUSA_RECHAZO", 13)
+    codigo("END")
     codigo("IF AUTO_ACTIVO == 1")
     llamar("Parada_Entre_Piezas")
     codigo("END")

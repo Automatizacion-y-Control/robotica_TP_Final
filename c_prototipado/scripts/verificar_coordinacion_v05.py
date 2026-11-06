@@ -106,8 +106,14 @@ def main():
                 esperar(lambda: valor("AUTO_ACTIVO") == 0)
                 assert valor("MODO_RESULTADO") == 3
             else:
+                if orden == 2:
+                    # Ambas quedan pendientes hasta el final de la pieza: prevalece la parada.
+                    r.setParam("ARRANQUE_ID", 20)
                 r.setParam("PARADA_ID", orden)
                 esperar(lambda: valor("PARADA_ACK") == orden and valor("AUTO_ACTIVO") == 0)
+                if orden == 2:
+                    assert valor("ARRANQUE_ACK") == 20 and valor("CAUSA_RECHAZO") == 13
+                    registrar("Arranque simultáneo descartado; prevalece la parada", causa=13)
             assert valor("PROXIMA_PIEZA") == pieza + 1
             assert valor("PIEZA_ACTIVA") == 0 and valor("ARCO_TIG") == 0
             assert all(r.Item("Estator_" + str(k)).Parent().Name() != "TCP_Pinza" for k in range(1,5))
