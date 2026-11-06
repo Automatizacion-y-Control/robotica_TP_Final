@@ -1,0 +1,474 @@
+"""Panel de operador para la celda de soldadura RoboDK (SIMULACION).
+Ejecutar como programa Python de RoboDK. Requiere tkinter y robodk.
+No es un sistema de seguridad industrial.
+"""
+import tkinter as tk
+from tkinter import messagebox
+from math import radians
+from robodk.robolink import Robolink, ITEM_TYPE_FRAME, ITEM_TYPE_PROGRAM, ITEM_TYPE_ROBOT, ITEM_TYPE_TARGET
+from robodk.robomath import transl, rotz
+
+RDK = Robolink()
+FRAME_NAME = 'Marco_Celda_2400'  # Se conserva este nombre en el script de la celda 3500
+HINGE_NAME = 'Bisagra_Puerta'
+ROBOT_NAME = 'ABB CRB 1300-10/1.15'  # Ajustar si el nombre exacto difiere
+HOME_TARGET_NAME = 'R_home'
+HOME_PROGRAM_NAME = 'Retorno_Home_CRB1300'
+POSITIONER_HOME_PROGRAM = 'P1'  # Programa existente que lleva el ABB MTD 250 a 0 grados
+WELD_NAME = 'Soldar_Cordon'         # Ajustar al nombre exacto en el arbol
+APPROACH_NAME = 'Aproximacion'
+WAIT_NAME = 'Espera'
+POSITIONER_PROGRAMS = ['P1', 'P2', 'P3', 'P4', 'P5', 'P6']
+DOOR_WIDTH = 900.0
+CELL_WIDTH = 3500.0
+DOOR_X = (CELL_WIDTH - DOOR_WIDTH) / 2.0
+OPEN_ANGLE = 100.0
+POLL_MS = 120
+PIECE_NAME = 'generator_assembly'
+
+frame = RDK.Item(FRAME_NAME, ITEM_TYPE_FRAME)
+hinge = RDK.Item(HINGE_NAME, ITEM_TYPE_FRAME)
+robot = RDK.Item(ROBOT_NAME, ITEM_TYPE_ROBOT)
+if not frame.Valid() or not hinge.Valid():
+    raise RuntimeError('Falta Marco_Celda_2400 o Bisagra_Puerta. Ejecutar primero el script de la celda.')
+if not robot.Valid():
+    raise RuntimeError('No se encuentra el robot ABB. Modificar ROBOT_NAME segun el arbol de RoboDK.')
+
+# Pieza original de la estacion: no se crea una copia ni se mueve el objeto.
+# El sensor de presencia es SIMULADO mediante la visibilidad de este elemento.
+# No restringimos ITEM_TYPE_OBJECT: en algunas estaciones la pieza está
+# clasificada como herramienta u otro tipo de item de RoboDK.
+piece = RDK.Item(PIECE_NAME)
+if not piece.Valid():
+    # Respaldo: buscar por nombre entre todos los tipos de elementos.
+    matches = [item for item in RDK.ItemList()
+               if PIECE_NAME.lower() in item.Name().lower()]
+    if len(matches) == 1:
+        piece = matches[0]
+    else:
+        raise RuntimeError(
+            'No se encontro %s en RoboDK. Coincidencias: %s. '
+            'Revisar el nombre en el arbol de la estacion.' % (PIECE_NAME, len(matches)))
+print('Pieza encontrada correctamente: %s (tipo RoboDK: %s)' % (piece.Name(), piece.Type()))
+
+root = tk.Tk()
+root.title('Panel de operador - Celda de soldadura (SIMULACION)')
+root.geometry('520x665')
+root.resizable(False, False)
+root.configure(bg='#152238')
+
+# Secuencia basada en el panel original que ya funcionaba.
+# Todos los movimientos estan definidos en programas nativos de RoboDK.
+# Se agrega HOME inicial y Aproximacion / Espera en cada cordon.
+sequence = [(HOME_PROGRAM_NAME, 'HOME INICIAL', 0)]
+for num, positioner_program in enumerate(POSITIONER_PROGRAMS, 1):
+    sequence.extend([
+        (positioner_program, 'POSICIONADOR', num),
+        (APPROACH_NAME, 'APROXIMACION', num),
+        (WELD_NAME, 'SOLDADURA', num),
+        (WAIT_NAME, 'ESPERA', num),
+    ])
+# Retorno final: primero se retira el robot, luego vuelve a HOME y
+# por ultimo el posicionador retorna a P1 (0 grados).
+sequence.extend([
+    (HOME_PROGRAM_NAME, 'HOME ROBOT', 6),
+    (POSITIONER_HOME_PROGRAM, 'HOME POSICIONADOR', 6),
+])
+
+def ensure_home_program():
+    """Crear una sola instruccion MoveJ al target R_home existente.
+    No modifica los programas de soldadura ni el posicionador.
+    """
+    existing = RDK.Item(HOME_PROGRAM_NAME, ITEM_TYPE_PROGRAM)
+    if existing.Valid():
+        return existing
+    target = RDK.Item(HOME_TARGET_NAME, ITEM_TYPE_TARGET)
+    if not target.Valid():
+        raise RuntimeError('No se encontro el target %s. Verifica su nombre exacto.' % HOME_TARGET_NAME)
+    program = RDK.AddProgram(HOME_PROGRAM_NAME, robot)
+    program.addMoveJ(target)
+    return program
+
+
+state = 'LISTO'
+door_closed = True
+estop = False
+step_index = 0
+active_program = None
+# Si se detiene un programa, no se puede reanudar desde la instruccion exacta.
+# Se repetira el subprograma actual desde el comienzo, previa confirmacion.
+recovery_required = False
+run_requested = False
+manual_home = False
+manual_home_stage = 0  # 1: robot, 2: posicionador
+
+status_var = tk.StringVar(value='LISTO')
+door_var = tk.StringVar(value='CERRADA')
+piece_var = tk.StringVar(value='SIN VERIFICAR')
+progress_var = tk.StringVar(value='Cordón: 0/6')
+step_var = tk.StringVar(value='Sin movimientos en curso')
+
+
+def set_status(new_state):
+    global state
+    state = new_state
+    status_var.set(new_state)
+
+
+def paint_door():
+    angle = 0 if door_closed else radians(OPEN_ANGLE)
+    hinge.setPose(transl(DOOR_X, 0, 0) * rotz(angle))
+    door_var.set('CERRADA' if door_closed else 'ABIERTA')
+
+
+def piece_present():
+    """Estado del sensor virtual: objeto visible en la estacion."""
+    return bool(piece.Visible())
+
+
+def update_piece_indicator():
+    present = piece_present()
+    piece_var.set('PRESENTE' if present else 'AUSENTE')
+    piece_indicator.config(fg='#86efac' if present else '#fca5a5')
+    return present
+
+
+def place_piece():
+    if state == 'EJECUTANDO' or active_program is not None or run_requested or manual_home:
+        messagebox.showwarning('Pieza', 'No se puede colocar la pieza durante movimientos.')
+        return
+    try:
+        piece.setVisible(True)
+        update_piece_indicator()
+        step_var.set('Sensor: pieza colocada en el posicionador.')
+        if not estop and door_closed and not recovery_required:
+            set_status('LISTO')
+    except Exception as ex:
+        messagebox.showerror('Sensor de pieza', str(ex))
+
+
+def remove_piece():
+    if state == 'EJECUTANDO' or active_program is not None or run_requested or manual_home:
+        messagebox.showwarning('Pieza', 'Detene los movimientos antes de retirar la pieza.')
+        return
+    if not door_closed:
+        # Puerta abierta: representa el acceso del operario a la celda.
+        pass
+    elif not messagebox.askyesno('Retirar pieza',
+            'La puerta figura cerrada. Para una secuencia real, primero se abriria. '
+            '¿Retirar igualmente la pieza en esta simulacion?'):
+        return
+    try:
+        piece.setVisible(False)
+        update_piece_indicator()
+        step_var.set('Sensor: no se detecta pieza. Inicio de soldadura bloqueado.')
+        if not estop and not recovery_required:
+            set_status('SIN PIEZA')
+    except Exception as ex:
+        messagebox.showerror('Sensor de pieza', str(ex))
+
+
+def weld_off():
+    try:
+        robot.setDO(5, 0)
+    except Exception as ex:
+        step_var.set('AVISO: no se pudo forzar DO5=0: ' + str(ex))
+
+
+def stop_active():
+    global active_program, run_requested, recovery_required, manual_home, manual_home_stage
+    run_requested = False
+    manual_home = False
+    manual_home_stage = 0
+    if active_program is not None:
+        try:
+            active_program.Stop()
+        except Exception:
+            pass
+        try:
+            robot.Stop()
+        except Exception:
+            pass
+        recovery_required = True
+        active_program = None
+    try:
+        robot.Stop()
+    except Exception:
+        pass
+    # Detener tambien el posicionador si estaba ejecutando un programa.
+    try:
+        for pname in POSITIONER_PROGRAMS:
+            prog = RDK.Item(pname, ITEM_TYPE_PROGRAM)
+            if prog.Valid() and prog.Busy():
+                prog.Stop()
+    except Exception:
+        pass
+    weld_off()
+
+
+def toggle_door():
+    global door_closed
+    if door_closed:
+        if state == 'EJECUTANDO':
+            stop_active()
+            set_status('INTERRUMPIDO - PUERTA ABIERTA')
+        door_closed = False
+    else:
+        door_closed = True
+        if not estop:
+            set_status('INTERRUMPIDO - REQUIERE REARME' if recovery_required else 'LISTO')
+    paint_door()
+
+
+def emergency():
+    global estop
+    estop = True
+    stop_active()
+    set_status('PARADA DE EMERGENCIA')
+
+
+def reset_emergency():
+    global estop
+    if not estop:
+        return
+    estop = False
+    set_status('INTERRUMPIDO - REQUIERE REARME' if recovery_required else ('LISTO' if door_closed else 'PUERTA ABIERTA'))
+
+
+def home():
+    global active_program, manual_home, manual_home_stage
+    if estop or not door_closed or state == 'EJECUTANDO' or active_program is not None:
+        messagebox.showwarning('HOME', 'Cerra la puerta, rearma la emergencia y detené el ciclo primero.')
+        return
+    if not messagebox.askyesno('Mover ambos a HOME',
+        'Primero el ABB CRB 1300 irá a R_home; después el posicionador irá a P1 (0 grados). '
+        'La soldadura se apagará antes de mover. Verificá que ambos recorridos estén libres de colisiones. '
+        '¿Ejecutar HOME de ambos equipos?'):
+        return
+    try:
+        prog = ensure_home_program()
+        pos_prog = RDK.Item(POSITIONER_HOME_PROGRAM, ITEM_TYPE_PROGRAM)
+        if not pos_prog.Valid():
+            raise RuntimeError('No se encuentra el programa P1 del posicionador.')
+        weld_off()
+        manual_home = True
+        manual_home_stage = 1
+        active_program = prog
+        set_status('EJECUTANDO')
+        step_var.set('HOME 1/2: ABB CRB 1300 a R_home')
+        prog.RunProgram()
+        root.after(450, poll_program)
+    except Exception as ex:
+        manual_home = False
+        manual_home_stage = 0
+        active_program = None
+        set_status('ERROR HOME')
+        messagebox.showerror('HOME', str(ex))
+
+
+def start():
+    global run_requested, recovery_required, step_index
+    if estop or not door_closed:
+        messagebox.showwarning('Inicio bloqueado', 'La puerta debe estar cerrada y la emergencia liberada.')
+        return
+    if state == 'EJECUTANDO':
+        return
+    try:
+        if not update_piece_indicator():
+            set_status('SIN PIEZA')
+            messagebox.showwarning('Inicio bloqueado',
+                'SENSOR DE PRESENCIA: no se detecta la pieza generator_assembly. '
+                'Presiona COLOCAR PIEZA antes de iniciar el ciclo.')
+            return
+    except Exception as ex:
+        messagebox.showerror('Sensor de pieza', str(ex))
+        return
+    if step_index >= len(sequence):
+        step_index = 0
+    if recovery_required:
+        name, kind, num = sequence[step_index]
+        msg = ('La interrupción ocurrió durante %s (cordón %s).\n\n'
+               'NO se reanudará en la posición exacta: se repetirá este subprograma '
+               'desde su inicio. Verificá manualmente la postura y que la antorcha '
+               'pueda aproximarse sin colisiones.\n\n'
+               '¿Confirmás la recuperación?') % (name, num)
+        if not messagebox.askyesno('Recuperación supervisada', msg):
+            return
+        recovery_required = False
+    # Verificar antes de iniciar que existan todos los programas.
+    try:
+        ensure_home_program()
+    except Exception as ex:
+        messagebox.showerror('HOME', str(ex))
+        return
+    missing = [name for name in POSITIONER_PROGRAMS + [APPROACH_NAME, WELD_NAME, WAIT_NAME, HOME_PROGRAM_NAME]
+               if not RDK.Item(name, ITEM_TYPE_PROGRAM).Valid()]
+    if missing:
+        messagebox.showerror('Programas faltantes', 'No se encuentran: ' + ', '.join(missing))
+        return
+    run_requested = True
+    set_status('EJECUTANDO')
+    launch_next()
+
+
+def launch_next():
+    global active_program, run_requested
+    if not run_requested or estop or not door_closed:
+        return
+    # Comprobacion redundante antes de lanzar cada subprograma.
+    # El panel no permite retirar la pieza mientras hay movimientos activos.
+    try:
+        if not update_piece_indicator():
+            stop_active()
+            set_status('INTERRUMPIDO - SIN PIEZA')
+            messagebox.showwarning('Sensor de pieza',
+                'Se perdio la presencia de pieza. Ciclo interrumpido.')
+            return
+    except Exception as ex:
+        stop_active()
+        set_status('ERROR SENSOR PIEZA')
+        messagebox.showerror('Sensor de pieza', str(ex))
+        return
+    if step_index >= len(sequence):
+        active_program = None
+        run_requested = False
+        weld_off()
+        set_status('CICLO FINALIZADO')
+        step_var.set('Se completaron seis cordones; CRB 1300 en R_home y MTD 250 en P1 (0°)')
+        return
+    name, kind, num = sequence[step_index]
+    step_var.set('%s: %s (cordón %s)' % (kind, name, num))
+    progress_var.set('Cordón: %s/6' % num)
+    active_program = RDK.Item(name, ITEM_TYPE_PROGRAM)
+    try:
+        active_program.RunProgram()
+    except Exception as ex:
+        stop_active()
+        set_status('ERROR DE EJECUCIÓN')
+        messagebox.showerror('RoboDK', str(ex))
+        return
+    # Busy() puede tardar un instante en activarse; dejamos margen antes de darlo por terminado.
+    root.after(450, poll_program)
+
+
+def poll_program():
+    global active_program, step_index, manual_home, manual_home_stage
+    if (not run_requested and not manual_home) or active_program is None:
+        return
+    if estop or not door_closed:
+        stop_active()
+        set_status('INTERRUMPIDO')
+        return
+    if run_requested:
+        try:
+            if not update_piece_indicator():
+                stop_active()
+                set_status('INTERRUMPIDO - SIN PIEZA')
+                messagebox.showwarning('Sensor de pieza', 'Pieza ausente: ciclo detenido.')
+                return
+        except Exception as ex:
+            stop_active()
+            set_status('ERROR SENSOR PIEZA')
+            messagebox.showerror('Sensor de pieza', str(ex))
+            return
+    try:
+        busy = bool(active_program.Busy())
+    except Exception as ex:
+        stop_active()
+        set_status('ERROR DE MONITOREO')
+        messagebox.showerror('RoboDK', str(ex))
+        return
+    if busy:
+        root.after(POLL_MS, poll_program)
+    else:
+        active_program = None
+        if manual_home:
+            if manual_home_stage == 1:
+                # El robot soldador ya esta en R_home: ahora puede girar el posicionador.
+                try:
+                    weld_off()
+                    pos_prog = RDK.Item(POSITIONER_HOME_PROGRAM, ITEM_TYPE_PROGRAM)
+                    if not pos_prog.Valid():
+                        raise RuntimeError('No se encuentra P1.')
+                    manual_home_stage = 2
+                    active_program = pos_prog
+                    step_var.set('HOME 2/2: ABB MTD 250 a P1 (0 grados)')
+                    pos_prog.RunProgram()
+                    root.after(450, poll_program)
+                except Exception as ex:
+                    stop_active()
+                    set_status('ERROR HOME')
+                    messagebox.showerror('HOME', str(ex))
+                return
+            manual_home = False
+            manual_home_stage = 0
+            weld_off()
+            set_status('HOME ALCANZADO')
+            step_var.set('Ambos en HOME: CRB 1300 en R_home; MTD 250 en P1 (0 grados)')
+            return
+        step_index += 1
+        root.after(150, launch_next)
+
+
+def reset_cycle():
+    global step_index, recovery_required
+    if state == 'EJECUTANDO' or estop or manual_home:
+        return
+    if not messagebox.askyesno('Reiniciar ciclo', '¿Reiniciar el contador a cordón 1? No mueve los robots.'):
+        return
+    step_index = 0
+    recovery_required = False
+    progress_var.set('Cordón: 0/6')
+    step_var.set('Sin movimientos en curso')
+    set_status('LISTO' if door_closed else 'PUERTA ABIERTA')
+
+
+def close_panel():
+    if state == 'EJECUTANDO':
+        if not messagebox.askyesno('Salir', 'Hay un ciclo activo. ¿Detener la simulación y cerrar el panel?'):
+            return
+        stop_active()
+    root.destroy()
+
+
+def button(text, command, color, row, col=0, span=1):
+    tk.Button(root, text=text, command=command, bg=color, fg='white',
+              activebackground=color, font=('Arial', 11, 'bold'),
+              relief='flat', height=2).grid(row=row, column=col, columnspan=span,
+                                            sticky='nsew', padx=9, pady=6)
+
+root.grid_columnconfigure(0, weight=1)
+root.grid_columnconfigure(1, weight=1)
+tk.Label(root, text='CELDA DE SOLDADURA', bg='#152238', fg='white',
+         font=('Arial', 17, 'bold')).grid(row=0, column=0, columnspan=2, pady=(17, 8))
+tk.Label(root, textvariable=status_var, bg='#152238', fg='#facc15',
+         font=('Arial', 13, 'bold')).grid(row=1, column=0, columnspan=2, pady=4)
+tk.Label(root, text='PUERTA', bg='#152238', fg='white').grid(row=2, column=0)
+tk.Label(root, textvariable=door_var, bg='#152238', fg='#86efac',
+         font=('Arial', 11, 'bold')).grid(row=2, column=1)
+button('ABRIR / CERRAR PUERTA', toggle_door, '#475569', 3, span=2)
+
+tk.Label(root, text='SENSOR DE PRESENCIA', bg='#152238', fg='white',
+         font=('Arial', 10, 'bold')).grid(row=4, column=0)
+piece_indicator = tk.Label(root, textvariable=piece_var, bg='#152238',
+                           font=('Arial', 11, 'bold'))
+piece_indicator.grid(row=4, column=1)
+button('COLOCAR PIEZA', place_piece, '#0f766e', 5)
+button('RETIRAR PIEZA', remove_piece, '#9a3412', 5, col=1)
+
+button('INICIAR / RECUPERAR', start, '#15803d', 6, span=2)
+button('PARADA DE EMERGENCIA', emergency, '#b91c1c', 7, span=2)
+button('REARMAR EMERGENCIA', reset_emergency, '#b45309', 8, span=2)
+button('HOME', home, '#2563eb', 9)
+button('REINICIAR CONTADOR', reset_cycle, '#475569', 9, col=1)
+tk.Label(root, textvariable=progress_var, bg='#152238', fg='white',
+         font=('Arial', 12)).grid(row=10, column=0, columnspan=2, pady=8)
+tk.Label(root, textvariable=step_var, bg='#152238', fg='#cbd5e1',
+         font=('Arial', 10), wraplength=480).grid(row=11, column=0, columnspan=2, pady=5)
+tk.Label(root, text='SIMULACIÓN · Sensor de presencia virtual; no sustituye dispositivos de seguridad certificados',
+         bg='#152238', fg='#94a3b8', font=('Arial', 8), wraplength=490).grid(
+             row=12, column=0, columnspan=2, pady=12)
+root.protocol('WM_DELETE_WINDOW', close_panel)
+paint_door()
+update_piece_indicator()
+root.mainloop()

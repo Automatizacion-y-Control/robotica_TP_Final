@@ -1,0 +1,39 @@
+{
+  "version": "6.1.1.26991",
+  "fecha": "2026-11-06",
+  "pruebas": [
+    {
+      "prueba": "Set nativo visible como parámetro",
+      "observado": 17.0,
+      "esperado": 17
+    },
+    {
+      "prueba": "WAIT y entrada desde parámetro",
+      "bloqueado_antes": true,
+      "fin_despues": 1.0
+    },
+    {
+      "prueba": "Llamada nativa",
+      "observado": 1.0,
+      "esperado": 1
+    },
+    {
+      "prueba": "IF RAPID insertado",
+      "entrada": 0,
+      "observado": 1.0,
+      "esperado": 0
+    },
+    {
+      "prueba": "IF RAPID insertado",
+      "entrada": 1,
+      "observado": 1.0,
+      "esperado": 1
+    },
+    {
+      "prueba": "Retirada de permiso después del WAIT",
+      "etapa_al_retirar": 1.0,
+      "etapa_final": 2.0,
+      "permiso_final": 0.0
+    }
+  ]
+}

@@ -1,0 +1,51 @@
+[
+  {
+    "prueba": "IRB_ida_vuelta",
+    "secuencia": [
+      "Man_Ir_Mantenimiento",
+      "Man_Ir_Reposo"
+    ],
+    "resultado": [
+      2.0,
+      2.3,
+      389.30969785381376,
+      1.0,
+      "No se han encontrado problemas para esta trayectoria<br>No hay colisiones detectadas."
+    ],
+    "pares": []
+  },
+  {
+    "prueba": "Ambos_IRB_CRB",
+    "secuencia": [
+      "Man_Ir_Mantenimiento",
+      "Sold_Ir_Mantenimiento",
+      "Sold_Ir_Reposo",
+      "Man_Ir_Reposo"
+    ],
+    "resultado": [
+      4.0,
+      4.366666666666666,
+      1314.0696004389667,
+      1.0,
+      "No se han encontrado problemas para esta trayectoria<br>No hay colisiones detectadas."
+    ],
+    "pares": []
+  },
+  {
+    "prueba": "Ambos_CRB_IRB",
+    "secuencia": [
+      "Sold_Ir_Mantenimiento",
+      "Man_Ir_Mantenimiento",
+      "Man_Ir_Reposo",
+      "Sold_Ir_Reposo"
+    ],
+    "resultado": [
+      4.0,
+      4.366666666666666,
+      1314.0696004389667,
+      1.0,
+      "No se han encontrado problemas para esta trayectoria<br>No hay colisiones detectadas."
+    ],
+    "pares": []
+  }
+]

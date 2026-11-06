@@ -238,6 +238,11 @@ antes de aplicar el LOTO.
 
 **Panel de operador:**
 
+La propuesta y el seguimiento de implementación se registran en
+[Panel de operador y sensores](panel_y_sensores.md). Se derivan de los lineamientos de
+`a_requisitos/` y los conceptos de `b_investigacion/`; el panel v01 se conserva como antecedente.
+Los requisitos de señales y transiciones de modo de esta sección todavía no están integrados.
+
 - selector de modo (§4) y estado de cada zona y equipo;
 - arranque, parada de ciclo y rearme;
 - indicación de las paradas de emergencia y de protección, y de su causa;

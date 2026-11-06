@@ -162,3 +162,4 @@ celda y en el documento de la mejora 01.
 | [Catálogo de componentes](b_investigacion/componentesRDK.md) | Datos, justificación e imágenes de cada componente |
 | [Definición de la celda](c_prototipado/definicion_celda.md) | Diseño completo de la celda y su justificación |
 | [Mejora 01 · Cinta pasante](c_prototipado/mejora_01_cinta_pasante.md) | Cambio de la v02 a la v03 |
+| [Panel de operador y sensores](c_prototipado/panel_y_sensores.md) | Trazabilidad desde los requisitos y la investigación, revisión del antecedente v01 y propuesta de modos, mantenimiento y señales; implementación pendiente |
