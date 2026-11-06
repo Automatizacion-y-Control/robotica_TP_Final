@@ -23,3 +23,6 @@ __pycache__/
 
 # Bibliografía (material con derechos de autor, no se versiona)
 b_investigacion/biblio/
+
+# Guía de trabajo para Claude Code (no forma parte de la entrega)
+CLAUDE.md
