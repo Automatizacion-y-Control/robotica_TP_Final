@@ -1,0 +1,48 @@
+{
+  "version": "6.1.1.26991",
+  "segundos_reales": 64.89099999982864,
+  "pruebas": [
+    {
+      "prueba": "Arranque sin permiso rechazado",
+      "siguiente": 1.0
+    },
+    {
+      "prueba": "Restaurar permiso no arranca",
+      "auto": 0.0
+    },
+    {
+      "prueba": "Parada durante soldadura",
+      "pieza": 1,
+      "siguiente": 2.0,
+      "completadas": 1.0,
+      "lotes": 0.0
+    },
+    {
+      "prueba": "Parada durante toma",
+      "pieza": 2,
+      "siguiente": 3.0,
+      "completadas": 2.0,
+      "lotes": 0.0
+    },
+    {
+      "prueba": "Parada durante soldadura",
+      "pieza": 4,
+      "siguiente": 5.0,
+      "completadas": 4.0,
+      "lotes": 0.0
+    },
+    {
+      "prueba": "Parada durante segundo lote",
+      "pieza": 4,
+      "siguiente": 5.0,
+      "completadas": 8.0,
+      "lotes": 1.0
+    },
+    {
+      "prueba": "Dos lotes soldados sin repetir piezas",
+      "completadas": 8,
+      "fin_segundo_lote_diferido": true,
+      "colisiones": 0
+    }
+  ]
+}

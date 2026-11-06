@@ -124,7 +124,9 @@ proyectoRobotica/
 |---|---|---|
 | v01 | [`Celda_Soldadura_Estator_Grupo4_v01.rdk`](c_prototipado/Celda_Soldadura_Estator_Grupo4_v01.rdk) | Versión original: posicionador ABB MTD 250 y cilindro de 6 cordones |
 | v02 | [`Celda_Soldadura_Estator_Grupo4_v02.rdk`](c_prototipado/Celda_Soldadura_Estator_Grupo4_v02.rdk) | Manipulador + soldador TIG sobre el paquete de estator; entrada por cinta y salida por pallet |
-| **v03** | [`Celda_Soldadura_Estator_Grupo4_v03.rdk`](c_prototipado/Celda_Soldadura_Estator_Grupo4_v03.rdk) | **Versión actual.** Cinta pasante: la misma cinta trae y saca las piezas; sin pallet |
+| v03 | [`Celda_Soldadura_Estator_Grupo4_v03.rdk`](c_prototipado/Celda_Soldadura_Estator_Grupo4_v03.rdk) | Cinta pasante: la misma cinta trae y saca las piezas; sin pallet |
+| **v04** | [`Celda_Soldadura_Estator_Grupo4_v04.rdk`](c_prototipado/Celda_Soldadura_Estator_Grupo4_v04.rdk) | **Base verificada.** Disposición y posiciones de mantenimiento; integración funcional de modos pendiente |
+| v05 | [`Celda_Soldadura_Estator_Grupo4_v05.rdk`](c_prototipado/Celda_Soldadura_Estator_Grupo4_v05.rdk) | **En desarrollo.** Coordinador nativo con arranque y parada entre piezas e índice de lote retenido. Panel, sensores y modos completos pendientes; ver [seguimiento](c_prototipado/panel_y_sensores.md) |
 
 ## Cómo abrir y reproducir la celda
 

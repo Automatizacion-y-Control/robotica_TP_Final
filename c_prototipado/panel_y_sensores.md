@@ -224,7 +224,7 @@ en [modos y mantenimiento, §§6–7 y 11](modos_y_mantenimiento.md).
 | 3 | Comprobar condiciones/saltos y monitoreo durante movimiento en RoboDK 6.1.1 | IF, WHILE, E/S y ejecución paralela probados; ELSE no validado. Retirar permiso durante MoveJ de cinta no detiene el movimiento. Interrupción inmediata nativa no demostrada. |
 | 4 | Verificar preparación/retorno individual, conjunta y de cinta | IRB de regreso y ambos órdenes conjuntos pasan. Ensayada cinta sin evacuación y evacuación del lote inicial; banda vacía y lotes parciales requieren procedimiento específico. |
 | 5 | Fijar contrato de E/S, escritor único, acuses, tolerancias y tiempos máximos | Propuesta de señales; pendiente de cerrar. |
-| 6 | Implementar coordinación nativa sin perder eventos de la estación anterior | Pendiente. |
+| 6 | Implementar coordinación nativa sin perder eventos de la estación anterior | Parcial: v05 con arranque/parada entre piezas y continuación verificados; modos completos pendientes. |
 | 7 | Implementar sensores y comprobar detecciones antes/durante/después de toma y depósito | Pendiente. |
 | 8 | Construir panel propio con solicitudes e indicadores | Pendiente; antecedente revisado. |
 | 9 | Ensayos integrados y documentación de resultados | Pendiente. |
@@ -301,7 +301,8 @@ La correspondencia de E/S con parámetros también está descrita en la
 
 Alcance pendiente: no se probó el vencimiento del timeout nativo ni combinaciones arbitrarias de
 sintaxis RAPID. Los ensayos sin robots usan pausas,
-no trayectorias. Todavía no se ha cambiado la configuración de flujo de la v04 ni creado la v05.
+no trayectorias. En esta etapa de ensayo todavía no se había generado la v05; su implementación
+posterior se registra más abajo. La configuración de la v04 se conserva.
 
 La comprobación posterior sobre un movimiento real del mecanismo se registra en el apartado siguiente;
 no se logró una interrupción nativa inmediata.
@@ -371,8 +372,69 @@ El resultado se registra en `persistencia_flujo` del JSON de cinta. Esto permite
 v05 del archivo v04 conservando los eventos originales, en vez de reconstruirla desde el ejemplo.
 
 Siguientes tareas: cerrar estados/órdenes y recuperación para lotes parciales; elegir la
-representación de las interrupciones dentro de las capacidades demostradas. La v05 y el panel
-todavía no están implementados.
+representación de las interrupciones dentro de las capacidades demostradas. El panel sigue
+pendiente; la primera implementación del coordinador v05 se describe a continuación.
+
+### Implementación inicial de parada entre piezas
+
+Se implementó [mejora_03_coordinacion.py](scripts/mejora_03_coordinacion.py) y se generó la
+estación v05. El primer intento se interrumpió al abrirse RoboDK con licencia gratuita y limitarse
+las llamadas a la API. Después se conectó a la instancia administrativa en **20501**, con licencia
+`Free (Trial)`, y se completaron generación, guardado, reapertura y ensayos dinámicos.
+
+El generador ahora comprueba que ya exista servidor y consulta la licencia antes de construir,
+y trabaja desde una copia temporal del archivo v04. Su propuesta conserva el ciclo productivo
+anterior como antecedente y agrega un coordinador nativo con:
+
+- solicitudes numeradas de arranque y parada, con acuse de recepción;
+- `PROXIMA_PIEZA` retenida entre paradas, sin repetir `Inicio_Celda` al continuar;
+- parada antes de la siguiente pieza y diferimiento de `Fin_Lote` si se solicita detener al
+  terminar la cuarta pieza;
+- permiso inicial en cero y ningún arranque automático al recuperar ese permiso;
+- pérdida de permiso atendida al retornar del subprograma, sin atribuirle interrupción inmediata.
+
+Banco: [verificar_coordinacion_v05.py](scripts/verificar_coordinacion_v05.py).
+[Resultados](verificaciones/coordinacion_v05.json), con simulación ×10 y colisiones activas:
+
+| Caso | Resultado |
+|---|---|
+| Arranque sin permiso | Rechazado; siguiente pieza = 1. |
+| Restituir permiso después del rechazo | No arranca hasta recibir un nuevo identificador de arranque. |
+| Parada durante soldadura de pieza 1 | Completa y deposita pieza 1; siguiente = 2, contador = 1. |
+| Continuación y parada durante toma de pieza 2 | Completa y deposita pieza 2; siguiente = 3, contador = 2. |
+| Continuación y parada durante soldadura de pieza 4 | Completa cuatro piezas; siguiente = 5 (Fin_Lote pendiente), lotes repuestos = 0. |
+| Continuación hacia segundo lote y parada en pieza 4 | Ejecuta Fin_Lote del primero, procesa otras cuatro piezas; contador = 8, siguiente = 5, lotes repuestos = 1. |
+| Pedido de parada mantenido después del acuse | No inicia otra pieza ni modifica el contador durante la observación. |
+
+`LOTES_COMPLETADOS` cuenta ejecuciones de Fin_Lote (evacuación y reposición), no simplemente cuatro
+piezas soldadas. En el último punto hay dos lotes soldados y la evacuación/reposición del segundo
+está diferida por la parada. Los eventos originales se ejecutaron al terminar el primer lote.
+El banco solo inyecta señales y observa el coordinador; no encadena los subprogramas de piezas.
+Al finalizar reabre el archivo nominal y restablece ×1, sin guardar el estado de prueba.
+
+Contrato de señales de esta etapa:
+
+| Señal | Escritor en operación | Significado |
+|---|---|---|
+| `ARRANQUE_ID` / `PARADA_ID` | Panel futuro | Identificadores crecientes de solicitudes; no pulsos efímeros. |
+| `ARRANQUE_ACK` / `PARADA_ACK` | Coordinador nativo | Solicitud atendida; acuse no implica aceptación. Consultar causa/estado. |
+| `PERMISO_OPERACION` | Lógica de sensores futura | Habilitación inicial; por defecto 0. Su pérdida se atiende entre subprogramas, no interrumpe un movimiento. |
+| `AUTO_ACTIVO` | Coordinador | Producción habilitada, incluidos intervalos entre piezas. |
+| `ESTADO_CONTROL` | Coordinador | 0 inicial, 1 automático, 2 parada normal, 3 permiso perdido. |
+| `CAUSA_RECHAZO` | Coordinador | 0 arranque aceptado, 1 condiciones de arranque no satisfechas. |
+| `PROXIMA_PIEZA` | Coordinador | 1–4 siguiente pieza; 5 fin de lote pendiente. |
+| `PIEZA_ACTIVA` | Coordinador | 0 sin pieza en ejecución; 1–4 subprograma de pieza activo. |
+| `CELDA_INICIALIZADA` | Coordinador | Inicio_Celda ya ejecutado; no reiniciarlo al continuar una parada normal. |
+| `PIEZAS_COMPLETADAS` / `LOTES_COMPLETADOS` | Coordinador | Contadores de pieza depositada y de fin de lote ejecutado. |
+| `COORDINADOR_ACTIVO` | Banco de verificación en esta etapa | Ejecutar el bucle mientras vale 1. No es un mando de emergencia ni un botón de operación. |
+
+El primer ensayo detectó que una comparación asignada puede almacenarse como texto `false`:
+se corrigió `PEDIDO_PARADA` para fijar valores numéricos 0/1 mediante E/S dentro de IF.
+
+Pendiente: parada durante depósito como caso específico, pérdida de permiso durante pieza,
+solicitudes simultáneas y recuperación tras cierre/reinicio del coordinador. No usar este
+coordinador como recuperación de fallas o función de seguridad. Mantenimiento, sensores y panel
+todavía deben integrarse; la v05 es una versión en desarrollo.
 
 ## 11. Referencias
 
