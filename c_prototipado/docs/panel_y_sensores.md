@@ -254,8 +254,7 @@ real. No guardar contraseñas en texto plano.
 
 ### Manual del panel
 
-El panel deberá entregarse con su correspondiente **`manual.md`**, ubicado junto a su implementación
-cuando se cierre la estructura de archivos. Se redactará y actualizará durante el desarrollo y
+El panel se entrega con su [**`manual.md`**](manual.md), en esta misma carpeta. Se redactará y actualizará durante el desarrollo y
 se validará contra el funcionamiento real antes de la entrega. Debe respetar portada, índice,
 prólogo, referencias y rutas relativas del proyecto.
 
@@ -297,7 +296,7 @@ en [modos y mantenimiento, §§6–7 y 11](modos_y_mantenimiento.md).
 | 5 | Fijar contrato de E/S, escritor único, acuses, tolerancias y tiempos máximos | Propuesta de señales; pendiente de cerrar. |
 | 6 | Implementar coordinación nativa sin perder eventos de la estación anterior | Parcial: v05 con arranque/parada entre piezas, continuación y modos de mantenimiento verificados; ver [modos nativos](#modos-nativos-y-sensores-geométricos). Faltan fallas con pieza sostenida y vaciado de cinta. |
 | 7 | Implementar sensores y comprobar detecciones antes/durante/después de toma y depósito | Parcial: posición de robots, cinta detenida y pieza sujeta. Faltan presencia en toma, pinza, posición de cinta, entradas de resguardo y vigencia. |
-| 8 | Construir panel propio con solicitudes e indicadores | Pendiente; antecedente revisado. |
+| 8 | Construir panel propio con solicitudes e indicadores | Implementado; ver [implementación del panel](#implementación-del-panel). |
 | 9 | Ensayos integrados y documentación de resultados | Pendiente. |
 
 Ensayos de aceptación que deben quedar registrados:
@@ -603,6 +602,30 @@ Limitaciones conocidas de esta revisión:
 1. `SENSORES_VALIDOS` no acredita vigencia; si el proceso termina de forma abrupta, queda en 1.
 2. El rechazo por pieza sujeta (causa 5) no se ensayó: requiere una falla con pieza en la pinza.
 3. Si un equipo queda fuera de reposo, el correctivo no puede cerrarse: falta la recuperación supervisada.
+
+### Implementación del panel
+
+Código en [panel/](../panel/): `cuentas.py`, `permisos.py`, `procesador.py`, `enlace.py`, `ventana.py` y `panel.py`. Uso en el [manual](manual.md).
+Banco: [verificar_panel.py](../scripts/verificar_panel.py). [Resultados](../verificaciones/panel_v05.json), con la v05 a ×10 y colisiones activas.
+
+Las órdenes siguen este camino: interfaz → procesador (sesión y permiso) → enlace → señal → coordinador nativo → confirmación → registro. El enlace es el único hilo que habla con RoboDK, ejecuta los sensores y no puede abrir RoboDK. Las entradas de simulación quedaron en el perfil de mantenimiento. El bloqueo por intentos dura 5 minutos.
+
+| Caso | Resultado |
+|---|---|
+| Matriz de permisos | 15 casillas positivas y negativas comprobadas en el procesador, además de las de administración. |
+| Sesión | Vencida, inhabilitada o con perfil cambiado: órdenes rechazadas. |
+| Cuentas | Hash con salt individual, bloqueo temporal y última cuenta administradora protegida. |
+| Código | Sin llamadas de ejecución ni movimiento en `panel/` y `sensores_modos.py`. |
+| Sin servidor | El enlace falla sin abrir RoboDK. |
+| Coordinador detenido | El panel lo indica y no lo inicia. |
+| Inicio y cierre de sesión | No arrancan ni mueven equipos. |
+| Botones de arranque y parada | Completan la pieza y conservan el índice. |
+| Cerrar sesión o la ventana en producción | Completan la pieza y no reinician el lote. |
+| Preparar y regresar | Modo 2 confirmado; regreso sin autoarranque. |
+| Rechazo nativo | El panel muestra la causa. |
+| Registro | Distingue solicitud y confirmación nativa. |
+
+Pendiente: reconocimiento de alarmas y rearme, entradas de puerta, cortinas y emergencia, vigencia de señales, más de un perfil por cuenta y evacuación de la cinta. No se ensayó la caída real de RoboDK con el panel abierto.
 
 ## 11. Referencias
 

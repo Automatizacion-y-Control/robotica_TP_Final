@@ -107,6 +107,7 @@ proyectoRobotica/
 │   └── biblio/                        Libros y clases (no se versiona)
 ├── c_prototipado/                   Diseño, construcción y verificación de la celda
 │   ├── docs/                          Definición de la celda, mejoras, modos y panel
+│   ├── panel/                         Panel de operador (PySide2)
 │   ├── Celda_Soldadura_Estator_Grupo4_v01.rdk
 │   ├── Celda_Soldadura_Estator_Grupo4_v02.rdk
 │   ├── Celda_Soldadura_Estator_Grupo4_v03.rdk
@@ -165,3 +166,4 @@ celda y en el documento de la mejora 01.
 | [Definición de la celda](c_prototipado/docs/definicion_celda.md) | Diseño completo de la celda y su justificación |
 | [Mejora 01 · Cinta pasante](c_prototipado/docs/mejora_01_cinta_pasante.md) | Cambio de la v02 a la v03 |
 | [Panel de operador y sensores](c_prototipado/docs/panel_y_sensores.md) | Trazabilidad desde los requisitos y la investigación, revisión del antecedente v01 y propuesta de modos, mantenimiento y señales; implementación pendiente |
+| [Manual del panel](c_prototipado/docs/manual.md) | Puesta en marcha y operación del panel de la v05 |
