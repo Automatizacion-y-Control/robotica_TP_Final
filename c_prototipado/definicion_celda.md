@@ -59,7 +59,9 @@ Se genera de forma reproducible con los scripts de [`scripts/`](scripts/). Los s
 **construyen** la estación: todos los movimientos del ciclo son instrucciones nativas de RoboDK
 (MoveJ, MoveL y MoveC), y ningún script mueve los robots durante la ejecución.
 
-Las medidas de la pieza son **estimadas** (ver [`componentesRDK.md`, §6](../b_investigacion/componentesRDK.md)).
+Las medidas de la pieza son **medidas de diseño adoptadas** por el grupo (ver
+[`componentesRDK.md`, §6](../b_investigacion/componentesRDK.md)); si se mide un paquete real, se
+reemplazan siguiendo el procedimiento de [`scripts/parametros_celda.py`](scripts/parametros_celda.py).
 Todas las cotas de la celda están en [`scripts/parametros_celda.py`](scripts/parametros_celda.py),
 que es la fuente única de valores.
 
@@ -88,7 +90,7 @@ lavarropas de ~330 W. Cada paquete lleva **4 cordones axiales**, uno por arista,
 
 | Dato | Valor |
 |---|---|
-| Pieza | Paquete de estator 105 × 105 × 55 mm, agujero Ø55, 3,6 kg (estimado) |
+| Pieza | Paquete de estator 105 × 105 × 55 mm, agujero Ø55, 3,6 kg (medidas adoptadas) |
 | Cordones por pieza | 4, de 53 mm, en el escalón de cada arista |
 | Proceso | TIG sin aporte, 8 mm/s, distancia de arco 2 mm |
 | Entrada | Cinta transportadora, lote de 4 piezas |
@@ -336,8 +338,8 @@ pieza. La transición tiene tres tramos:
    `Sold_Transicion_Medio` (sobre la vertical de la cara superior) hasta `Sold_B_Entrada`.
 3. **Entrada radial (MoveL)** hasta el inicio del cordón B.
 
-- **Por qué 80 mm y no el radio de soldadura:** durante el cordón el TCP está a 69,2 mm del eje
-  (47,5 · √2 + 2). Los bordes del escalón de la arista están a √(47,5² + 52,5²) = **70,8 mm**. Un arco
+- **Por qué 80 mm y no el radio de soldadura:** durante el cordón el TCP está a 70,6 mm del eje
+  (48,5 · √2 + 2). Los bordes del escalón de la arista están a √(48,5² + 52,5²) = **71,5 mm**. Un arco
   al radio de soldadura roza la pared del escalón al salir de la arista. Así lo detectó la simulación
   con la pieza real enganchada en la pinza.
 - **Orientación:** la antorcha se mantiene radial y gira 90° a lo largo del arco.
@@ -533,7 +535,8 @@ Queda fuera del alcance de este trabajo.
    **Conviene consultar a la cátedra** si la segunda opción es aceptable, porque los lineamientos
    limitan Python a los sensores.
 3. **Ejecución en bucle** del `Programa_Principal`, una vez resuelta la reposición del lote.
-4. **Medidas reales** del paquete de estator, para reemplazar las estimadas en `parametros_celda.py`.
+4. ✔ **Medidas del paquete de estator:** se adoptan las de diseño (105 × 105 × 55 mm). Si se mide un
+   paquete real, se actualizan con el procedimiento documentado en `parametros_celda.py`.
 5. **Panel de operador y sensores** (puerta, emergencia, presencia), retomando el de la versión
    anterior. Solo puede habilitar o detener el ciclo, nunca mover los robots.
 6. **Volver a verificar** con `verificar_celda.py --colisiones --con-pieza` después de los cambios.

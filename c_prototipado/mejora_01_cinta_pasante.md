@@ -237,7 +237,7 @@ proceso para cambiar un pallet).
 
    Representan al operario que, afuera, retira las piezas soldadas y carga el lote siguiente. El
    `Programa_Principal` puede ejecutarse en bucle (§8).
-2. **Medidas reales** del estator, igual que en la v02.
+2. ✔ **Medidas del estator:** se adoptan las de diseño, igual que en la v02.
 
 **Nota sobre la licencia de RoboDK:** la licencia de prueba solo se valida, y permite guardar
 estaciones con varios robots, si RoboDK se ejecuta **como administrador** y con conexión a

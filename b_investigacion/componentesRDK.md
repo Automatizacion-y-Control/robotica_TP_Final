@@ -256,12 +256,12 @@ aristas donde van los cordones. La carrera de 85 mm es mayor que el diámetro de
 | Dato | Valor | Fuente |
 |---|---|---|
 | Descripción | Paquete de chapas de acero al silicio, sin bobinar, de un motor universal de lavarropas | [Despiece](despiece_motor_lavarropas.md) |
-| Sección exterior | 105 × 105 mm | Estimado |
-| Largo de apilado | 55 mm | Estimado |
-| Agujero central | Ø55 mm | Estimado |
-| Escalón en cada arista | 4 × 4 mm | Estimado |
-| Masa | 3,6 kg (acero al silicio, 7,65 g/cm³) | Calculado sobre las medidas estimadas |
-| Cordones | 4 axiales, uno por arista, cada 90°, de 55 mm | Estimado ([despiece, §4](despiece_motor_lavarropas.md)) |
+| Sección exterior | 105 × 105 mm | Adoptado (medida de diseño) |
+| Largo de apilado | 55 mm | Adoptado |
+| Agujero central | Ø55 mm | Adoptado |
+| Escalón en cada arista | 4 × 4 mm | Adoptado |
+| Masa | 3,6 kg (acero al silicio, 7,65 g/cm³) | Calculado sobre las medidas adoptadas |
+| Cordones | 4 axiales, uno por arista, cada 90°, de 53 mm (1 mm de margen en cada cara) | Adoptado ([despiece, §4](despiece_motor_lavarropas.md)) |
 | Archivo | `c_prototipado/modelos/paquete_estator.stl` | Modelo propio |
 
 **Por qué se modela así:** reemplaza al cilindro `generator_assembly` de la versión anterior, que
@@ -277,7 +277,7 @@ a lo largo del eje del paquete.
 |---|---|---|
 | Tipo | Cinta modelada como **mecanismo de 1 eje lineal** | Biblioteca RoboDK, ejemplo 17 *Conveyor Swap* |
 | Recorrido del eje | ±900 m (sin límite práctico) | Modelo (API) |
-| Dimensiones | ~2200 × 750 mm en planta | Estimado sobre el modelo |
+| Dimensiones | Banda de 600 mm de ancho y ~2050 mm de largo; ~680 mm de ancho total | Medido sobre el modelo |
 | Archivo | `C:\RoboDK\Library\17-Conveyor Swap\Parts\Conveyor.robot` | Biblioteca local |
 
 **Función:** traer los paquetes de estator a la zona de toma del manipulador. El operario carga la

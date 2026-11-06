@@ -1,34 +1,81 @@
 """Parámetros geométricos y de proceso de la celda de soldadura de estatores.
 
-Fuente única de cotas para generar_modelos.py (geometría) y construir_celda.py
-(disposición, targets y programas). Unidades: mm, grados, mm/s.
+Fuente única de cotas y valores de proceso. La usan:
+    generar_modelos.py          geometría de los modelos propios (STL)
+    construir_celda.py          estación v02: disposición, targets y programas
+    programa_soldadura.py       targets y programa del par de cordones
+    mejora_01_cinta_pasante.py  estación v03, a partir de la v02
+    verificar_celda.py          pieza de prueba para la verificación
+
+Unidades: mm, grados (°) y mm/s, salvo que se indique otra cosa.
 
 Sistema de referencia de la celda (Frame_Celda):
     origen en el piso, en el centro de la base del robot manipulador;
-    +X hacia la ventana del pallet y la puerta; +Y hacia el robot soldador;
-    +Z hacia arriba.
+    +X hacia la cara este (puerta y salida de piezas); +Y hacia el robot
+    soldador; +Z hacia arriba.
+
+Estado de los valores
+---------------------
+Cada grupo indica de dónde sale su valor:
+    ADOPTADO      medida de diseño fijada por el grupo; es la que vale para la celda.
+    MEDIDO        medido sobre un modelo de la biblioteca de RoboDK.
+    TÍPICO        valor habitual del proceso o del equipo, sin medición propia.
+    DISEÑO        cota de la disposición elegida en el diseño de la celda.
+
+Cómo actualizar un valor
+------------------------
+1. Cambiar el valor en este archivo (y su comentario, si cambia el origen).
+2. Si afecta la geometría (pieza, antorcha, cerramiento, cinta, pallet,
+   estación de servicio): python generar_modelos.py
+3. Reconstruir las estaciones:
+     a. v02: construir_celda.py. Borra y rehace la estación: hay que volver a
+        cargar desde la GUI los eventos Evento_Tomar_Pieza (adjuntar a
+        TCP_Pinza) y Evento_Soltar_Pieza (separar a Frame_Pallet), y guardar.
+        Si solo cambia la soldadura, alcanza con actualizar_soldadura.py, que
+        conserva los eventos.
+     b. v03: mejora_01_cinta_pasante.py, a partir de la v02 ya guardada
+        (conserva los eventos de tomar y soltar). Después hay que volver a
+        cargar en Fin_Lote los eventos de reposición del lote, con los
+        estatores en su posición de inicio, y guardar.
+4. Verificar: verificar_celda.py --colisiones --con-pieza [--estacion ...]
+5. Actualizar los documentos que citan el valor (definicion_celda.md,
+   mejora_01_cinta_pasante.md, componentesRDK.md).
+
+RoboDK tiene que estar abierto como administrador: si no, la licencia de
+prueba no se valida y no permite guardar estaciones con varios robots.
 """
 
 # ---------------------------------------------------------------------------
-# Pieza: paquete de estator (medidas estimadas, ver componentesRDK.md §6)
+# Pieza: paquete de estator                                          ADOPTADO
 # ---------------------------------------------------------------------------
+# Medidas de diseño del paquete de chapas de estator de un motor universal de
+# lavarropas de ~330 W, adoptadas como definitivas el 2026-11-06. Surgieron de
+# las fotos del motor de referencia (b_investigacion/despiece_motor_lavarropas.md)
+# y de la masa resultante. Si se mide un paquete real, se reemplazan acá
+# siguiendo el procedimiento de la cabecera.
 ESTATOR_LADO = 105.0          # lado exterior de la sección cuadrada
-ESTATOR_LARGO = 55.0          # largo de apilado (eje del paquete)
-ESTATOR_D_AGUJERO = 55.0      # diámetro del agujero central
+ESTATOR_LARGO = 55.0          # largo de apilado (eje del paquete); el cordón mide 53 mm (1 mm de margen por cara)
+ESTATOR_D_AGUJERO = 55.0      # diámetro del agujero central; tiene que superar 29 mm (dedos de la pinza cerrados)
 ESTATOR_ESCALON = 4.0         # escalón en cada arista, alojamiento del cordón
+# Masa resultante con acero al silicio (7,65 g/cm3): 3,6 kg. La calcula
+# generar_modelos.py. Junto con la pinza (~0,9 kg) tiene que quedar por debajo
+# de la carga del IRB 1200 (7 kg).
 
 # Punto de soldadura: vértice interior del escalón, medido desde el eje.
-CORDON_XY = ESTATOR_LADO / 2.0 - ESTATOR_ESCALON          # 47,5 mm
+CORDON_XY = ESTATOR_LADO / 2.0 - ESTATOR_ESCALON          # 48,5 mm con las medidas adoptadas
 
 # ---------------------------------------------------------------------------
-# Proceso TIG sin aporte
+# Proceso TIG sin aporte                                    TÍPICO / DISEÑO
 # ---------------------------------------------------------------------------
-TIG_TCP_Z = 207.0             # punta del tungsteno respecto de la brida
+# Valores de proceso típicos de TIG sin aporte sobre chapa fina; ajustar con
+# ensayos si se pasa a una instalación real.
+TIG_TCP_Z = 207.0             # punta del tungsteno respecto de la brida (geometría de antorcha_tig.stl)
 DIST_ARCO = 2.0               # distancia punta-pieza durante el cordón
 DIST_APROX_SOLD = 40.0        # retiro radial para aproximación y salida
 # Radio (desde el eje del estator) de la transición en arco entre aristas.
-# Tiene que superar el de los bordes del escalón, sqrt(47,5^2 + 52,5^2) = 70,8 mm,
+# Tiene que superar el de los bordes del escalón, sqrt(48,5^2 + 52,5^2) = 71,5 mm,
 # más el radio del electrodo y un margen; con 80 mm la punta pasa a 27,5 mm de la cara.
+# Durante el cordón el TCP está a CORDON_XY * sqrt(2) + DIST_ARCO = 70,6 mm del eje.
 R_TRANSICION = 80.0
 V_SOLDADURA = 8.0             # velocidad de avance del cordón (TIG manual: 2-10 mm/s)
 V_APROX = 100.0               # aproximación y retiro lineal
@@ -36,8 +83,9 @@ V_TRASLADO_LIN = 500.0        # traslados lineales largos
 V_ARTICULAR = 60.0            # velocidad articular de los MoveJ (°/s)
 
 # ---------------------------------------------------------------------------
-# Pinza Robotiq 2F-85 (agarre interior en el agujero del estator)
+# Pinza Robotiq 2F-85 (agarre interior en el agujero del estator)      MEDIDO
 # ---------------------------------------------------------------------------
+# Largo y aperturas medidos sobre el modelo de la biblioteca de RoboDK.
 PINZA_TCP_Z = 150.0           # centro de las almohadillas respecto de la brida
 PINZA_PROF_AGARRE = 20.0      # profundidad del TCP dentro del agujero, desde la cara
 PINZA_CERRADA = 0.0           # apertura para entrar en el agujero (dedos juntos)
@@ -46,8 +94,10 @@ PINZA_ABIERTA = 85.0          # apertura máxima (reposo)
 DIST_APROX_PINZA = 80.0       # altura de aproximación sobre la cara del estator
 
 # ---------------------------------------------------------------------------
-# Disposición en planta (Frame_Celda)
+# Disposición en planta (Frame_Celda)                                 DISEÑO
 # ---------------------------------------------------------------------------
+# Cotas elegidas para que todos los puntos queden dentro del alcance de los
+# robots (IRB 1200: 703 mm, CRB 1300: 1150 mm); ver verificar_celda.py.
 # Robot manipulador ABB IRB 1200-7/0.7, apoyado en el piso.
 IRB_BASE = (0.0, 0.0, 0.0, 0.0)          # x, y, z, giro en Z
 
@@ -58,7 +108,7 @@ CRB_BASE = (0.0, 1150.0, 0.0, -90.0)
 # El eje del estator queda paralelo a +Y (apuntando al soldador).
 SOLD_CENTRO = (0.0, 500.0, 620.0)
 
-# Cinta de entrada (modelo ConveyorA del ejemplo 17 de RoboDK).
+# Cinta (modelo ConveyorA del ejemplo 17 de RoboDK).                  MEDIDO
 # El modelo tiene la base en un extremo, la banda hacia +X y la cara
 # superior a 366,5 mm del piso.
 CINTA_ALTURA_BANDA = 366.5
@@ -68,7 +118,7 @@ CINTA_TOMA = (120.0, -560.0)   # posición (x, y) del centro del estator al toma
 CINTA_PASO = 300.0             # separación entre estatores sobre la banda
 LOTE = 4                       # estatores por lote (= posiciones del pallet)
 
-# Pallet de salida de 2 x 2 posiciones sobre un soporte bajo.
+# Pallet de salida de 2 x 2 posiciones sobre un soporte bajo (solo v02).  DISEÑO
 PALLET_CENTRO = (480.0, 0.0)   # centro del pallet en planta
 PALLET_LADO = 400.0
 PALLET_ESPESOR = 20.0
@@ -80,7 +130,7 @@ SERVICIO_BASE = (520.0, 1300.0)
 SERVICIO_PUNTO = (0.0, 60.0, 970.0)   # punto de verificación del TCP, relativo a la base
 
 # ---------------------------------------------------------------------------
-# Cerramiento (protección de nivel 1)
+# Cerramiento (protección de nivel 1)                                 DISEÑO
 # ---------------------------------------------------------------------------
 CERR_X = (-1300.0, 850.0)      # caras oeste y este
 CERR_Y = (-1150.0, 1850.0)     # caras sur y norte
@@ -90,21 +140,23 @@ CERR_PANEL = 4.0
 # Abertura en la cara oeste por donde entra la cinta (túnel).
 CERR_ABERTURA_CINTA_Y = (-1000.0, -120.0)
 CERR_ABERTURA_CINTA_Z = 700.0
-# Ventana de descarga del pallet en la cara este, protegida por cortina de luz.
+# Ventana de descarga del pallet en la cara este, con cortina de luz (solo v02).
 CERR_VENTANA_PALLET_Y = (-300.0, 300.0)
 CERR_VENTANA_PALLET_Z = (300.0, 1000.0)
 # Puerta de acceso en la cara este, frente a la estación de servicio.
 CERR_PUERTA_Y = (1000.0, 1700.0)
 
 # ---------------------------------------------------------------------------
-# Posiciones de reposo (valores articulares)
+# Posiciones de reposo (valores articulares)                          DISEÑO
 # ---------------------------------------------------------------------------
+# Fuera del volumen de giro de la pieza en la zona de soldadura.
 IRB_REPOSO = [0.0, -20.0, 30.0, 0.0, 80.0, 0.0]
 CRB_REPOSO = [0.0, -10.0, 10.0, 0.0, 60.0, 0.0]
 
 # ---------------------------------------------------------------------------
-# Mejora 01 (v03): cinta pasante, entrada y salida por la misma cinta
+# Mejora 01 (v03): cinta pasante, entrada y salida por la misma cinta  DISEÑO
 # ---------------------------------------------------------------------------
+# Ver c_prototipado/mejora_01_cinta_pasante.md.
 # El modelo ConveyorA termina a ~2050 mm de su base; se prolonga con un tramo
 # propio que atraviesa la cara este del cerramiento. Todo lo que está sobre la
 # banda (Frame_Banda) avanza con el mismo eje del mecanismo.
