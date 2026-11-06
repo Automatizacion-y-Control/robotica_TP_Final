@@ -1,0 +1,254 @@
+solid accionamiento_cinta.stl
+  facet normal 0.000000 0.000000 -1.000000
+    outer loop
+      vertex -70.0000 -60.0000 156.5000
+      vertex -70.0000 60.0000 156.5000
+      vertex 70.0000 60.0000 156.5000
+    endloop
+  endfacet
+  facet normal 0.000000 0.000000 -1.000000
+    outer loop
+      vertex -70.0000 -60.0000 156.5000
+      vertex 70.0000 60.0000 156.5000
+      vertex 70.0000 -60.0000 156.5000
+    endloop
+  endfacet
+  facet normal 0.000000 0.000000 1.000000
+    outer loop
+      vertex -70.0000 -60.0000 296.5000
+      vertex 70.0000 -60.0000 296.5000
+      vertex 70.0000 60.0000 296.5000
+    endloop
+  endfacet
+  facet normal 0.000000 0.000000 1.000000
+    outer loop
+      vertex -70.0000 -60.0000 296.5000
+      vertex 70.0000 60.0000 296.5000
+      vertex -70.0000 60.0000 296.5000
+    endloop
+  endfacet
+  facet normal 0.000000 -1.000000 0.000000
+    outer loop
+      vertex -70.0000 -60.0000 156.5000
+      vertex 70.0000 -60.0000 156.5000
+      vertex 70.0000 -60.0000 296.5000
+    endloop
+  endfacet
+  facet normal 0.000000 -1.000000 0.000000
+    outer loop
+      vertex -70.0000 -60.0000 156.5000
+      vertex 70.0000 -60.0000 296.5000
+      vertex -70.0000 -60.0000 296.5000
+    endloop
+  endfacet
+  facet normal 0.000000 1.000000 0.000000
+    outer loop
+      vertex -70.0000 60.0000 156.5000
+      vertex -70.0000 60.0000 296.5000
+      vertex 70.0000 60.0000 296.5000
+    endloop
+  endfacet
+  facet normal 0.000000 1.000000 0.000000
+    outer loop
+      vertex -70.0000 60.0000 156.5000
+      vertex 70.0000 60.0000 296.5000
+      vertex 70.0000 60.0000 156.5000
+    endloop
+  endfacet
+  facet normal -1.000000 0.000000 0.000000
+    outer loop
+      vertex -70.0000 -60.0000 156.5000
+      vertex -70.0000 -60.0000 296.5000
+      vertex -70.0000 60.0000 296.5000
+    endloop
+  endfacet
+  facet normal -1.000000 0.000000 0.000000
+    outer loop
+      vertex -70.0000 -60.0000 156.5000
+      vertex -70.0000 60.0000 296.5000
+      vertex -70.0000 60.0000 156.5000
+    endloop
+  endfacet
+  facet normal 1.000000 0.000000 0.000000
+    outer loop
+      vertex 70.0000 -60.0000 156.5000
+      vertex 70.0000 60.0000 156.5000
+      vertex 70.0000 60.0000 296.5000
+    endloop
+  endfacet
+  facet normal 1.000000 0.000000 0.000000
+    outer loop
+      vertex 70.0000 -60.0000 156.5000
+      vertex 70.0000 60.0000 296.5000
+      vertex 70.0000 -60.0000 296.5000
+    endloop
+  endfacet
+  facet normal 0.000000 0.000000 -1.000000
+    outer loop
+      vertex -60.0000 60.0000 166.5000
+      vertex -60.0000 260.0000 166.5000
+      vertex 60.0000 260.0000 166.5000
+    endloop
+  endfacet
+  facet normal 0.000000 0.000000 -1.000000
+    outer loop
+      vertex -60.0000 60.0000 166.5000
+      vertex 60.0000 260.0000 166.5000
+      vertex 60.0000 60.0000 166.5000
+    endloop
+  endfacet
+  facet normal 0.000000 0.000000 1.000000
+    outer loop
+      vertex -60.0000 60.0000 286.5000
+      vertex 60.0000 60.0000 286.5000
+      vertex 60.0000 260.0000 286.5000
+    endloop
+  endfacet
+  facet normal 0.000000 0.000000 1.000000
+    outer loop
+      vertex -60.0000 60.0000 286.5000
+      vertex 60.0000 260.0000 286.5000
+      vertex -60.0000 260.0000 286.5000
+    endloop
+  endfacet
+  facet normal 0.000000 -1.000000 0.000000
+    outer loop
+      vertex -60.0000 60.0000 166.5000
+      vertex 60.0000 60.0000 166.5000
+      vertex 60.0000 60.0000 286.5000
+    endloop
+  endfacet
+  facet normal 0.000000 -1.000000 0.000000
+    outer loop
+      vertex -60.0000 60.0000 166.5000
+      vertex 60.0000 60.0000 286.5000
+      vertex -60.0000 60.0000 286.5000
+    endloop
+  endfacet
+  facet normal 0.000000 1.000000 0.000000
+    outer loop
+      vertex -60.0000 260.0000 166.5000
+      vertex -60.0000 260.0000 286.5000
+      vertex 60.0000 260.0000 286.5000
+    endloop
+  endfacet
+  facet normal 0.000000 1.000000 0.000000
+    outer loop
+      vertex -60.0000 260.0000 166.5000
+      vertex 60.0000 260.0000 286.5000
+      vertex 60.0000 260.0000 166.5000
+    endloop
+  endfacet
+  facet normal -1.000000 0.000000 0.000000
+    outer loop
+      vertex -60.0000 60.0000 166.5000
+      vertex -60.0000 60.0000 286.5000
+      vertex -60.0000 260.0000 286.5000
+    endloop
+  endfacet
+  facet normal -1.000000 0.000000 0.000000
+    outer loop
+      vertex -60.0000 60.0000 166.5000
+      vertex -60.0000 260.0000 286.5000
+      vertex -60.0000 260.0000 166.5000
+    endloop
+  endfacet
+  facet normal 1.000000 0.000000 0.000000
+    outer loop
+      vertex 60.0000 60.0000 166.5000
+      vertex 60.0000 260.0000 166.5000
+      vertex 60.0000 260.0000 286.5000
+    endloop
+  endfacet
+  facet normal 1.000000 0.000000 0.000000
+    outer loop
+      vertex 60.0000 60.0000 166.5000
+      vertex 60.0000 260.0000 286.5000
+      vertex 60.0000 60.0000 286.5000
+    endloop
+  endfacet
+  facet normal 0.000000 0.000000 -1.000000
+    outer loop
+      vertex -40.0000 -40.0000 0.0000
+      vertex -40.0000 40.0000 0.0000
+      vertex 40.0000 40.0000 0.0000
+    endloop
+  endfacet
+  facet normal 0.000000 0.000000 -1.000000
+    outer loop
+      vertex -40.0000 -40.0000 0.0000
+      vertex 40.0000 40.0000 0.0000
+      vertex 40.0000 -40.0000 0.0000
+    endloop
+  endfacet
+  facet normal 0.000000 0.000000 1.000000
+    outer loop
+      vertex -40.0000 -40.0000 156.5000
+      vertex 40.0000 -40.0000 156.5000
+      vertex 40.0000 40.0000 156.5000
+    endloop
+  endfacet
+  facet normal 0.000000 0.000000 1.000000
+    outer loop
+      vertex -40.0000 -40.0000 156.5000
+      vertex 40.0000 40.0000 156.5000
+      vertex -40.0000 40.0000 156.5000
+    endloop
+  endfacet
+  facet normal 0.000000 -1.000000 0.000000
+    outer loop
+      vertex -40.0000 -40.0000 0.0000
+      vertex 40.0000 -40.0000 0.0000
+      vertex 40.0000 -40.0000 156.5000
+    endloop
+  endfacet
+  facet normal 0.000000 -1.000000 0.000000
+    outer loop
+      vertex -40.0000 -40.0000 0.0000
+      vertex 40.0000 -40.0000 156.5000
+      vertex -40.0000 -40.0000 156.5000
+    endloop
+  endfacet
+  facet normal 0.000000 1.000000 0.000000
+    outer loop
+      vertex -40.0000 40.0000 0.0000
+      vertex -40.0000 40.0000 156.5000
+      vertex 40.0000 40.0000 156.5000
+    endloop
+  endfacet
+  facet normal 0.000000 1.000000 0.000000
+    outer loop
+      vertex -40.0000 40.0000 0.0000
+      vertex 40.0000 40.0000 156.5000
+      vertex 40.0000 40.0000 0.0000
+    endloop
+  endfacet
+  facet normal -1.000000 0.000000 0.000000
+    outer loop
+      vertex -40.0000 -40.0000 0.0000
+      vertex -40.0000 -40.0000 156.5000
+      vertex -40.0000 40.0000 156.5000
+    endloop
+  endfacet
+  facet normal -1.000000 0.000000 0.000000
+    outer loop
+      vertex -40.0000 -40.0000 0.0000
+      vertex -40.0000 40.0000 156.5000
+      vertex -40.0000 40.0000 0.0000
+    endloop
+  endfacet
+  facet normal 1.000000 0.000000 0.000000
+    outer loop
+      vertex 40.0000 -40.0000 0.0000
+      vertex 40.0000 40.0000 0.0000
+      vertex 40.0000 40.0000 156.5000
+    endloop
+  endfacet
+  facet normal 1.000000 0.000000 0.000000
+    outer loop
+      vertex 40.0000 -40.0000 0.0000
+      vertex 40.0000 40.0000 156.5000
+      vertex 40.0000 -40.0000 156.5000
+    endloop
+  endfacet
+endsolid accionamiento_cinta.stl

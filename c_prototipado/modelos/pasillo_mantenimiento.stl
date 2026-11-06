@@ -1,0 +1,86 @@
+solid pasillo_mantenimiento.stl
+  facet normal 0.000000 0.000000 -1.000000
+    outer loop
+      vertex -1950.0000 -1765.0000 0.0000
+      vertex -1950.0000 -965.0000 0.0000
+      vertex 1500.0000 -965.0000 0.0000
+    endloop
+  endfacet
+  facet normal 0.000000 0.000000 -1.000000
+    outer loop
+      vertex -1950.0000 -1765.0000 0.0000
+      vertex 1500.0000 -965.0000 0.0000
+      vertex 1500.0000 -1765.0000 0.0000
+    endloop
+  endfacet
+  facet normal 0.000000 0.000000 1.000000
+    outer loop
+      vertex -1950.0000 -1765.0000 3.0000
+      vertex 1500.0000 -1765.0000 3.0000
+      vertex 1500.0000 -965.0000 3.0000
+    endloop
+  endfacet
+  facet normal 0.000000 0.000000 1.000000
+    outer loop
+      vertex -1950.0000 -1765.0000 3.0000
+      vertex 1500.0000 -965.0000 3.0000
+      vertex -1950.0000 -965.0000 3.0000
+    endloop
+  endfacet
+  facet normal 0.000000 -1.000000 0.000000
+    outer loop
+      vertex -1950.0000 -1765.0000 0.0000
+      vertex 1500.0000 -1765.0000 0.0000
+      vertex 1500.0000 -1765.0000 3.0000
+    endloop
+  endfacet
+  facet normal 0.000000 -1.000000 0.000000
+    outer loop
+      vertex -1950.0000 -1765.0000 0.0000
+      vertex 1500.0000 -1765.0000 3.0000
+      vertex -1950.0000 -1765.0000 3.0000
+    endloop
+  endfacet
+  facet normal 0.000000 1.000000 0.000000
+    outer loop
+      vertex -1950.0000 -965.0000 0.0000
+      vertex -1950.0000 -965.0000 3.0000
+      vertex 1500.0000 -965.0000 3.0000
+    endloop
+  endfacet
+  facet normal 0.000000 1.000000 0.000000
+    outer loop
+      vertex -1950.0000 -965.0000 0.0000
+      vertex 1500.0000 -965.0000 3.0000
+      vertex 1500.0000 -965.0000 0.0000
+    endloop
+  endfacet
+  facet normal -1.000000 0.000000 0.000000
+    outer loop
+      vertex -1950.0000 -1765.0000 0.0000
+      vertex -1950.0000 -1765.0000 3.0000
+      vertex -1950.0000 -965.0000 3.0000
+    endloop
+  endfacet
+  facet normal -1.000000 0.000000 0.000000
+    outer loop
+      vertex -1950.0000 -1765.0000 0.0000
+      vertex -1950.0000 -965.0000 3.0000
+      vertex -1950.0000 -965.0000 0.0000
+    endloop
+  endfacet
+  facet normal 1.000000 0.000000 0.000000
+    outer loop
+      vertex 1500.0000 -1765.0000 0.0000
+      vertex 1500.0000 -965.0000 0.0000
+      vertex 1500.0000 -965.0000 3.0000
+    endloop
+  endfacet
+  facet normal 1.000000 0.000000 0.000000
+    outer loop
+      vertex 1500.0000 -1765.0000 0.0000
+      vertex 1500.0000 -965.0000 3.0000
+      vertex 1500.0000 -1765.0000 3.0000
+    endloop
+  endfacet
+endsolid pasillo_mantenimiento.stl

@@ -1,0 +1,254 @@
+solid paneles_desmontables_sur.stl
+  facet normal 0.000000 0.000000 -1.000000
+    outer loop
+      vertex -1295.0000 -962.0000 0.0000
+      vertex -1295.0000 -958.0000 0.0000
+      vertex -588.3333 -958.0000 0.0000
+    endloop
+  endfacet
+  facet normal 0.000000 0.000000 -1.000000
+    outer loop
+      vertex -1295.0000 -962.0000 0.0000
+      vertex -588.3333 -958.0000 0.0000
+      vertex -588.3333 -962.0000 0.0000
+    endloop
+  endfacet
+  facet normal 0.000000 0.000000 1.000000
+    outer loop
+      vertex -1295.0000 -962.0000 2000.0000
+      vertex -588.3333 -962.0000 2000.0000
+      vertex -588.3333 -958.0000 2000.0000
+    endloop
+  endfacet
+  facet normal 0.000000 0.000000 1.000000
+    outer loop
+      vertex -1295.0000 -962.0000 2000.0000
+      vertex -588.3333 -958.0000 2000.0000
+      vertex -1295.0000 -958.0000 2000.0000
+    endloop
+  endfacet
+  facet normal 0.000000 -1.000000 0.000000
+    outer loop
+      vertex -1295.0000 -962.0000 0.0000
+      vertex -588.3333 -962.0000 0.0000
+      vertex -588.3333 -962.0000 2000.0000
+    endloop
+  endfacet
+  facet normal 0.000000 -1.000000 0.000000
+    outer loop
+      vertex -1295.0000 -962.0000 0.0000
+      vertex -588.3333 -962.0000 2000.0000
+      vertex -1295.0000 -962.0000 2000.0000
+    endloop
+  endfacet
+  facet normal 0.000000 1.000000 0.000000
+    outer loop
+      vertex -1295.0000 -958.0000 0.0000
+      vertex -1295.0000 -958.0000 2000.0000
+      vertex -588.3333 -958.0000 2000.0000
+    endloop
+  endfacet
+  facet normal 0.000000 1.000000 0.000000
+    outer loop
+      vertex -1295.0000 -958.0000 0.0000
+      vertex -588.3333 -958.0000 2000.0000
+      vertex -588.3333 -958.0000 0.0000
+    endloop
+  endfacet
+  facet normal -1.000000 0.000000 0.000000
+    outer loop
+      vertex -1295.0000 -962.0000 0.0000
+      vertex -1295.0000 -962.0000 2000.0000
+      vertex -1295.0000 -958.0000 2000.0000
+    endloop
+  endfacet
+  facet normal -1.000000 0.000000 0.000000
+    outer loop
+      vertex -1295.0000 -962.0000 0.0000
+      vertex -1295.0000 -958.0000 2000.0000
+      vertex -1295.0000 -958.0000 0.0000
+    endloop
+  endfacet
+  facet normal 1.000000 0.000000 0.000000
+    outer loop
+      vertex -588.3333 -962.0000 0.0000
+      vertex -588.3333 -958.0000 0.0000
+      vertex -588.3333 -958.0000 2000.0000
+    endloop
+  endfacet
+  facet normal 1.000000 0.000000 0.000000
+    outer loop
+      vertex -588.3333 -962.0000 0.0000
+      vertex -588.3333 -958.0000 2000.0000
+      vertex -588.3333 -962.0000 2000.0000
+    endloop
+  endfacet
+  facet normal 0.000000 0.000000 -1.000000
+    outer loop
+      vertex -578.3333 -962.0000 0.0000
+      vertex -578.3333 -958.0000 0.0000
+      vertex 128.3333 -958.0000 0.0000
+    endloop
+  endfacet
+  facet normal 0.000000 0.000000 -1.000000
+    outer loop
+      vertex -578.3333 -962.0000 0.0000
+      vertex 128.3333 -958.0000 0.0000
+      vertex 128.3333 -962.0000 0.0000
+    endloop
+  endfacet
+  facet normal 0.000000 0.000000 1.000000
+    outer loop
+      vertex -578.3333 -962.0000 2000.0000
+      vertex 128.3333 -962.0000 2000.0000
+      vertex 128.3333 -958.0000 2000.0000
+    endloop
+  endfacet
+  facet normal 0.000000 0.000000 1.000000
+    outer loop
+      vertex -578.3333 -962.0000 2000.0000
+      vertex 128.3333 -958.0000 2000.0000
+      vertex -578.3333 -958.0000 2000.0000
+    endloop
+  endfacet
+  facet normal 0.000000 -1.000000 0.000000
+    outer loop
+      vertex -578.3333 -962.0000 0.0000
+      vertex 128.3333 -962.0000 0.0000
+      vertex 128.3333 -962.0000 2000.0000
+    endloop
+  endfacet
+  facet normal 0.000000 -1.000000 0.000000
+    outer loop
+      vertex -578.3333 -962.0000 0.0000
+      vertex 128.3333 -962.0000 2000.0000
+      vertex -578.3333 -962.0000 2000.0000
+    endloop
+  endfacet
+  facet normal 0.000000 1.000000 0.000000
+    outer loop
+      vertex -578.3333 -958.0000 0.0000
+      vertex -578.3333 -958.0000 2000.0000
+      vertex 128.3333 -958.0000 2000.0000
+    endloop
+  endfacet
+  facet normal 0.000000 1.000000 0.000000
+    outer loop
+      vertex -578.3333 -958.0000 0.0000
+      vertex 128.3333 -958.0000 2000.0000
+      vertex 128.3333 -958.0000 0.0000
+    endloop
+  endfacet
+  facet normal -1.000000 0.000000 0.000000
+    outer loop
+      vertex -578.3333 -962.0000 0.0000
+      vertex -578.3333 -962.0000 2000.0000
+      vertex -578.3333 -958.0000 2000.0000
+    endloop
+  endfacet
+  facet normal -1.000000 0.000000 0.000000
+    outer loop
+      vertex -578.3333 -962.0000 0.0000
+      vertex -578.3333 -958.0000 2000.0000
+      vertex -578.3333 -958.0000 0.0000
+    endloop
+  endfacet
+  facet normal 1.000000 0.000000 0.000000
+    outer loop
+      vertex 128.3333 -962.0000 0.0000
+      vertex 128.3333 -958.0000 0.0000
+      vertex 128.3333 -958.0000 2000.0000
+    endloop
+  endfacet
+  facet normal 1.000000 0.000000 0.000000
+    outer loop
+      vertex 128.3333 -962.0000 0.0000
+      vertex 128.3333 -958.0000 2000.0000
+      vertex 128.3333 -962.0000 2000.0000
+    endloop
+  endfacet
+  facet normal 0.000000 0.000000 -1.000000
+    outer loop
+      vertex 138.3333 -962.0000 0.0000
+      vertex 138.3333 -958.0000 0.0000
+      vertex 845.0000 -958.0000 0.0000
+    endloop
+  endfacet
+  facet normal 0.000000 0.000000 -1.000000
+    outer loop
+      vertex 138.3333 -962.0000 0.0000
+      vertex 845.0000 -958.0000 0.0000
+      vertex 845.0000 -962.0000 0.0000
+    endloop
+  endfacet
+  facet normal 0.000000 0.000000 1.000000
+    outer loop
+      vertex 138.3333 -962.0000 2000.0000
+      vertex 845.0000 -962.0000 2000.0000
+      vertex 845.0000 -958.0000 2000.0000
+    endloop
+  endfacet
+  facet normal 0.000000 0.000000 1.000000
+    outer loop
+      vertex 138.3333 -962.0000 2000.0000
+      vertex 845.0000 -958.0000 2000.0000
+      vertex 138.3333 -958.0000 2000.0000
+    endloop
+  endfacet
+  facet normal 0.000000 -1.000000 0.000000
+    outer loop
+      vertex 138.3333 -962.0000 0.0000
+      vertex 845.0000 -962.0000 0.0000
+      vertex 845.0000 -962.0000 2000.0000
+    endloop
+  endfacet
+  facet normal 0.000000 -1.000000 0.000000
+    outer loop
+      vertex 138.3333 -962.0000 0.0000
+      vertex 845.0000 -962.0000 2000.0000
+      vertex 138.3333 -962.0000 2000.0000
+    endloop
+  endfacet
+  facet normal 0.000000 1.000000 0.000000
+    outer loop
+      vertex 138.3333 -958.0000 0.0000
+      vertex 138.3333 -958.0000 2000.0000
+      vertex 845.0000 -958.0000 2000.0000
+    endloop
+  endfacet
+  facet normal 0.000000 1.000000 0.000000
+    outer loop
+      vertex 138.3333 -958.0000 0.0000
+      vertex 845.0000 -958.0000 2000.0000
+      vertex 845.0000 -958.0000 0.0000
+    endloop
+  endfacet
+  facet normal -1.000000 0.000000 0.000000
+    outer loop
+      vertex 138.3333 -962.0000 0.0000
+      vertex 138.3333 -962.0000 2000.0000
+      vertex 138.3333 -958.0000 2000.0000
+    endloop
+  endfacet
+  facet normal -1.000000 0.000000 0.000000
+    outer loop
+      vertex 138.3333 -962.0000 0.0000
+      vertex 138.3333 -958.0000 2000.0000
+      vertex 138.3333 -958.0000 0.0000
+    endloop
+  endfacet
+  facet normal 1.000000 0.000000 0.000000
+    outer loop
+      vertex 845.0000 -962.0000 0.0000
+      vertex 845.0000 -958.0000 0.0000
+      vertex 845.0000 -958.0000 2000.0000
+    endloop
+  endfacet
+  facet normal 1.000000 0.000000 0.000000
+    outer loop
+      vertex 845.0000 -962.0000 0.0000
+      vertex 845.0000 -958.0000 2000.0000
+      vertex 845.0000 -962.0000 2000.0000
+    endloop
+  endfacet
+endsolid paneles_desmontables_sur.stl

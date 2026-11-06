@@ -1,0 +1,86 @@
+solid accionamiento_cinta_resguardo.stl
+  facet normal 0.000000 0.000000 -1.000000
+    outer loop
+      vertex -110.0000 -100.0000 126.5000
+      vertex -110.0000 300.0000 126.5000
+      vertex 110.0000 300.0000 126.5000
+    endloop
+  endfacet
+  facet normal 0.000000 0.000000 -1.000000
+    outer loop
+      vertex -110.0000 -100.0000 126.5000
+      vertex 110.0000 300.0000 126.5000
+      vertex 110.0000 -100.0000 126.5000
+    endloop
+  endfacet
+  facet normal 0.000000 0.000000 1.000000
+    outer loop
+      vertex -110.0000 -100.0000 326.5000
+      vertex 110.0000 -100.0000 326.5000
+      vertex 110.0000 300.0000 326.5000
+    endloop
+  endfacet
+  facet normal 0.000000 0.000000 1.000000
+    outer loop
+      vertex -110.0000 -100.0000 326.5000
+      vertex 110.0000 300.0000 326.5000
+      vertex -110.0000 300.0000 326.5000
+    endloop
+  endfacet
+  facet normal 0.000000 -1.000000 0.000000
+    outer loop
+      vertex -110.0000 -100.0000 126.5000
+      vertex 110.0000 -100.0000 126.5000
+      vertex 110.0000 -100.0000 326.5000
+    endloop
+  endfacet
+  facet normal 0.000000 -1.000000 0.000000
+    outer loop
+      vertex -110.0000 -100.0000 126.5000
+      vertex 110.0000 -100.0000 326.5000
+      vertex -110.0000 -100.0000 326.5000
+    endloop
+  endfacet
+  facet normal 0.000000 1.000000 0.000000
+    outer loop
+      vertex -110.0000 300.0000 126.5000
+      vertex -110.0000 300.0000 326.5000
+      vertex 110.0000 300.0000 326.5000
+    endloop
+  endfacet
+  facet normal 0.000000 1.000000 0.000000
+    outer loop
+      vertex -110.0000 300.0000 126.5000
+      vertex 110.0000 300.0000 326.5000
+      vertex 110.0000 300.0000 126.5000
+    endloop
+  endfacet
+  facet normal -1.000000 0.000000 0.000000
+    outer loop
+      vertex -110.0000 -100.0000 126.5000
+      vertex -110.0000 -100.0000 326.5000
+      vertex -110.0000 300.0000 326.5000
+    endloop
+  endfacet
+  facet normal -1.000000 0.000000 0.000000
+    outer loop
+      vertex -110.0000 -100.0000 126.5000
+      vertex -110.0000 300.0000 326.5000
+      vertex -110.0000 300.0000 126.5000
+    endloop
+  endfacet
+  facet normal 1.000000 0.000000 0.000000
+    outer loop
+      vertex 110.0000 -100.0000 126.5000
+      vertex 110.0000 300.0000 126.5000
+      vertex 110.0000 300.0000 326.5000
+    endloop
+  endfacet
+  facet normal 1.000000 0.000000 0.000000
+    outer loop
+      vertex 110.0000 -100.0000 126.5000
+      vertex 110.0000 300.0000 326.5000
+      vertex 110.0000 -100.0000 326.5000
+    endloop
+  endfacet
+endsolid accionamiento_cinta_resguardo.stl

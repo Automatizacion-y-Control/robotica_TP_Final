@@ -171,3 +171,31 @@ V3_AVANCE_EVACUACION = 1750.0     # posición del eje de la cinta al terminar el
 # Abertura de salida en la cara este, igual a la de entrada en la cara oeste.
 CERR_ABERTURA_SALIDA_Y = CERR_ABERTURA_CINTA_Y
 CERR_ABERTURA_SALIDA_Z = CERR_ABERTURA_CINTA_Z
+
+# ---------------------------------------------------------------------------
+# Mejora 02 (v04): modos de operación y mantenimiento                 DISEÑO
+# ---------------------------------------------------------------------------
+# Ver c_prototipado/modos_y_mantenimiento.md (§10) y mejora_02_modos_mantenimiento.md.
+# La pared sur se acerca a la cinta y afuera queda un pasillo de mantenimiento;
+# la pared sur a lo largo de la cinta se arma con paneles desmontables para
+# sacar la banda por ese costado.
+V4_CERR_Y_SUR = -960.0            # cara sur del cerramiento (60 mm del larguero de la cinta)
+V4_PASILLO_ANCHO = 800.0          # pasillo de mantenimiento, del lado sur, afuera
+V4_PASILLO_X = (-1950.0, 1500.0)  # largo del pasillo marcado en el piso
+V4_PANEL_DESMONTABLE = 700.0      # ancho nominal de cada panel desmontable
+V4_TUNEL_Y = (-960.0, -120.0)     # túneles de entrada y salida de la cinta (oeste y este)
+# Accionamiento de la cinta: extremo oeste, afuera del cerramiento, del lado norte de la banda.
+V4_ACCIONAMIENTO = (-1760.0, -130.0)
+# Equipos fuera del cerramiento (posición en planta del centro de la base).
+V4_PANEL_OPERADOR = (1150.0, 250.0)
+V4_TABLERO_LOTO = (1010.0, 700.0)        # adosado a la cara este, junto a la puerta
+V4_PARADAS_EMERGENCIA = {                # pulsadores en poste, además del del panel
+    "Parada_Emergencia_Puerta": (930.0, 920.0),
+    "Parada_Emergencia_Entrada": (-1420.0, -1060.0),
+    "Parada_Emergencia_Salida": (970.0, -1060.0),
+}
+V4_GABINETES_Y = 1950.0                  # detrás de la cara norte, afuera
+# Posiciones de mantenimiento (valores articulares): brazo plegado, herramienta
+# orientada hacia la puerta, ejes en una postura estable para intervenir.
+IRB_MANTENIMIENTO = [45.0, -30.0, 50.0, 0.0, 60.0, 0.0]
+CRB_MANTENIMIENTO = [100.0, -20.0, 40.0, 0.0, 60.0, 0.0]

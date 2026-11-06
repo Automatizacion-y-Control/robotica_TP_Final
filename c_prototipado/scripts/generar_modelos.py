@@ -234,21 +234,29 @@ def _pared_y(y, xa, xb, tri):
     tri += tri_caja_ext(xa, xb, y - t / 2, y + t / 2, 0, H)
 
 
-def cerramiento(sufijo="", huecos_este=None):
+def cerramiento(sufijo="", huecos_este=None, y_sur=None, tunel_y=None, pared_sur=True):
     """Cerramiento rectangular de CERR_ALTO con aberturas en las caras oeste y este.
 
     Oeste: túnel de entrada de la cinta. Este: los huecos indicados más el vano
     de la puerta. Por defecto (v02), la ventana del pallet. Origen en el origen
     de la celda.
+
+    y_sur y tunel_y permiten mover la cara sur y los túneles (v04). Con
+    pared_sur=False la cara sur no se genera: en la v04 la forman los paneles
+    desmontables (paneles_desmontables_sur).
     """
     (x0, x1), (y0, y1) = P.CERR_X, P.CERR_Y
+    if y_sur is not None:
+        y0 = y_sur
+    tunel_y = tunel_y or P.CERR_ABERTURA_CINTA_Y
     p, H = P.CERR_POSTE, P.CERR_ALTO
     if huecos_este is None:
         huecos_este = [(*P.CERR_VENTANA_PALLET_Y, *P.CERR_VENTANA_PALLET_Z)]
     paneles, estructura = [], []
-    _pared_x(x0, y0, y1, [(*P.CERR_ABERTURA_CINTA_Y, 0.0, P.CERR_ABERTURA_CINTA_Z)], paneles)
+    _pared_x(x0, y0, y1, [(*tunel_y, 0.0, P.CERR_ABERTURA_CINTA_Z)], paneles)
     _pared_x(x1, y0, y1, huecos_este + [(*P.CERR_PUERTA_Y, 0.0, H)], paneles)
-    _pared_y(y0, x0, x1, paneles)
+    if pared_sur:
+        _pared_y(y0, x0, x1, paneles)
     _pared_y(y1, x0, x1, paneles)
     # Postes en las esquinas, en los bordes de la puerta y cada ~1 m en las paredes largas.
     postes = [(x0, y0), (x0, y1), (x1, y0), (x1, y1),
@@ -316,18 +324,107 @@ def cinta_extension():
     escribir_stl("cinta_extension_estructura.stl", estructura)
 
 
-def cortina_cinta():
+def cortina_cinta(nombre="cortina_luz_cinta.stl", tunel_y=None):
     """Emisor y receptor de una cortina de luz en el paso de la cinta por el cerramiento.
 
-    Dos columnas verticales en los bordes del túnel (CERR_ABERTURA_CINTA_Y),
-    hasta CERR_ABERTURA_CINTA_Z. Origen sobre la cara de la pared; se instancia
-    una vez en la entrada (oeste) y otra en la salida (este).
+    Dos columnas verticales en los bordes del túnel (por defecto
+    CERR_ABERTURA_CINTA_Y), hasta CERR_ABERTURA_CINTA_Z. Origen sobre la cara de
+    la pared; se instancia una vez en la entrada (oeste) y otra en la salida (este).
     """
-    ya, yb = P.CERR_ABERTURA_CINTA_Y
+    ya, yb = tunel_y or P.CERR_ABERTURA_CINTA_Y
     zt = P.CERR_ABERTURA_CINTA_Z
     tri = tri_caja_ext(-20, 20, ya - 40, ya, 0, zt)             # emisor
     tri += tri_caja_ext(-20, 20, yb, yb + 40, 0, zt)            # receptor
-    escribir_stl("cortina_luz_cinta.stl", tri)
+    escribir_stl(nombre, tri)
+
+
+# ---------------------------------------------------------------------------
+# Mejora 02 (v04): mantenimiento, aislamiento y operación
+# ---------------------------------------------------------------------------
+def _desplazar(tri, d):
+    """Traslada una lista de triángulos en el vector d."""
+    return [tuple(tuple(c + o for c, o in zip(v, d)) for v in t) for t in tri]
+
+
+def paneles_desmontables_sur():
+    """Cara sur del cerramiento v04 formada por paneles desmontables.
+
+    Cada panel lleva dos manijas del lado del pasillo. Entre panel y panel queda
+    una junta de 10 mm (los postes de la estructura no cambian).
+    """
+    (x0, x1), y = P.CERR_X, P.V4_CERR_Y_SUR
+    t, H = P.CERR_PANEL, P.CERR_ALTO
+    n = max(1, round((x1 - x0) / P.V4_PANEL_DESMONTABLE))
+    ancho = (x1 - x0) / n
+    paneles, manijas = [], []
+    for i in range(n):
+        xa, xb = x0 + i * ancho + 5.0, x0 + (i + 1) * ancho - 5.0
+        paneles += tri_caja_ext(xa, xb, y - t / 2, y + t / 2, 0, H)
+        for xm in (xa + 80.0, xb - 110.0):                      # manijas hacia el pasillo (-Y)
+            manijas += tri_caja_ext(xm, xm + 30.0, y - 40.0, y - t / 2, 1000.0, 1150.0)
+    escribir_stl("paneles_desmontables_sur.stl", paneles)
+    escribir_stl("paneles_desmontables_manijas.stl", manijas)
+
+
+def pasillo_mantenimiento():
+    """Marca en el piso del pasillo de mantenimiento, del lado sur, afuera."""
+    xa, xb = P.V4_PASILLO_X
+    y = P.V4_CERR_Y_SUR
+    tri = tri_caja_ext(xa, xb, y - 5.0 - P.V4_PASILLO_ANCHO, y - 5.0, 0.0, 3.0)
+    escribir_stl("pasillo_mantenimiento.stl", tri)
+
+
+def accionamiento_cinta():
+    """Motorreductor de la cinta con su resguardo, en el extremo oeste, afuera.
+
+    Origen en el centro de la base del conjunto (P.V4_ACCIONAMIENTO), al piso.
+    """
+    zt = P.CINTA_ALTURA_BANDA
+    motor = tri_caja_ext(-70, 70, -60, 60, zt - 210, zt - 70)          # reductor
+    motor += tri_caja_ext(-60, 60, 60, 260, zt - 200, zt - 80)         # motor, hacia el norte
+    motor += tri_caja_ext(-40, 40, -40, 40, 0, zt - 210)               # soporte
+    resguardo = tri_caja_ext(-110, 110, -100, 300, zt - 240, zt - 40)
+    escribir_stl("accionamiento_cinta.stl", motor)
+    escribir_stl("accionamiento_cinta_resguardo.stl", resguardo)
+
+
+def tablero_loto():
+    """Tablero de aislamiento: gabinete con cuatro seccionadores y una válvula de gas.
+
+    Seccionadores: IRB 1200, CRB 1300, cinta y fuente TIG. Válvula: argón.
+    Origen en el centro de la base, frente hacia +X (afuera de la cara este).
+    """
+    gabinete = tri_caja_ext(0, 150, -250, 250, 900, 1600)
+    gabinete += tri_caja_ext(20, 80, -40, 40, 0, 900)                  # pie
+    manijas = []
+    for i in range(5):
+        yc = -200 + i * 100
+        manijas += tri_caja_ext(150, 200, yc - 15, yc + 15, 1200, 1320)
+    escribir_stl("tablero_loto.stl", gabinete)
+    escribir_stl("tablero_loto_manijas.stl", manijas)
+
+
+def panel_operador():
+    """Panel de operador en pedestal: consola y pantalla simplificadas."""
+    tri = tri_caja_ext(-60, 60, -60, 60, 0, 950)                       # pedestal
+    tri += tri_caja_ext(-200, 200, -250, 250, 950, 1150)               # consola
+    tri += tri_caja_ext(-20, 20, -180, 180, 1150, 1400)                # pantalla
+    escribir_stl("panel_operador.stl", tri)
+
+
+def parada_emergencia():
+    """Pulsador de emergencia en poste: poste gris y hongo rojo (dos archivos)."""
+    poste = tri_caja_ext(-40, 40, -40, 40, 0, 1050)
+    poste += tri_caja_ext(-60, 60, -60, 60, 1050, 1150)                # caja del pulsador
+    escribir_stl("parada_emergencia_poste.stl", poste)
+    escribir_stl("parada_emergencia_hongo.stl", _desplazar(tri_tronco(0, 40, 45, 45, n=32), (0, 0, 1150)))
+
+
+def equipos_auxiliares():
+    """Gabinete de controlador, fuente TIG y cilindro de argón (fuera de la celda, al norte)."""
+    escribir_stl("gabinete_controlador.stl", tri_caja_ext(-300, 300, 0, 500, 0, 1200))
+    escribir_stl("fuente_tig.stl", tri_caja_ext(-200, 200, 0, 600, 0, 800))
+    escribir_stl("cilindro_argon.stl", tri_tronco(0, 1450, 110, 110) + tri_tronco(1450, 1550, 110, 40))
 
 
 if __name__ == "__main__":
@@ -342,3 +439,14 @@ if __name__ == "__main__":
     cortina_luz()
     cinta_extension()
     cortina_cinta()
+    # v04
+    cerramiento("_v04", [(*P.V4_TUNEL_Y, 0.0, P.CERR_ABERTURA_SALIDA_Z)],
+                y_sur=P.V4_CERR_Y_SUR, tunel_y=P.V4_TUNEL_Y, pared_sur=False)
+    cortina_cinta("cortina_luz_cinta_v04.stl", P.V4_TUNEL_Y)
+    paneles_desmontables_sur()
+    pasillo_mantenimiento()
+    accionamiento_cinta()
+    tablero_loto()
+    panel_operador()
+    parada_emergencia()
+    equipos_auxiliares()

@@ -1,0 +1,170 @@
+solid tablero_loto.stl
+  facet normal 0.000000 0.000000 -1.000000
+    outer loop
+      vertex 0.0000 -250.0000 900.0000
+      vertex 0.0000 250.0000 900.0000
+      vertex 150.0000 250.0000 900.0000
+    endloop
+  endfacet
+  facet normal 0.000000 0.000000 -1.000000
+    outer loop
+      vertex 0.0000 -250.0000 900.0000
+      vertex 150.0000 250.0000 900.0000
+      vertex 150.0000 -250.0000 900.0000
+    endloop
+  endfacet
+  facet normal 0.000000 0.000000 1.000000
+    outer loop
+      vertex 0.0000 -250.0000 1600.0000
+      vertex 150.0000 -250.0000 1600.0000
+      vertex 150.0000 250.0000 1600.0000
+    endloop
+  endfacet
+  facet normal 0.000000 0.000000 1.000000
+    outer loop
+      vertex 0.0000 -250.0000 1600.0000
+      vertex 150.0000 250.0000 1600.0000
+      vertex 0.0000 250.0000 1600.0000
+    endloop
+  endfacet
+  facet normal 0.000000 -1.000000 0.000000
+    outer loop
+      vertex 0.0000 -250.0000 900.0000
+      vertex 150.0000 -250.0000 900.0000
+      vertex 150.0000 -250.0000 1600.0000
+    endloop
+  endfacet
+  facet normal 0.000000 -1.000000 0.000000
+    outer loop
+      vertex 0.0000 -250.0000 900.0000
+      vertex 150.0000 -250.0000 1600.0000
+      vertex 0.0000 -250.0000 1600.0000
+    endloop
+  endfacet
+  facet normal 0.000000 1.000000 0.000000
+    outer loop
+      vertex 0.0000 250.0000 900.0000
+      vertex 0.0000 250.0000 1600.0000
+      vertex 150.0000 250.0000 1600.0000
+    endloop
+  endfacet
+  facet normal 0.000000 1.000000 0.000000
+    outer loop
+      vertex 0.0000 250.0000 900.0000
+      vertex 150.0000 250.0000 1600.0000
+      vertex 150.0000 250.0000 900.0000
+    endloop
+  endfacet
+  facet normal -1.000000 0.000000 0.000000
+    outer loop
+      vertex 0.0000 -250.0000 900.0000
+      vertex 0.0000 -250.0000 1600.0000
+      vertex 0.0000 250.0000 1600.0000
+    endloop
+  endfacet
+  facet normal -1.000000 0.000000 0.000000
+    outer loop
+      vertex 0.0000 -250.0000 900.0000
+      vertex 0.0000 250.0000 1600.0000
+      vertex 0.0000 250.0000 900.0000
+    endloop
+  endfacet
+  facet normal 1.000000 0.000000 0.000000
+    outer loop
+      vertex 150.0000 -250.0000 900.0000
+      vertex 150.0000 250.0000 900.0000
+      vertex 150.0000 250.0000 1600.0000
+    endloop
+  endfacet
+  facet normal 1.000000 0.000000 0.000000
+    outer loop
+      vertex 150.0000 -250.0000 900.0000
+      vertex 150.0000 250.0000 1600.0000
+      vertex 150.0000 -250.0000 1600.0000
+    endloop
+  endfacet
+  facet normal 0.000000 0.000000 -1.000000
+    outer loop
+      vertex 20.0000 -40.0000 0.0000
+      vertex 20.0000 40.0000 0.0000
+      vertex 80.0000 40.0000 0.0000
+    endloop
+  endfacet
+  facet normal 0.000000 0.000000 -1.000000
+    outer loop
+      vertex 20.0000 -40.0000 0.0000
+      vertex 80.0000 40.0000 0.0000
+      vertex 80.0000 -40.0000 0.0000
+    endloop
+  endfacet
+  facet normal 0.000000 0.000000 1.000000
+    outer loop
+      vertex 20.0000 -40.0000 900.0000
+      vertex 80.0000 -40.0000 900.0000
+      vertex 80.0000 40.0000 900.0000
+    endloop
+  endfacet
+  facet normal 0.000000 0.000000 1.000000
+    outer loop
+      vertex 20.0000 -40.0000 900.0000
+      vertex 80.0000 40.0000 900.0000
+      vertex 20.0000 40.0000 900.0000
+    endloop
+  endfacet
+  facet normal 0.000000 -1.000000 0.000000
+    outer loop
+      vertex 20.0000 -40.0000 0.0000
+      vertex 80.0000 -40.0000 0.0000
+      vertex 80.0000 -40.0000 900.0000
+    endloop
+  endfacet
+  facet normal 0.000000 -1.000000 0.000000
+    outer loop
+      vertex 20.0000 -40.0000 0.0000
+      vertex 80.0000 -40.0000 900.0000
+      vertex 20.0000 -40.0000 900.0000
+    endloop
+  endfacet
+  facet normal 0.000000 1.000000 0.000000
+    outer loop
+      vertex 20.0000 40.0000 0.0000
+      vertex 20.0000 40.0000 900.0000
+      vertex 80.0000 40.0000 900.0000
+    endloop
+  endfacet
+  facet normal 0.000000 1.000000 0.000000
+    outer loop
+      vertex 20.0000 40.0000 0.0000
+      vertex 80.0000 40.0000 900.0000
+      vertex 80.0000 40.0000 0.0000
+    endloop
+  endfacet
+  facet normal -1.000000 0.000000 0.000000
+    outer loop
+      vertex 20.0000 -40.0000 0.0000
+      vertex 20.0000 -40.0000 900.0000
+      vertex 20.0000 40.0000 900.0000
+    endloop
+  endfacet
+  facet normal -1.000000 0.000000 0.000000
+    outer loop
+      vertex 20.0000 -40.0000 0.0000
+      vertex 20.0000 40.0000 900.0000
+      vertex 20.0000 40.0000 0.0000
+    endloop
+  endfacet
+  facet normal 1.000000 0.000000 0.000000
+    outer loop
+      vertex 80.0000 -40.0000 0.0000
+      vertex 80.0000 40.0000 0.0000
+      vertex 80.0000 40.0000 900.0000
+    endloop
+  endfacet
+  facet normal 1.000000 0.000000 0.000000
+    outer loop
+      vertex 80.0000 -40.0000 0.0000
+      vertex 80.0000 40.0000 900.0000
+      vertex 80.0000 -40.0000 900.0000
+    endloop
+  endfacet
+endsolid tablero_loto.stl
