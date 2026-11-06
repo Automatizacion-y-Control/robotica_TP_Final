@@ -36,12 +36,33 @@ def main():
             if condicion():
                 return
             time.sleep(.025)
-        raise AssertionError("Tiempo máximo de espera")
+        raise AssertionError("Tiempo máximo de espera: " + str(
+            {n: valor(n) for n in ("ARRANQUE_ID", "ARRANQUE_ACK", "CAUSA_RECHAZO", "AUTO_ACTIVO",
+                                   "ESTADO_CONTROL", "PIEZA_ACTIVA", "PROXIMA_PIEZA", "MODO_CAUSA",
+                                   "MODO_CONFIRMADO", "IRB_EN_REPOSO", "CRB_EN_REPOSO",
+                                   "CINTA_DETENIDA", "PIEZA_SUJETA_SENSOR")}))
 
     def registrar(nombre, **datos):
         fila = {"prueba": nombre, **datos}
         pruebas.append(fila)
         print(json.dumps(fila, ensure_ascii=False), flush=True)
+
+    solicitudes_modo = 0
+
+    def pedir_modo(modo):
+        nonlocal solicitudes_modo
+        solicitudes_modo += 1
+        r.setParam("MODO_SOLICITADO", modo)
+        r.setParam("MODO_ID", solicitudes_modo)
+        esperar(lambda: valor("MODO_ACK") == solicitudes_modo, limite=70)
+
+    def intervenir(modo):
+        pedir_modo(modo)
+        esperar(lambda: valor("MODO_CONFIRMADO") == modo and valor("MODO_EN_TRANSICION") == 0)
+        r.setParam("CONF_RESTITUCION", 1)
+        pedir_modo(0)
+        esperar(lambda: valor("MODO_CONFIRMADO") == 0 and valor("MODO_EN_TRANSICION") == 0)
+        assert valor("AUTO_ACTIVO") == 0
 
     try:
         r.setCollisionActive(COLLISION_ON)
@@ -54,7 +75,7 @@ def main():
         r.setParam("ARRANQUE_ID", 1)
         esperar(lambda: valor("ARRANQUE_ACK") == 1)
         assert valor("AUTO_ACTIVO") == 0 and valor("CAUSA_RECHAZO") == 1
-        registrar("Arranque sin permiso rechazado", siguiente=valor("PROXIMA_PIEZA"))
+        registrar("Arranque sin permiso rechazado", causa=1, siguiente=valor("PROXIMA_PIEZA"))
         r.setParam("PERMISO_OPERACION", 1)
         time.sleep(.3)
         assert valor("AUTO_ACTIVO") == 0
@@ -64,13 +85,25 @@ def main():
         for orden, pieza, fase in ((2, 1, "soldadura"), (3, 2, "toma"), (4, 4, "soldadura"),
                                    (5, 4, "segundo lote")):
             r.setParam("ARRANQUE_ID", orden)
+            if orden == 4:
+                # Las solicitudes inválidas se atienden entre piezas y no detienen el lote.
+                esperar(lambda: valor("PIEZA_ACTIVA") == 3)
+                pedir_modo(99)
+                assert valor("AUTO_ACTIVO") == 1 and valor("MODO_RESULTADO") == 2
+                assert valor("MODO_CAUSA") == 11
+                registrar("Modo desconocido no detiene producción", causa=11)
+            if orden == 5:
+                esperar(lambda: valor("PIEZA_ACTIVA") == 1, limite=70)
+                pedir_modo(0)
+                assert valor("AUTO_ACTIVO") == 1 and valor("MODO_RESULTADO") == 2
+                assert valor("MODO_CAUSA") == 9
+                registrar("Regreso sin modo activo no detiene producción", causa=9)
             esperar(lambda: valor("PIEZA_ACTIVA") == pieza and
                     (valor("ARCO_TIG") == 1 if fase != "toma" else
                      r.Item("Estator_2").Parent().Name() == "TCP_Pinza"), limite=70)
             if fase == "segundo lote":
-                r.setParam("MODO_SOLICITADO", 1)
-                r.setParam("MODO_ID", 1)
-                esperar(lambda: valor("MODO_ACK") == 1 and valor("AUTO_ACTIVO") == 0)
+                pedir_modo(1)
+                esperar(lambda: valor("AUTO_ACTIVO") == 0)
                 assert valor("MODO_RESULTADO") == 3
             else:
                 r.setParam("PARADA_ID", orden)
@@ -83,20 +116,40 @@ def main():
             antes = valor("PIEZAS_COMPLETADAS")
             time.sleep(.25)
             assert valor("PIEZAS_COMPLETADAS") == antes
+            if orden == 3:
+                # Lote parcial real: faltan las piezas 3 y 4; la fase siguiente debe retomarlas.
+                intervenir(2)
+                assert valor("PROXIMA_PIEZA") == 3 and valor("PIEZAS_COMPLETADAS") == 2
+                assert valor("LOTES_COMPLETADOS") == 0
+                registrar("Mantenimiento con lote parcial conserva el índice", siguiente=3,
+                          completadas=2)
         assert valor("PIEZAS_COMPLETADAS") == 8
         assert valor("LOTES_COMPLETADOS") == 1
         registrar("Dos lotes soldados sin repetir piezas", completadas=8,
                   fin_segundo_lote_diferido=True, colisiones=0)
-        r.setParam("MODO_ID", 2)
-        esperar(lambda: valor("MODO_CONFIRMADO") == 1)
+        intervenir(1)
         assert valor("PROXIMA_PIEZA") == 5 and valor("PIEZAS_COMPLETADAS") == 8
+        registrar("Mantenimiento con fin de lote pendiente conserva el estado", siguiente=5,
+                  completadas=8, solicitud_desde_auto_requiere_repeticion=True)
+
+        r.setParam("ARRANQUE_ID", 6)
+        esperar(lambda: valor("LOTES_COMPLETADOS") == 2 and valor("PIEZA_ACTIVA") == 1, limite=70)
+        registrar("Arranque posterior ejecuta el fin de lote diferido", lotes=2)
+
+        # La falla se atiende entre piezas y deja la intervención sin movimiento como salida.
+        r.setParam("CRB_DISPONIBLE", 0)
+        esperar(lambda: valor("AUTO_ACTIVO") == 0 and valor("ESTADO_CONTROL") == 3, limite=70)
+        assert valor("PROXIMA_PIEZA") == 2 and valor("PIEZAS_COMPLETADAS") == 9
+        pedir_modo(6)
+        esperar(lambda: valor("MODO_CONFIRMADO") == 6)
         r.setParam("CONF_RESTITUCION", 1)
-        r.setParam("MODO_SOLICITADO", 0)
-        r.setParam("MODO_ID", 3)
-        esperar(lambda: valor("MODO_CONFIRMADO") == 0 and valor("MODO_ACK") == 3)
-        assert valor("PROXIMA_PIEZA") == 5 and valor("AUTO_ACTIVO") == 0
-        registrar("Mantenimiento y retorno conservan lote parcial", siguiente=5, completadas=8,
-                  solicitud_desde_auto_requiere_repeticion=True)
+        pedir_modo(0)
+        assert valor("MODO_CAUSA") == 7 and valor("MODO_CONFIRMADO") == 6
+        r.setParam("CRB_DISPONIBLE", 1)
+        pedir_modo(0)
+        esperar(lambda: valor("MODO_CONFIRMADO") == 0 and valor("MODO_EN_TRANSICION") == 0)
+        assert valor("AUTO_ACTIVO") == 0 and valor("PROXIMA_PIEZA") == 2
+        registrar("Falla en producción, correctivo y retorno", siguiente=2, completadas=9)
     finally:
         r.setParam("COORDINADOR_ACTIVO", 0)
         r.setParam("SENSORES_VALIDOS", 0)

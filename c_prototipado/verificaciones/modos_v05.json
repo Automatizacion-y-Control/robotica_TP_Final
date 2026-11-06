@@ -13,8 +13,46 @@
       ]
     },
     {
-      "prueba": "Equipo averiado rechaza preparación",
-      "resultado": 2
+      "prueba": "Parada no mueve el equipo no disponible",
+      "crb_en_mantenimiento": true
+    },
+    {
+      "prueba": "Parada mueve a reposo el equipo disponible",
+      "crb_en_reposo": true
+    },
+    {
+      "prueba": "Equipo averiado rechaza preparación que lo mueve",
+      "causa": 7
+    },
+    {
+      "prueba": "Equipo averiado rechaza arranque",
+      "causa": 7
+    },
+    {
+      "prueba": "Correctivo sin movimiento con equipo averiado",
+      "modo": 6,
+      "regreso_causa": 7
+    },
+    {
+      "prueba": "Regreso del correctivo con equipo reparado",
+      "modo": 0
+    },
+    {
+      "prueba": "Equipo ajeno averiado no impide la tarea",
+      "modo": 1
+    },
+    {
+      "prueba": "Cinta averiada admite diagnóstico y rechaza arranque",
+      "modo": 4
+    },
+    {
+      "prueba": "Solicitudes inválidas en reposo",
+      "desconocido": 11,
+      "sin_modo": 9
+    },
+    {
+      "prueba": "Sin permiso se rechaza lo que mueve; el correctivo se admite",
+      "causa": 1
     },
     {
       "prueba": "Modo confirmado",

@@ -24,6 +24,15 @@ INICIALES = {
     "PIEZAS_COMPLETADAS": 0, "LOTES_COMPLETADOS": 0,
 }
 
+# De menor a mayor prioridad; códigos en modos_nativos.CAUSAS.
+CONDICIONES_ARRANQUE = (
+    ("CINTA_DISPONIBLE == 0", 7), ("CRB_DISPONIBLE == 0", 7), ("IRB_DISPONIBLE == 0", 7),
+    ("CINTA_DETENIDA == 0", 6), ("PIEZA_SUJETA_SENSOR == 1", 5),
+    ("CRB_EN_REPOSO == 0", 4), ("IRB_EN_REPOSO == 0", 4), ("SENSORES_VALIDOS == 0", 3),
+    ("MODO_CONFIRMADO != 0", 8), ("MODO_EN_TRANSICION == 1", 2),
+    ("PERMISO_OPERACION == 0", 1), ("AUTO_ACTIVO == 1", 12),
+)
+
 
 def construir():
     puerto = int(sys.argv[sys.argv.index("--puerto") + 1]) if "--puerto" in sys.argv else 20500
@@ -65,7 +74,7 @@ def construir():
     codigo("END")
     codigo("IF PEDIDO_PARADA == 1")
     codigo("IF AUTO_ACTIVO == 1")
-    llamar("Parada_Ciclo")
+    llamar("Parada_Entre_Piezas")
     codigo("END")
     salida("AUTO_ACTIVO", 0)
     salida("ESTADO_CONTROL", 2)
@@ -75,30 +84,23 @@ def construir():
     llamar("Atender_Solicitud_Modo")
     llamar("Confirmar_Posicion_Modo")
 
+    # Una vuelta dura ~0,3 s: un arranque llegado junto a una parada espera a la siguiente.
+    codigo("IF PEDIDO_PARADA == 0")
     codigo("IF ARRANQUE_ID != ARRANQUE_ACK")
     codigo("ARRANQUE_ACK = ARRANQUE_ID")
-    salida("CAUSA_RECHAZO", 1)
-    codigo("IF PEDIDO_PARADA == 0")
-    codigo("IF AUTO_ACTIVO == 0")
-    codigo("IF PERMISO_OPERACION == 1")
-    codigo("IF MODO_CONFIRMADO == 0")
-    codigo("IF MODO_EN_TRANSICION == 0")
-    for condicion in ("SENSORES_VALIDOS == 1", "IRB_EN_REPOSO == 1", "CRB_EN_REPOSO == 1",
-                      "PIEZA_SUJETA_SENSOR == 0", "CINTA_DETENIDA == 1",
-                      "IRB_DISPONIBLE == 1", "CRB_DISPONIBLE == 1", "CINTA_DISPONIBLE == 1"):
-        codigo("IF " + condicion)
     salida("CAUSA_RECHAZO", 0)
+    # Sin ELSE validado: cada condición escribe su causa y la última escrita prevalece.
+    for condicion, causa in CONDICIONES_ARRANQUE:
+        codigo("IF " + condicion)
+        salida("CAUSA_RECHAZO", causa)
+        codigo("END")
+    codigo("IF CAUSA_RECHAZO == 0")
     codigo("IF CELDA_INICIALIZADA == 0")
     llamar("Inicio_Celda")
     salida("CELDA_INICIALIZADA", 1)
     codigo("END")
     salida("AUTO_ACTIVO", 1)
     salida("ESTADO_CONTROL", 1)
-    for _ in range(8):
-        codigo("END")
-    codigo("END")
-    codigo("END")
-    codigo("END")
     codigo("END")
     codigo("END")
     codigo("END")
@@ -106,7 +108,7 @@ def construir():
     # La pérdida de permiso se retiene al volver de la pieza, sin autoarranque al recuperarlo.
     codigo("IF AUTO_ACTIVO == 1")
     codigo("IF PERMISO_OPERACION == 0")
-    llamar("Parada_Ciclo")
+    llamar("Parada_Entre_Piezas")
     salida("AUTO_ACTIVO", 0)
     salida("ESTADO_CONTROL", 3)
     codigo("END")
@@ -116,7 +118,7 @@ def construir():
                       "CRB_DISPONIBLE == 0", "CINTA_DISPONIBLE == 0"):
         codigo("IF AUTO_ACTIVO == 1")
         codigo("IF " + condicion)
-        llamar("Parada_Ciclo")
+        llamar("Parada_Entre_Piezas")
         salida("AUTO_ACTIVO", 0)
         salida("ESTADO_CONTROL", 3)
         codigo("END")

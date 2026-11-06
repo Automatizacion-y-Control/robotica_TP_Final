@@ -1,9 +1,10 @@
 {
   "version": "6.1.1.26991",
-  "segundos_reales": 72.78099999995902,
+  "segundos_reales": 83.34400000004098,
   "pruebas": [
     {
       "prueba": "Arranque sin permiso rechazado",
+      "causa": 1,
       "siguiente": 1.0
     },
     {
@@ -25,11 +26,24 @@
       "lotes": 0.0
     },
     {
+      "prueba": "Mantenimiento con lote parcial conserva el índice",
+      "siguiente": 3,
+      "completadas": 2
+    },
+    {
+      "prueba": "Modo desconocido no detiene producción",
+      "causa": 11
+    },
+    {
       "prueba": "Parada durante soldadura",
       "pieza": 4,
       "siguiente": 5.0,
       "completadas": 4.0,
       "lotes": 0.0
+    },
+    {
+      "prueba": "Regreso sin modo activo no detiene producción",
+      "causa": 9
     },
     {
       "prueba": "Parada durante segundo lote",
@@ -45,10 +59,19 @@
       "colisiones": 0
     },
     {
-      "prueba": "Mantenimiento y retorno conservan lote parcial",
+      "prueba": "Mantenimiento con fin de lote pendiente conserva el estado",
       "siguiente": 5,
       "completadas": 8,
       "solicitud_desde_auto_requiere_repeticion": true
+    },
+    {
+      "prueba": "Arranque posterior ejecuta el fin de lote diferido",
+      "lotes": 2
+    },
+    {
+      "prueba": "Falla en producción, correctivo y retorno",
+      "siguiente": 2,
+      "completadas": 9
     }
   ]
 }
