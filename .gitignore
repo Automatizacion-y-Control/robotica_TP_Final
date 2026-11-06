@@ -29,3 +29,6 @@ CLAUDE.md
 
 # Guía de trabajo para otros agentes de código (no forma parte de la entrega)
 AGENTS.md
+
+# Panel: cuentas y registro de cada instalación
+c_prototipado/panel/panel.db*

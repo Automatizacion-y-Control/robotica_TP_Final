@@ -1,0 +1,92 @@
+{
+  "exito": true,
+  "integracion": true,
+  "pruebas": [
+    {
+      "prueba": "Contraseñas guardadas como hash con salt individual",
+      "cuentas": 3
+    },
+    {
+      "prueba": "Cuentas iniciales ingresan y se identifican como de fábrica",
+      "cuentas": 3
+    },
+    {
+      "prueba": "Matriz de permisos en el procesador",
+      "casillas": 15
+    },
+    {
+      "prueba": "Sin sesión solo se admite la parada normal, registrada como tal"
+    },
+    {
+      "prueba": "Sin conexión o sin coordinador no se envían órdenes"
+    },
+    {
+      "prueba": "Sesión vencida por inactividad rechaza órdenes",
+      "segundos": 900
+    },
+    {
+      "prueba": "Baja o cambio de perfil invalidan la sesión abierta"
+    },
+    {
+      "prueba": "Última cuenta administradora protegida; sin cambio de privilegios propios"
+    },
+    {
+      "prueba": "Bloqueo temporal tras intentos fallidos",
+      "intentos": 5,
+      "segundos": 300
+    },
+    {
+      "prueba": "Cambio de contraseña propia quita el aviso de clave de fábrica"
+    },
+    {
+      "prueba": "Cerrar sesión pide parada solo si hay producción"
+    },
+    {
+      "prueba": "Órdenes sin confirmar se descartan al perder la conexión"
+    },
+    {
+      "prueba": "El registro no contiene contraseñas"
+    },
+    {
+      "prueba": "El panel y los sensores no ejecutan ni mueven nada",
+      "archivos": 7
+    },
+    {
+      "prueba": "Sin servidor el enlace no abre RoboDK",
+      "puerto": 20599
+    },
+    {
+      "prueba": "Sin coordinador iniciado el panel lo indica y no lo inicia",
+      "aviso": "El coordinador está detenido: iniciar Programa_Principal desde RoboDK."
+    },
+    {
+      "prueba": "Inicio y cierre de sesión no arrancan ni mueven"
+    },
+    {
+      "prueba": "Arranque y parada desde los botones",
+      "siguiente": 2,
+      "completadas": 1
+    },
+    {
+      "prueba": "Cerrar sesión en producción completa la pieza y no reinicia el lote",
+      "siguiente": 3
+    },
+    {
+      "prueba": "Preparar y regresar desde el panel sin autoarranque",
+      "modo": 2,
+      "siguiente": 3
+    },
+    {
+      "prueba": "El panel muestra la causa de rechazo nativa",
+      "causa": "Última solicitud: Rechazada · Equipo no disponible"
+    },
+    {
+      "prueba": "El registro distingue solicitud y confirmación nativa",
+      "entradas": 26
+    },
+    {
+      "prueba": "Cerrar el panel en producción completa la pieza",
+      "siguiente": 4
+    }
+  ]
+}
