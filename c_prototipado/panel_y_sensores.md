@@ -221,8 +221,8 @@ en [modos y mantenimiento, §§6–7 y 11](modos_y_mantenimiento.md).
 |---|---|---|
 | 1 | Trazabilidad e inventario de v04 y antecedente v01 | Documentados en esta revisión. |
 | 2 | Cerrar estados, transiciones y disponibilidad por equipo | Propuesta; falta validar capacidades nativas. |
-| 3 | Comprobar condiciones/saltos y monitoreo durante movimiento en RoboDK 6.1.1 | IF, WHILE, E/S y ejecución paralela probados; ELSE no validado. WAIT no supervisa la instrucción siguiente. Falta respuesta durante movimiento. |
-| 4 | Verificar preparación/retorno individual, conjunta y de cinta | IRB de regreso y ambos órdenes conjuntos pasan; falta preparación/vaciado de cinta y validación funcional. |
+| 3 | Comprobar condiciones/saltos y monitoreo durante movimiento en RoboDK 6.1.1 | IF, WHILE, E/S y ejecución paralela probados; ELSE no validado. Retirar permiso durante MoveJ de cinta no detiene el movimiento. Interrupción inmediata nativa no demostrada. |
+| 4 | Verificar preparación/retorno individual, conjunta y de cinta | IRB de regreso y ambos órdenes conjuntos pasan. Ensayada cinta sin evacuación y evacuación del lote inicial; banda vacía y lotes parciales requieren procedimiento específico. |
 | 5 | Fijar contrato de E/S, escritor único, acuses, tolerancias y tiempos máximos | Propuesta de señales; pendiente de cerrar. |
 | 6 | Implementar coordinación nativa sin perder eventos de la estación anterior | Pendiente. |
 | 7 | Implementar sensores y comprobar detecciones antes/durante/después de toma y depósito | Pendiente. |
@@ -253,6 +253,8 @@ Ensayos de aceptación que deben quedar registrados:
 | 2026-11-06 | Modos todavía no integrados: las pruebas geométricas no equivalen a validación funcional del panel. |
 | 2026-11-06 | Control de flujo probado en estación aislada basada en ejemplo oficial: habilitar la opción por estación es imprescindible. Usar IF/END y WHILE/END comprobados; no adoptar ELSE todavía. |
 | 2026-11-06 | IRB ida/vuelta y mantenimiento conjunto en ambos órdenes: ratio 1 sin colisiones con muestreo 1 mm/1°. Orden propuesto: IRB, CRB; regreso CRB, IRB. |
+| 2026-11-06 | Ensayo sobre copia descartable de v04: retirar permiso con eje a 155 mm no detiene el avance a 2050 mm. No atribuir función de protección inmediata a WAIT ni al panel. |
+| 2026-11-06 | Separar cinta detenida, zona de robots sin piezas y banda vacía. Evacuación a 1750 mm no despeja el lote inicial; 2050 mm sí despeja ese caso, pero no representa retirada de piezas. |
 
 Cada implementación posterior debe actualizar la tabla de pasos, señales definitivas y pruebas,
 indicando versión de estación y resultado. No marcar como implementado un requisito por disponer
@@ -268,6 +270,7 @@ Las llamadas de ejecución desde Python pertenecen exclusivamente al banco de pr
 ```text
 C:\RoboDK\Python-Embedded\python.exe c_prototipado/scripts/probar_control_nativo.py
 C:\RoboDK\Python-Embedded\python.exe c_prototipado/scripts/probar_control_nativo.py --con-flujo
+C:\RoboDK\Python-Embedded\python.exe c_prototipado/scripts/probar_control_nativo.py --con-flujo-api
 ```
 
 Para la segunda variante se usa la configuración de
@@ -296,9 +299,12 @@ insertado sin habilitar el flujo; no debe interpretarse como ausencia general de
 La correspondencia de E/S con parámetros también está descrita en la
 [documentación oficial Set/Wait IO](https://robodk.com/doc/en/Robot-Programs-SetWait-IO.html).
 
-Alcance pendiente: no se probó el vencimiento del timeout nativo, ni una interrupción durante un
-movimiento, ni combinaciones arbitrarias de sintaxis RAPID. Los ensayos sin robots usan pausas,
+Alcance pendiente: no se probó el vencimiento del timeout nativo ni combinaciones arbitrarias de
+sintaxis RAPID. Los ensayos sin robots usan pausas,
 no trayectorias. Todavía no se ha cambiado la configuración de flujo de la v04 ni creado la v05.
+
+La comprobación posterior sobre un movimiento real del mecanismo se registra en el apartado siguiente;
+no se logró una interrupción nativa inmediata.
 
 ### Verificación geométrica complementaria
 
@@ -313,6 +319,60 @@ Se proponen movimientos secuenciales, no simultáneos. Estas pruebas incluyen la
 durante las trayectorias pero no validan disponibilidad de equipos, accesibilidad física para una
 tarea particular, soporte de ejes ni aislamiento. Los programas temporales se eliminaron y se
 restableció el reposo; la v04 no se guardó con cambios de este ensayo.
+
+### Cinta y retirada de permiso durante movimiento
+
+Banco: [probar_cinta_y_permisos.py](scripts/probar_cinta_y_permisos.py).
+Evidencia: [cinta_y_permisos_v04.json](verificaciones/cinta_y_permisos_v04.json).
+Se abrió una copia descartable del archivo v04, conservando eventos y geometría. Se eliminó al
+terminar y se restauró la estación activa y la velocidad. Los movimientos de ensayo fueron
+instrucciones MoveJ nativas, no órdenes de movimiento desde el sensor o el panel.
+
+| Caso | Resultado observado | Interpretación |
+|---|---|---|
+| Preparar sin evacuar | Robots en reposo, cinta en 0, cuatro piezas sobre banda, cero colisiones. | Para una tarea que no requiere quitar piezas, mantener la posición; no ordenar origen por defecto. Falta integrar permisos y confirmación temporal de detención. |
+| Evacuar lote inicial hasta eje 1750 | Centros en X = 1600, 1300, 1000 y 700 mm; ratio 1 sin colisiones. | El último estator sigue dentro: cara este del cerramiento en X = 850 mm. El target productivo no es un vaciado universal. |
+| Evacuar lote inicial hasta eje 2050 | Centros en X = 1900, 1600, 1300 y 1000 mm; ratio 1 sin colisiones. | Todas las piezas quedan fuera de la zona y dentro del apoyo de salida, que termina en X = 2100 mm. Solo probado para la distribución inicial. |
+| Permiso retirado durante MoveJ | Se retiró con eje a 155 mm; el eje llegó a 2050 mm y el programa escribió fin, con permiso en 0. Cero colisiones detectadas por monitoreo. | WAIT previo no cancela el movimiento en curso. La reacción inmediata a una intrusión no está implementada por ese mecanismo. |
+
+Para determinar salida completa se comprobó `min(X_centros) - ESTATOR_LADO/2 > CERR_X[1]`;
+para el apoyo, `max(X_centros) + ESTATOR_LADO/2 <= CINTA_EXT_FIN_X`. Se aplica a las piezas
+verticales de este ensayo; no es un algoritmo general para cualquier orientación o distribución.
+
+**Decisiones para cerrar la lógica de cinta:**
+
+1. **Sin evacuación:** detener y conservar eje; no declarar vacía ni reiniciar el lote.
+2. **Despejar zona de robots:** solo permitir una evacuación cuya distribución de piezas y apoyo
+   final estén comprobados. No reutilizar 2050 mm para cualquier lote parcial.
+3. **Banda vacía para recambio:** exige retirada efectiva de las piezas y confirmación independiente;
+   desplazarlas a la salida no vacía la banda. La retirada se representará por un procedimiento
+   supervisado y los eventos nativos necesarios; el panel no reubicará ni ocultará piezas.
+4. **Accionamiento averiado:** rechazar evacuación automática; mantener estado e indicar recuperación
+   e intervención. No intentar mover la cinta para satisfacer el permiso de mantenimiento.
+5. **Reinicio:** preservar estado del lote; después de intervención no ejecutar automáticamente
+   `Fin_Lote`, porque también repone piezas. Requiere confirmación de restitución y nuevo arranque.
+
+**Decisión de alcance para la v05:** se puede implementar coordinación de producción, paradas al
+final de pieza y preparación programada. La emergencia y las protecciones se deben mostrar como
+entradas de simulación con su alcance explícito. No dar por validada una parada inmediata por
+señales hasta demostrar un mecanismo nativo que cancele el movimiento. La parada manual del
+simulador es distinta de esa función. No añadir `Stop()` al panel Python para ocultar esta diferencia.
+
+### Persistencia del control de flujo sobre la base v04
+
+Se comprobó `estacion.setParam("FlowControl", "1")`, con respuesta `OK`, mediante el banco
+`--con-flujo-api`. La [evidencia](verificaciones/control_nativo_6_1_1_flujo_api.json) reproduce
+IF, WHILE, llamadas y ejecución paralela sin depender del ejemplo externo. Es una capacidad
+comprobada experimentalmente en esta versión, no una garantía para otras versiones.
+
+El banco de cinta habilita esa opción en su copia descartable de v04, guarda y reabre el archivo,
+compara los nombres de las instrucciones de evento por programa y ejecuta una condición falsa.
+El resultado se registra en `persistencia_flujo` del JSON de cinta. Esto permite derivar la futura
+v05 del archivo v04 conservando los eventos originales, en vez de reconstruirla desde el ejemplo.
+
+Siguientes tareas: cerrar estados/órdenes y recuperación para lotes parciales; elegir la
+representación de las interrupciones dentro de las capacidades demostradas. La v05 y el panel
+todavía no están implementados.
 
 ## 11. Referencias
 

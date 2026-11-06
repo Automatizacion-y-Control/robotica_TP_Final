@@ -18,8 +18,9 @@ def main():
     rdk = Robolink(port=20500)
     anterior = rdk.ActiveStation()
     velocidad = rdk.SimulationSpeed()
-    con_flujo = "--con-flujo" in sys.argv
-    if con_flujo:
+    por_api = "--con-flujo-api" in sys.argv
+    con_flujo = "--con-flujo" in sys.argv or por_api
+    if con_flujo and not por_api:
         referencia = Path(__file__).resolve().parent.parent / "referencias" / "FlowControlTest_oficial.rdk"
         estacion = rdk.AddFile(str(referencia))
         # Solo se conserva la configuración del ejemplo; no se ejecuta su código.
@@ -28,9 +29,14 @@ def main():
         estacion.setName("Ensayo_Control_Nativo_Con_Flujo")
     else:
         estacion = rdk.AddStation("Ensayo_Control_Nativo_Sin_Movimientos")
+        if por_api:
+            respuesta = estacion.setParam("FlowControl", "1")
+            if respuesta != "OK":
+                raise RuntimeError("No se pudo habilitar FlowControl: " + respuesta)
     programas = []
     resultados = {"version": rdk.Version(), "fecha": "2026-11-06",
-                  "base_con_flujo_oficial": con_flujo, "pruebas": []}
+                  "base_con_flujo_oficial": con_flujo and not por_api,
+                  "flujo_habilitado_por_api": por_api, "pruebas": []}
 
     def programa(nombre):
         p = rdk.AddProgram(nombre)
@@ -161,7 +167,7 @@ def main():
                 p.Stop()
         carpeta = Path(__file__).resolve().parent.parent / "verificaciones"
         carpeta.mkdir(exist_ok=True)
-        sufijo = "con_flujo" if con_flujo else "sin_flujo"
+        sufijo = "flujo_api" if por_api else "con_flujo" if con_flujo else "sin_flujo"
         ruta = carpeta / ("control_nativo_6_1_1_" + sufijo + ".json")
         with ruta.open("w", encoding="utf-8", newline="\n") as archivo:
             json.dump(resultados, archivo, ensure_ascii=False, indent=2)

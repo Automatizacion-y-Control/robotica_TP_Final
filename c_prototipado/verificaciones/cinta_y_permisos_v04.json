@@ -1,0 +1,131 @@
+{
+  "version": "6.1.1.26991",
+  "pruebas": [
+    {
+      "prueba": "Preparación sin vaciado",
+      "eje": [
+        0.0
+      ],
+      "piezas": [
+        {
+          "nombre": "Estator_1",
+          "x": -150.0
+        },
+        {
+          "nombre": "Estator_2",
+          "x": -450.0
+        },
+        {
+          "nombre": "Estator_3",
+          "x": -750.0
+        },
+        {
+          "nombre": "Estator_4",
+          "x": -1050.0
+        }
+      ],
+      "colisiones": 0,
+      "criterio": "Mantener posición; no declarar banda vacía"
+    },
+    {
+      "prueba": "Evacuación desde lote inicial",
+      "destino": 1750.0,
+      "resultado": [
+        4.0,
+        18.5,
+        1750.0,
+        1.0,
+        "No se han encontrado problemas para esta trayectoria<br>No hay colisiones detectadas."
+      ],
+      "piezas": [
+        {
+          "nombre": "Estator_1",
+          "x": 1600.0
+        },
+        {
+          "nombre": "Estator_2",
+          "x": 1300.0
+        },
+        {
+          "nombre": "Estator_3",
+          "x": 1000.0
+        },
+        {
+          "nombre": "Estator_4",
+          "x": 700.0
+        }
+      ],
+      "fuera_de_zona": false,
+      "dentro_del_apoyo_salida": true
+    },
+    {
+      "prueba": "Evacuación desde lote inicial",
+      "destino": 2050,
+      "resultado": [
+        4.0,
+        21.5,
+        2050.0,
+        1.0,
+        "No se han encontrado problemas para esta trayectoria<br>No hay colisiones detectadas."
+      ],
+      "piezas": [
+        {
+          "nombre": "Estator_1",
+          "x": 1900.0
+        },
+        {
+          "nombre": "Estator_2",
+          "x": 1600.0
+        },
+        {
+          "nombre": "Estator_3",
+          "x": 1300.0
+        },
+        {
+          "nombre": "Estator_4",
+          "x": 1000.0
+        }
+      ],
+      "fuera_de_zona": true,
+      "dentro_del_apoyo_salida": true
+    },
+    {
+      "prueba": "Retirada de permiso durante movimiento nativo",
+      "eje_al_retirar": 154.0,
+      "eje_final": [
+        2050.0
+      ],
+      "fin": 1.0,
+      "permiso": 0.0,
+      "colisiones": 0,
+      "segundos_reales": 10.718000000109896
+    }
+  ],
+  "persistencia_flujo": {
+    "rama_con_condicion_falsa": 0.0,
+    "eventos_antes": {
+      "Evento_Tomar_Pieza": [
+        "Adjuntar a TCP_Pinza"
+      ],
+      "Evento_Soltar_Pieza": [
+        "Separar de TCP_Pinza"
+      ],
+      "Fin_Lote": [
+        "Inicio Cinta_Pasante",
+        "Mover objetos"
+      ]
+    },
+    "eventos_despues": {
+      "Evento_Tomar_Pieza": [
+        "Adjuntar a TCP_Pinza"
+      ],
+      "Evento_Soltar_Pieza": [
+        "Separar de TCP_Pinza"
+      ],
+      "Fin_Lote": [
+        "Inicio Cinta_Pasante",
+        "Mover objetos"
+      ]
+    }
+  }
+}

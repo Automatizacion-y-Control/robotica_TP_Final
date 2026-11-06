@@ -214,6 +214,14 @@ Los programas tienen que tener **nombres claros** (criterio de evaluación). Rec
 
 ## 9. Qué hay que definir en nuestra celda
 
+**Contraste con la implementación (2026-11-06):** los ensayos de RoboDK 6.1.1 confirman el
+intercambio entre E/S simuladas y parámetros, y el flujo IF/WHILE con la opción de estación
+habilitada. También confirman que un WAIT previo no interrumpe un movimiento al retirarse la señal.
+La aplicación y la evidencia están en
+[Panel y sensores, ensayos de control nativo](../../c_prototipado/panel_y_sensores.md#ensayos-de-control-nativo).
+Esta limitación del simulador no cambia el concepto de monitoreo continuo de §5: obliga a declarar
+qué funciones se representan realmente antes de diseñar el panel.
+
 - ¿Qué subprogramas tiene la celda, y qué hace cada uno?
 - ¿Cuál es el estado inicial y final de cada subprograma?
 - ¿Qué señales de entrada y salida hay (arco, posicionador, puerta, presencia de pieza,
