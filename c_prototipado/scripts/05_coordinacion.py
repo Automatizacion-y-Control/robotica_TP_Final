@@ -16,11 +16,13 @@ from empaquetar_panel import generar
 from modos_nativos import instalar, INICIALES_MODOS
 from paradas_nativas import instalar_paradas, INICIALES_PARADAS, RESGUARDOS
 from velocidades_v05 import ajustar_velocidades
-from robodk.robolink import (Robolink, ITEM_TYPE_PROGRAM, ITEM_TYPE_PROGRAM_PYTHON, ITEM_TYPE_ROBOT,
+from robodk.robolink import (Robolink, ITEM_TYPE_PROGRAM, ITEM_TYPE_PROGRAM_PYTHON, ITEM_TYPE_TARGET,
                             INSTRUCTION_INSERT_CODE,
                             INSTRUCTION_CALL_PROGRAM, INSTRUCTION_COMMENT)
 
 RAIZ = Path(__file__).resolve().parent.parent
+# Postura con la que abre la estación: un target por equipo (IRB, CRB, pinza y cinta).
+REPOSO = ("Man_Reposo", "Sold_Reposo", "Pinza_Abierta", "Cinta_Posicion_1")
 INICIALES = {
     "COORDINADOR_ACTIVO": 1, "PERMISO_OPERACION": 0,
     "ARRANQUE_ID": 0, "ARRANQUE_ACK": 0, "PARADA_ID": 0, "PARADA_ACK": 0,
@@ -240,14 +242,16 @@ def construir():
     panel = rdk.AddFile(str(generar(carpeta_temporal / "Abrir_Panel_Operador.py")), estacion)
     assert panel.Valid() and panel.Type() == ITEM_TYPE_PROGRAM_PYTHON
     # Validar deja el estado de los programas al día; el coordinador tiene un bucle y no se valida.
-    # Update deja los equipos donde terminó el programa: la estación debe abrir en reposo.
-    equipos = [(e, e.Joints()) for e in rdk.ItemList(ITEM_TYPE_ROBOT)]
     for programa in rdk.ItemList(ITEM_TYPE_PROGRAM):
         if programa.Name() != "Coordinador_Panel":
             resultado = programa.Update()
             assert resultado[3] == 1, (programa.Name(), resultado)
-    for equipo, articulaciones in equipos:
-        equipo.setJoints(articulaciones)
+    # La estación abre en reposo: Update deja los equipos donde terminó cada programa, y la v04
+    # base puede estar guardada en otra postura (por ejemplo, el CRB en mantenimiento).
+    for nombre in REPOSO:
+        target = rdk.Item(nombre, ITEM_TYPE_TARGET)
+        assert target.Valid() and target.Name() == nombre, nombre
+        target.getLink().setJoints(target.Joints())
     ruta = RAIZ / "Celda_Soldadura_Estator_Grupo4_v05.rdk"
     estacion.Save(str(ruta))
     shutil.rmtree(carpeta_temporal)
