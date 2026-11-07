@@ -59,12 +59,11 @@ Los entregables están en [`d_presentacion/`](d_presentacion/).
 
 | Producto | Ubicación | Estado |
 |---|---|---|
-| Celda robotizada final (estación RoboDK con todos los elementos) | `d_presentacion/` | Pendiente: se publica cuando esté cerrada la última versión |
-| Informe técnico final (máximo 8 páginas) | `d_presentacion/` | Pendiente |
+| Celda robotizada final (estación RoboDK con todos los elementos) | [`d_presentacion/`](d_presentacion/) | Copia de la v05 actual |
+| Informe técnico final (máximo 8 páginas) | [`Informe_Tecnico_Grupo4.pdf`](d_presentacion/Informe_Tecnico_Grupo4.pdf) | Generado, 7 páginas |
 | Video de presentación | `d_presentacion/` | Pendiente: se graba al final, con todo terminado |
 
-El informe que hoy está en `d_presentacion/` corresponde a la **entrega anterior** (celda v01) y
-queda como antecedente.
+El informe de la **entrega anterior** (celda v01) se conserva en [`c_prototipado/docs/antecedentes/`](c_prototipado/docs/antecedentes/).
 
 ## La celda
 

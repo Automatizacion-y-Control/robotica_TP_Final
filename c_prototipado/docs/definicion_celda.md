@@ -73,7 +73,7 @@ que es la fuente única de valores.
 
 | Versión | Archivo | Cambio principal | Documento |
 |---|---|---|---|
-| v01 | [`Celda_Soldadura_Estator_Grupo4_v01.rdk`](../Celda_Soldadura_Estator_Grupo4_v01.rdk) | Versión original: posicionador MTD 250, cilindro de 6 cordones, sin transporte | Informe de la entrega anterior (`d_presentacion/`) |
+| v01 | [`Celda_Soldadura_Estator_Grupo4_v01.rdk`](../Celda_Soldadura_Estator_Grupo4_v01.rdk) | Versión original: posicionador MTD 250, cilindro de 6 cordones, sin transporte | [Informe de la entrega anterior](antecedentes/Informe_Tecnico_Robotica_UTN_FRC_Entrega.pdf) |
 | v02 | [`Celda_Soldadura_Estator_Grupo4_v02.rdk`](../Celda_Soldadura_Estator_Grupo4_v02.rdk) | Manipulador + soldador TIG; paquete de estator real; entrada por cinta y salida por pallet | Este documento |
 | v03 | [`Celda_Soldadura_Estator_Grupo4_v03.rdk`](../Celda_Soldadura_Estator_Grupo4_v03.rdk) | **Cinta pasante:** la misma cinta trae y saca las piezas; se elimina el pallet y su ventana | [mejora 01](mejora_01_cinta_pasante.md) |
 
