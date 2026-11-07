@@ -24,6 +24,17 @@ Casali Emiliano · Ferrero Facundo · Vera Gonzalo
 
 Comisión 2LA1 · Año 2026
 
+[![RoboDK 6.1.1](https://img.shields.io/badge/RoboDK-6.1.1-1F6FB2)](https://robodk.com/)
+[![Robots ABB](https://img.shields.io/badge/robots-ABB%20IRB%201200%20%2B%20CRB%201300-E2001A)](#la-celda)
+[![Soldadura TIG](https://img.shields.io/badge/proceso-TIG%20sin%20aporte-E8A33D)](#el-trabajo)
+[![Celda v05](https://img.shields.io/badge/celda-v05-2F6690)](#versiones-de-la-celda)
+[![Python](https://img.shields.io/badge/Python-panel%20y%20sensores-3776AB?logo=python&logoColor=white)](c_prototipado/panel/)
+
+[![Video](https://img.shields.io/badge/video-8%3A53-EA4335?logo=googledrive&logoColor=white)](https://drive.google.com/file/d/1jT9AAlhyzWE13D6R3_5kL27YfOVaF3MH/view?usp=drive_link)
+[![Informe técnico](https://img.shields.io/badge/informe-PDF%20%C2%B7%207%20p%C3%A1ginas-B30B00?logo=adobeacrobatreader&logoColor=white)](d_presentacion/Informe_Tecnico_Grupo4.pdf)
+[![Estación](https://img.shields.io/badge/estaci%C3%B3n-.rdk-0E1B2C)](d_presentacion/Celda_Soldadura_Estator_Grupo4_v05.rdk)
+[![Manual del panel](https://img.shields.io/badge/manual-producci%C3%B3n%20%C2%B7%20mantenimiento%20%C2%B7%20admin-5A6B7B)](c_prototipado/docs/manual.md)
+
 </div>
 
 ---
@@ -206,5 +217,5 @@ celda y en el documento de la mejora 01.
 | [Modos y mantenimiento](c_prototipado/docs/modos_y_mantenimiento.md) | Paradas, LOTO, energías, zonas, modos y tareas |
 | [Mejora 02 · Modos y mantenimiento](c_prototipado/docs/mejora_02_modos_mantenimiento.md) | Cambio de la v03 a la v04 |
 | [Panel de operador y sensores](c_prototipado/docs/panel_y_sensores.md) | Trazabilidad desde los requisitos y la investigación, revisión del antecedente v01, modos, mantenimiento y señales; implementado en la v05 |
-| [Manual del panel](c_prototipado/docs/manual.md) | Puesta en marcha y operación de la v05, con el panel o sin él |
+| [Manual del panel](c_prototipado/docs/manual.md) | Puesta en marcha y operación de la v05, con el panel o sin él; perfiles de producción (§5), mantenimiento (§6) y administración (§8) |
 | [Guion de edición del video](c_prototipado/video/guion-edicion.md) | Transcripción, cortes, tramos de pantalla dividida y formato del video |
