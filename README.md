@@ -32,6 +32,7 @@ Comisión 2LA1 · Año 2026
 
 - [El trabajo](#el-trabajo)
 - [Productos finales](#productos-finales)
+- [Video de presentación](#video-de-presentación)
 - [La celda](#la-celda)
 - [Cumplimiento de los requisitos](#cumplimiento-de-los-requisitos)
 - [Estructura del repositorio](#estructura-del-repositorio)
@@ -61,9 +62,17 @@ Los entregables están en [`d_presentacion/`](d_presentacion/).
 |---|---|---|
 | Celda robotizada final (estación RoboDK con todos los elementos) | [`d_presentacion/`](d_presentacion/) | Copia de la v05 actual |
 | Informe técnico final (máximo 8 páginas) | [`Informe_Tecnico_Grupo4.pdf`](d_presentacion/Informe_Tecnico_Grupo4.pdf) | Generado, 7 páginas |
-| Video de presentación | `d_presentacion/` | Pendiente: se graba al final, con todo terminado |
+| Video de presentación | [Google Drive](https://drive.google.com/file/d/1jT9AAlhyzWE13D6R3_5kL27YfOVaF3MH/view?usp=drive_link) | 8:53, 1080p; la copia local no se versiona |
 
 El informe de la **entrega anterior** (celda v01) se conserva en [`c_prototipado/docs/antecedentes/`](c_prototipado/docs/antecedentes/).
+
+## Video de presentación
+
+[![Video de presentación de la celda: clic para verlo en Google Drive](d_presentacion/miniatura_video.jpg)](https://drive.google.com/file/d/1jT9AAlhyzWE13D6R3_5kL27YfOVaF3MH/view?usp=drive_link)
+
+Recorrido de la celda en 8:53: qué se fabrica, equipos y seguridad, programas, panel de operador, soldadura y un
+pedido de 12 piezas. Cuando se habla de un programa, la pantalla se divide y muestra sus instrucciones reales de la
+v05. La edición está documentada en el [guion de edición](c_prototipado/video/guion-edicion.md).
 
 ## La celda
 
@@ -117,12 +126,13 @@ proyectoRobotica/
 │   ├── Celda_Soldadura_Estator_Grupo4_v04.rdk
 │   ├── Celda_Soldadura_Estator_Grupo4_v05.rdk   Versión actual
 │   ├── Componentes_Grupo4.rdk         Estación de trabajo con los componentes
-│   ├── scripts/                       Parámetros, generación de modelos, construcción y verificación
+│   ├── scripts/                       Parámetros, generación (01 a 05, en orden), ensayos y mediciones
 │   ├── modelos/                       Modelos 3D propios y de la biblioteca de RoboDK
 │   ├── verificaciones/                Resultados de los ensayos
 │   ├── referencias/                   Panel de la v01 y ejemplo de control de flujo
-│   └── imagenes/                      Capturas de la celda y del panel
-└── d_presentacion/                  Productos finales: estación e informe; falta el video
+│   ├── imagenes/                      Capturas de la celda y del panel
+│   └── video/                         Guion de edición y scripts del video (el crudo no se versiona)
+└── d_presentacion/                  Productos finales: estación, informe y miniatura del video (el video está en Drive)
 ```
 
 ## Versiones de la celda
@@ -165,6 +175,16 @@ C:\RoboDK\Python-Embedded\python.exe verificar_panel.py --puerto 20500
 C:\RoboDK\Python-Embedded\python.exe medir_ciclo_v05.py --puerto 20500        # tiempo de ciclo, a x2
 ```
 
+**Para regenerar el video** (con FFmpeg, faster-whisper y Pillow; el crudo no está en el repositorio):
+
+```text
+cd c_prototipado/video
+python transcribir.py crudo_2026-11-07.mp4 trabajo      # transcripción local con Whisper
+python graficos.py                                      # portada, placa y tarjetas de pantalla dividida
+python editar.py                                        # vista previa a 540p
+python editar.py --final                                # video final y miniatura en d_presentacion/
+```
+
 Los eventos de simulación (tomar y soltar la pieza, reponer el lote) no se pueden crear desde la API
 de RoboDK y se cargan desde la interfaz. El procedimiento está en
 [`scripts/parametros_celda.py`](c_prototipado/scripts/parametros_celda.py), en la definición de la
@@ -185,5 +205,6 @@ celda y en el documento de la mejora 01.
 | [Mejora 01 · Cinta pasante](c_prototipado/docs/mejora_01_cinta_pasante.md) | Cambio de la v02 a la v03 |
 | [Modos y mantenimiento](c_prototipado/docs/modos_y_mantenimiento.md) | Paradas, LOTO, energías, zonas, modos y tareas |
 | [Mejora 02 · Modos y mantenimiento](c_prototipado/docs/mejora_02_modos_mantenimiento.md) | Cambio de la v03 a la v04 |
-| [Panel de operador y sensores](c_prototipado/docs/panel_y_sensores.md) | Trazabilidad desde los requisitos y la investigación, revisión del antecedente v01 y propuesta de modos, mantenimiento y señales; implementación pendiente |
+| [Panel de operador y sensores](c_prototipado/docs/panel_y_sensores.md) | Trazabilidad desde los requisitos y la investigación, revisión del antecedente v01, modos, mantenimiento y señales; implementado en la v05 |
 | [Manual del panel](c_prototipado/docs/manual.md) | Puesta en marcha y operación de la v05, con el panel o sin él |
+| [Guion de edición del video](c_prototipado/video/guion-edicion.md) | Transcripción, cortes, tramos de pantalla dividida y formato del video |

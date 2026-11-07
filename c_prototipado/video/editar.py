@@ -2,8 +2,9 @@
 
 Un solo grafo de FFmpeg: el crudo se recorta una vez (silencio inicial y final) y la voz corre continua; en los
 tramos de pantalla dividida se superpone el fondo con el programa y la grabación achicada. Portada y placa en silencio.
-Uso: python editar.py            vista previa a 540p en trabajo/vista-previa.mp4
-     python editar.py --final    video final en d_presentacion/
+Uso: python editar.py               vista previa a 540p en trabajo/vista-previa.mp4
+     python editar.py --final       video final en d_presentacion/ (no se versiona: se publica en Drive) y miniatura
+     python editar.py --miniatura   solo la miniatura para los README, a partir del video final
 """
 import subprocess
 import sys
@@ -16,6 +17,8 @@ CRUDO = AQUI / "crudo_2026-11-07.mp4"
 G = AQUI / "g"
 PREVIA = AQUI / "trabajo" / "vista-previa.mp4"
 FINAL = AQUI.parents[1] / "d_presentacion" / "Video_Celda_Soldadura_Grupo4.mp4"
+MINIATURA = AQUI.parents[1] / "d_presentacion" / "miniatura_video.jpg"
+CUADRO_MINIATURA = 350.0  # segundo del crudo: soldadura en pantalla dividida, con Sold_Par_Cordones al costado
 
 # Presentación sobre la portada, reordenada y sin «Nosotros somos el grupo 10» (Whisper oyó mal; se dice 4):
 # «Bueno, ¿qué tal?» + «Nuestro grupo está conformado por…» + «Vamos a presentar ahora… paquete de estator».
@@ -96,9 +99,36 @@ def render(salida, escala, video_args, audio_k):
     print(f"{salida} ({salida.stat().st_size / 1e6:.1f} MB)")
 
 
+def miniatura():
+    """Cuadro del video final con un botón de reproducción, para enlazar el video de Drive desde los README."""
+    from PIL import Image, ImageDraw
+    from graficos import ACENTO, SANS_B, fuente
+    t = PORTADA + CUADRO_MINIATURA - INICIO
+    cuadro = AQUI / "trabajo" / "cuadro_miniatura.png"
+    subprocess.run(["ffmpeg", "-y", "-v", "error", "-ss", f"{t:.2f}", "-i", str(FINAL), "-frames:v", "1", str(cuadro)],
+                   check=True)
+    im = Image.open(cuadro).convert("RGB").resize((1280, 720), Image.LANCZOS)
+    capa = Image.new("RGBA", im.size, (0, 0, 0, 0))
+    d = ImageDraw.Draw(capa)
+    cx, cy, radio = 640, 360, 90
+    d.ellipse((cx - radio, cy - radio, cx + radio, cy + radio), fill=(14, 27, 44, 210), outline=ACENTO, width=6)
+    d.polygon([(cx - 30, cy - 48), (cx - 30, cy + 48), (cx + 52, cy)], fill="white")
+    minutos, segundos = divmod(round(PORTADA + FIN - INICIO + PLACA), 60)
+    texto = f"Ver el video · {minutos}:{segundos:02d}"
+    f = fuente(SANS_B, 34)
+    ancho = d.textlength(texto, font=f)
+    d.rounded_rectangle((cx - ancho / 2 - 24, cy + 118, cx + ancho / 2 + 24, cy + 176), radius=12, fill=(14, 27, 44, 220))
+    d.text((cx - ancho / 2, cy + 124), texto, font=f, fill="white")
+    Image.alpha_composite(im.convert("RGBA"), capa).convert("RGB").save(MINIATURA, quality=85, optimize=True)
+    print(f"{MINIATURA} ({MINIATURA.stat().st_size / 1e3:.0f} kB)")
+
+
 if __name__ == "__main__":
-    if "--final" in sys.argv:
+    if "--miniatura" in sys.argv:
+        miniatura()
+    elif "--final" in sys.argv:
         render(FINAL, "1920:1080", ["-c:v", "libx264", "-preset", "slow", "-tune", "animation", "-crf", str(CRF),
                                     "-pix_fmt", "yuv420p", "-g", "300"], 96)
+        miniatura()
     else:
         render(PREVIA, "960:540", ["-c:v", "libx264", "-preset", "veryfast", "-crf", "28", "-pix_fmt", "yuv420p"], 96)
