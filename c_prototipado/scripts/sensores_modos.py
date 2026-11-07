@@ -24,6 +24,7 @@ class SensoresModos:
                         ("Man_Reposo", "Sold_Reposo", "Man_Mantenimiento", "Sold_Mantenimiento",
                          "Serv_Cambio_Tungsteno")}
         self.previa = None
+        self.escritos = {}
         self.estable_desde = time.monotonic()
 
     @staticmethod
@@ -60,8 +61,11 @@ class SensoresModos:
             "PIEZA_SUJETA_SENSOR": sujeta,
             "SENSORES_VALIDOS": True,
         }
+        # Cada llamada a la API frena la simulación: solo se escribe lo que cambió.
         for n,v in datos.items():
-            self.r.setParam(n, int(v))
+            if self.escritos.get(n) != v:
+                self.r.setParam(n, int(v))
+                self.escritos[n] = v
         return datos
 
 

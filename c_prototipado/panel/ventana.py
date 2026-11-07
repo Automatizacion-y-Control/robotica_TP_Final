@@ -5,16 +5,20 @@ from PySide2.QtCore import QEvent, Qt, QTimer
 from PySide2.QtWidgets import (QAbstractItemView, QCheckBox, QComboBox, QDialog, QFormLayout, QFrame,
                                QGridLayout, QGroupBox, QHBoxLayout, QHeaderView, QInputDialog,
                                QLabel, QLineEdit, QMainWindow, QMessageBox, QPushButton,
-                               QStackedWidget, QTableWidget, QTableWidgetItem, QTabWidget,
+                               QSpinBox, QStackedWidget, QTableWidget, QTableWidgetItem, QTabWidget,
                                QTextBrowser, QVBoxLayout, QWidget)
 
 from cuentas import ErrorCuenta, FALLO_ACCESO
-from permisos import (ADMINISTRADOR, ENTRADAS_SIMULADAS, MANTENIMIENTO, MODOS, PERFILES, PRODUCCION,
-                      TIPOS_INTERVENCION, Op, permitido)
+from permisos import (ADMINISTRADOR, CAUSAS_PARO, ENTRADAS_SIMULADAS, MANTENIMIENTO, MODOS, OBJETIVO_MAXIMO,
+                      PERFILES, PRODUCCION, RESGUARDOS, TIPOS_INTERVENCION, Op, permitido)
 from procesador import operativo
+from sinoptico import Sinoptico
 
 ESTADOS = {0: "Inicial", 1: "Automático", 2: "Parada normal", 3: "Detenida por condición perdida",
-           4: "Preparando modo", 5: "Regresando de modo", 6: "Modo confirmado"}
+           4: "Preparando modo", 5: "Regresando de modo", 6: "Modo confirmado",
+           7: "Recuperación pendiente", 8: "Recuperando", 9: "Pedido terminado"}
+FASES = {1: "avance", 2: "toma", 3: "presentación", 4: "soldadura", 5: "giro", 6: "soldadura", 7: "depósito",
+         8: "regreso"}
 RESULTADOS_MODO = {1: "Aceptada", 2: "Rechazada", 3: "Producción detenida: reenviar la solicitud"}
 SENSORES = (("IRB_EN_REPOSO", "IRB en reposo"), ("CRB_EN_REPOSO", "CRB en reposo"),
             ("IRB_EN_MANT", "IRB en mantenimiento"), ("CRB_EN_MANT", "CRB en mantenimiento"),
@@ -35,13 +39,22 @@ cuatro estatores y termina.</p>
 <li>Cerrar sesión, entrar como producción y pulsar Arranque.</li>
 </ol>
 <p>No mezclar: para pasar de un programa a otro, reabrir la estación sin guardar.</p>
+<h3>Paradas</h3>
+<p><b>Emergencia:</b> botón rojo de la banda o pulsadores de la pestaña Proceso. <b>Cortinas y puerta:</b>
+clic en la imagen del proceso; detienen solo si hay equipos en marcha.</p>
+<p>Después de una parada: eliminar la causa, pulsar Rearme, doble clic en <code>Coordinador_Panel</code> y,
+si la pieza quedó a medias, Recuperar con mantenimiento. Una pieza cortada al soldar se termina y se
+deja corrida en la cinta, como retrabajo. Rearmar no arranca nada.</p>
+<h3>Cantidad a fabricar</h3>
+<p>En Producción, fijar el objetivo de piezas buenas; 0 es sin límite. El retrabajo no cuenta. Al llegar,
+la celda repone las piezas, pone los contadores en cero y queda lista.</p>
 <h3>Cuentas de puesta en marcha</h3>
 {cuentas}
 <h3>Perfiles</h3>
 <ul>
-<li><b>Producción:</b> arranque y parada normal.</li>
-<li><b>Mantenimiento:</b> preparar modos, regresar, entradas de simulación y parada normal.</li>
-<li><b>Administrador:</b> cuentas y parada normal; no opera la celda.</li>
+<li><b>Producción:</b> arranque, parada, objetivo y rearme de cortinas y puerta.</li>
+<li><b>Mantenimiento:</b> modos, entradas de simulación, rearme, recuperación y reinicio de lote.</li>
+<li><b>Administrador:</b> cuentas y parada; no opera la celda.</li>
 </ul>
 <h3>Mantenimiento</h3>
 <p>Elegir equipo y pulsar Preparar. Si había producción, se detiene al terminar la pieza: pulsar
@@ -49,6 +62,7 @@ Preparar otra vez. Al terminar, Confirmar restitución y regresar; la celda no a
 <h3>Límites</h3>
 <ul>
 <li>Parada normal termina la pieza en curso: no es una parada de emergencia.</li>
+<li>La emergencia del panel representa la función: la real es un circuito de seguridad.</li>
 <li>Las entradas de simulación no son protecciones.</li>
 <li>El panel solo envía solicitudes: los movimientos son programas nativos de RoboDK.</li>
 <li>Al cerrar RoboDK, no guardar: se conservaría el estado de la simulación.</li>
@@ -65,7 +79,7 @@ QFrame#tarjeta, QGroupBox { background: #ffffff; border: 1px solid #cfd5da; bord
 QGroupBox { margin-top: 14px; padding-top: 12px; font-weight: 600; }
 QGroupBox::title { subcontrol-origin: margin; left: 10px; padding: 0 4px; }
 QLabel#rotulo { color: #56626c; font-size: 12px; }
-QLabel#valor { font-size: 17px; font-weight: 600; }
+QLabel#valor { font-size: 15px; font-weight: 600; }
 QLabel#aviso { background: #fff3cd; border: 1px solid #d9b64a; border-radius: 4px; padding: 6px 10px; }
 QLabel#mensaje { color: #1c2329; padding: 2px; }
 QPushButton { background: #ffffff; border: 1px solid #8b98a3; border-radius: 4px; padding: 7px 14px; }
@@ -75,11 +89,13 @@ QPushButton#primario, QPushButton#crear_cuenta { background: #1d6b45; border-col
 QPushButton#primario:disabled { background: #c9d6cf; border-color: #c9d6cf; color: #ffffff; }
 QPushButton#parada { background: #b3261e; border-color: #b3261e; color: #ffffff; font-weight: 600; }
 QPushButton#parada:disabled { background: #dcbcba; border-color: #dcbcba; color: #ffffff; }
+QPushButton#emergencia { background: #ffcc00; border: 3px solid #b3261e; color: #b3261e; font-weight: 700; }
+QPushButton#emergencia:disabled { background: #efe6bd; border-color: #d9c9a0; color: #a89b6d; }
 QTabWidget::pane { border: 1px solid #cfd5da; background: #f8f9fa; }
 QTabBar::tab { padding: 8px 18px; background: #dfe3e7; border: 1px solid #cfd5da; }
 QTabBar::tab:selected { background: #f8f9fa; color: #1d6b45; }
 QTableWidget { background: #ffffff; gridline-color: #e1e5e8; }
-QLineEdit, QComboBox { background: #ffffff; border: 1px solid #8b98a3; border-radius: 4px; padding: 5px; }
+QLineEdit, QComboBox, QSpinBox { background: #ffffff; border: 1px solid #8b98a3; border-radius: 4px; padding: 5px; }
 """
 
 
@@ -130,6 +146,9 @@ def condiciones_arranque(s):
             ("Sin modo activo", igual("MODO_CONFIRMADO", 0) and igual("MODO_EN_TRANSICION", 0)),
             ("Robots en reposo", igual("IRB_EN_REPOSO", 1) and igual("CRB_EN_REPOSO", 1)),
             ("Sin pieza sujeta", igual("PIEZA_SUJETA_SENSOR", 0)),
+            ("Sin parada activa", not s.get("PARO_CAUSA")),
+            ("Resguardos cerrados", not any(igual(n, 1) for n in RESGUARDOS)),
+            ("Sin recuperación pendiente", igual("RECUP_PENDIENTE", 0)),
             ("Cinta detenida", igual("CINTA_DETENIDA", 1)),
             ("Equipos disponibles", igual("IRB_DISPONIBLE", 1) and igual("CRB_DISPONIBLE", 1)
              and igual("CINTA_DISPONIBLE", 1)))
@@ -179,7 +198,7 @@ class Ventana(QMainWindow):
         banda.setObjectName("banda")
         capa = QHBoxLayout(banda)
         capa.setContentsMargins(14, 8, 14, 8)
-        titulo = QLabel("Panel de operador")
+        titulo = QLabel("Panel")
         titulo.setObjectName("titulo")
         capa.addWidget(titulo)
         capa.addStretch(1)
@@ -191,7 +210,7 @@ class Ventana(QMainWindow):
         self.bt_ayuda = QPushButton("Ayuda")
         self.bt_ayuda.clicked.connect(self._ayuda)
         capa.addWidget(self.bt_ayuda)
-        self.bt_clave = QPushButton("Cambiar contraseña")
+        self.bt_clave = QPushButton("Contraseña")
         self.bt_clave.clicked.connect(self._cambiar_clave)
         capa.addWidget(self.bt_clave)
         self.bt_salir = QPushButton("Cerrar sesión")
@@ -201,6 +220,10 @@ class Ventana(QMainWindow):
         self.bt_parada.setObjectName("parada")
         self.bt_parada.clicked.connect(lambda: self._orden(Op.PARADA))
         capa.addWidget(self.bt_parada)
+        self.bt_emergencia = QPushButton("EMERGENCIA")
+        self.bt_emergencia.setObjectName("emergencia")
+        self.bt_emergencia.clicked.connect(self._alternar_emergencia)
+        capa.addWidget(self.bt_emergencia)
         return banda
 
     def _resumen(self):
@@ -249,6 +272,19 @@ class Ventana(QMainWindow):
         columna.addWidget(self.et_arranque)
         columna.addWidget(rotulo("La parada normal termina y deposita la pieza en curso. "
                                  "No es una parada de emergencia."))
+        fila = QHBoxLayout()
+        fila.addWidget(QLabel("Piezas buenas a fabricar"))
+        self.sp_objetivo = QSpinBox()
+        self.sp_objetivo.setRange(0, OBJETIVO_MAXIMO)
+        self.sp_objetivo.setSpecialValueText("Sin límite")
+        fila.addWidget(self.sp_objetivo)
+        self.bt_objetivo = QPushButton("Fijar")
+        self.bt_objetivo.clicked.connect(lambda: self._orden(Op.OBJETIVO, self.et_arranque,
+                                                             valor=self.sp_objetivo.value()))
+        fila.addWidget(self.bt_objetivo)
+        columna.addLayout(fila)
+        columna.addWidget(rotulo("El retrabajo no cuenta. Al llegar, la celda repone las piezas y "
+                                 "pone los contadores en cero."))
         columna.addStretch(1)
         capa.addWidget(mandos, 1)
         caja = QGroupBox("Condiciones de arranque")
@@ -298,6 +334,34 @@ class Ventana(QMainWindow):
             columna.addWidget(casilla)
         columna.addStretch(1)
         capa.addWidget(simuladas, 2)
+        return pagina
+
+    def _pestana_proceso(self):
+        pagina = QWidget()
+        capa = QHBoxLayout(pagina)
+        self.sinoptico = Sinoptico()
+        self.sinoptico.accionado.connect(self._accionar)
+        capa.addWidget(self.sinoptico, 3)
+        caja = QGroupBox("Paradas")
+        columna = QVBoxLayout(caja)
+        columna.addWidget(rotulo("Clic en pulsadores, cortinas y puerta para simularlos."))
+        self.et_paro = QLabel()
+        self.et_paro.setWordWrap(True)
+        columna.addWidget(self.et_paro)
+        self.bt_rearme = QPushButton("Rearme")
+        self.bt_rearme.clicked.connect(lambda: self._orden(Op.REARME, self.et_paro_resultado))
+        columna.addWidget(self.bt_rearme)
+        self.bt_recuperar = QPushButton("Recuperar")
+        self.bt_recuperar.clicked.connect(self._recuperar)
+        columna.addWidget(self.bt_recuperar)
+        self.bt_reiniciar = QPushButton("Reiniciar lote")
+        self.bt_reiniciar.clicked.connect(self._reiniciar)
+        columna.addWidget(self.bt_reiniciar)
+        self.et_paro_resultado = QLabel()
+        self.et_paro_resultado.setWordWrap(True)
+        columna.addWidget(self.et_paro_resultado)
+        columna.addStretch(1)
+        capa.addWidget(caja, 1)
         return pagina
 
     def _pestana_sensores(self):
@@ -352,6 +416,7 @@ class Ventana(QMainWindow):
         return pagina
 
     def _construir_pestanas(self):
+        self.pag_proceso = self._pestana_proceso()
         self.pag_produccion = self._pestana_produccion()
         self.pag_mantenimiento = self._pestana_mantenimiento()
         self.pag_sensores = self._pestana_sensores()
@@ -411,6 +476,10 @@ class Ventana(QMainWindow):
         self.et_usuario.setText(f"{self.sesion.nombre} · {self.sesion.perfil}" if hay else "Sin sesión")
         if hay:
             perfil = self.sesion.perfil
+            self.pestanas.addTab(self.pag_proceso, "Proceso")
+            self.bt_rearme.setVisible(permitido(perfil, Op.REARME))
+            self.bt_recuperar.setVisible(permitido(perfil, Op.RECUPERAR))
+            self.bt_reiniciar.setVisible(permitido(perfil, Op.REINICIAR))
             if permitido(perfil, Op.ARRANQUE):
                 self.pestanas.addTab(self.pag_produccion, "Producción")
             if permitido(perfil, Op.PREPARAR_MODO):
@@ -428,8 +497,13 @@ class Ventana(QMainWindow):
             texto = "Sin conexión con RoboDK: los mandos están bloqueados."
         elif not self.estado.get("estacion_ok"):
             texto = "La estación activa de RoboDK no es la v05: los mandos están bloqueados."
+        elif self.estado.get("senales", {}).get("PARO_CAUSA"):
+            causa = int(self.estado["senales"]["PARO_CAUSA"])
+            texto = f"Celda detenida: {CAUSAS_PARO.get(causa, causa)}. Eliminar la causa y pulsar Rearme."
         elif not self.estado.get("coordinador"):
             texto = "El coordinador está detenido: doble clic en Coordinador_Panel, en RoboDK."
+        elif self.estado.get("senales", {}).get("RECUP_PENDIENTE") == 1:
+            texto = "Recuperación pendiente: pulsar Recuperar con el perfil de mantenimiento."
         elif self.sesion is not None and self.sesion.clave_por_defecto:
             texto = "Esta cuenta usa la contraseña de fábrica: actualizarla al pasar la celda a operación."
         elif self.sesion is not None and self.sesion.perfil == ADMINISTRADOR \
@@ -467,6 +541,29 @@ class Ventana(QMainWindow):
         if self.sesion is not None:
             self._refrescar_tablas()
         return resultado
+
+    def _alternar_emergencia(self):
+        pulsada = self.estado.get("senales", {}).get("EMERGENCIA_SIM") == 1
+        self._orden(Op.EMERGENCIA, valor=0 if pulsada else 1)
+
+    def _accionar(self, nombre):
+        s = self.estado.get("senales", {})
+        if nombre == "emergencia":
+            self._alternar_emergencia()
+            return
+        senal = {"cortina_entrada": "CORTINA_ENTRADA_SIM", "cortina_salida": "CORTINA_SALIDA_SIM",
+                 "puerta": "PUERTA_ABIERTA_SIM"}[nombre]
+        self._orden(Op.RESGUARDO, self.et_paro_resultado, senal=senal, valor=0 if s.get(senal) == 1 else 1)
+
+    def _recuperar(self):
+        if self.confirmar("¿Retomar la pieza interrumpida? Los robots van a moverse. Nadie debe estar "
+                          "dentro de la zona de robots."):
+            self._orden(Op.RECUPERAR, self.et_paro_resultado)
+
+    def _reiniciar(self):
+        if self.confirmar("¿Reiniciar el lote? La cinta evacúa, se reponen las piezas y los contadores "
+                          "vuelven a cero."):
+            self._orden(Op.REINICIAR, self.et_paro_resultado)
 
     def _preparar(self):
         modo = self.cb_modo.currentData()
@@ -546,11 +643,21 @@ class Ventana(QMainWindow):
             self._cerrar_sesion("Sesión cerrada por pérdida de conexión")
         s = estado.get("senales", {})
         puerto = estado.get("puerto")
-        self.et_conexion.setText(f"RoboDK conectado · puerto {puerto}" if estado.get("conectado")
-                                 else "Sin conexión con RoboDK")
+        self.et_conexion.setText(f"RoboDK {puerto}" if estado.get("conectado") else "Sin conexión")
         listo = operativo(estado)
         self.bt_parada.setEnabled(listo)
-        self.valores["estado"].setText(ESTADOS.get(int(s.get("ESTADO_CONTROL") or 0), "—") if s else "—")
+        self.bt_emergencia.setEnabled(bool(estado.get("conectado") and estado.get("estacion_ok")))
+        self.bt_emergencia.setText("LIBERAR EMERGENCIA" if s.get("EMERGENCIA_SIM") == 1 else "EMERGENCIA")
+        self.sinoptico.actualizar(s)
+        # Stop no pasa por el coordinador: sus señales quedan como estaban y no describen la celda.
+        causa_paro = int(s.get("PARO_CAUSA") or 0)
+        if causa_paro:
+            estado_celda = "Parada: " + CAUSAS_PARO.get(causa_paro, str(causa_paro))
+        elif s and not estado.get("coordinador"):
+            estado_celda = "Coordinador detenido"
+        else:
+            estado_celda = ESTADOS.get(int(s.get("ESTADO_CONTROL") or 0), "—") if s else "—"
+        self.valores["estado"].setText(estado_celda)
         if not s:
             self.valores["modo"].setText("—")
             self.valores["pieza"].setText("—")
@@ -562,11 +669,17 @@ class Ventana(QMainWindow):
                                          MODOS.get(confirmado, "Producción"))
             activa = int(s.get("PIEZA_ACTIVA") or 0)
             proxima = int(s.get("PROXIMA_PIEZA") or 1)
-            texto = f"Soldando pieza {activa}" if activa else (
-                "Fin de lote pendiente" if proxima == 5 else f"Próxima pieza {proxima}")
-            hechas = int(s.get("PIEZAS_COMPLETADAS") or 0)
-            lotes = int(s.get("LOTES_COMPLETADOS") or 0)
-            self.valores["pieza"].setText(texto + "\n" + f"{hechas} hechas · {lotes} lotes")
+            lote = int(s.get("LOTES_COMPLETADOS") or 0) + 1
+            fase = FASES.get(int(s.get("FASE_PIEZA") or 0))
+            texto = (f"Lote {lote} · Pieza {activa} de 4" if activa else
+                     f"Lote {lote} · Fin de lote" if proxima == 5 else
+                     f"Lote {lote} · Próxima {proxima} de 4")
+            buenas = int(s.get("PIEZAS_BUENAS") or 0)
+            objetivo = int(s.get("OBJETIVO_PIEZAS") or 0)
+            retrabajo = int(s.get("PIEZAS_RETRABAJO") or 0)
+            meta = f"{buenas} de {objetivo} buenas" if objetivo else f"{buenas} buenas"
+            detalle = f"{meta} · {retrabajo} retrabajo" + (f" · {fase}" if activa and fase else "")
+            self.valores["pieza"].setText(texto + "\n" + detalle)
             causa = int(s.get("CAUSA_RECHAZO") or 0) or int(s.get("MODO_CAUSA") or 0)
             self.valores["causa"].setText(self.causas.get(causa, str(causa)) if causa else "Ninguno")
         self._actualizar_mandos(s, listo)
@@ -575,6 +688,13 @@ class Ventana(QMainWindow):
     def _actualizar_mandos(self, s, listo):
         if self.sesion is None:
             return
+        causa_paro = int(s.get("PARO_CAUSA") or 0)
+        self.et_paro.setText(f"Parada activa: {CAUSAS_PARO.get(causa_paro, causa_paro)}" if causa_paro else
+                             "Recuperación pendiente" if s.get("RECUP_PENDIENTE") == 1 else "Sin paradas")
+        self.bt_rearme.setEnabled(bool(causa_paro))
+        self.bt_recuperar.setEnabled(bool(listo and not causa_paro and s.get("RECUP_PENDIENTE") == 1))
+        self.bt_reiniciar.setEnabled(bool(listo and not causa_paro and s.get("AUTO_ACTIVO") == 0
+                                          and s.get("RECUP_PENDIENTE") == 0))
         condiciones = condiciones_arranque(s)
         faltan = [nombre for nombre, ok in condiciones if not ok]
         automatico = s.get("AUTO_ACTIVO") == 1

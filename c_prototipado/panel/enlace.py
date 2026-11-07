@@ -14,12 +14,13 @@ from PySide2.QtCore import QThread, Signal
 
 sys.path.insert(0, r"C:\RoboDK\Python")
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "scripts"))
-from robodk.robolink import Robolink, ITEM_TYPE_PROGRAM
+from robodk.robolink import Robolink, ITEM_TYPE_PROGRAM, ITEM_TYPE_ROBOT
 from sensores_modos import SensoresModos
 
 ESTACION = "Celda_Soldadura_Estator_Grupo4_v05"
 COORDINADOR = "Coordinador_Panel"
-PERIODO_S = 0.1
+# Consultar más seguido frena la simulación: RoboDK atiende la API en el mismo ciclo.
+PERIODO_S = 0.2
 REINTENTO_S = 1.0
 # RoboDK informa su puerto a los programas que ejecuta.
 PUERTOS = ((int(os.environ["ROBODK_API_PORT"]),) if os.environ.get("ROBODK_API_PORT")
@@ -30,7 +31,10 @@ SENALES = (
     "ARCO_TIG", "MODO_ACK", "MODO_CONFIRMADO", "MODO_EN_TRANSICION", "MODO_RESULTADO",
     "MODO_CAUSA", "PERMISO_OPERACION", "IRB_DISPONIBLE", "CRB_DISPONIBLE", "CINTA_DISPONIBLE",
     "SENSORES_VALIDOS", "IRB_EN_REPOSO", "CRB_EN_REPOSO", "IRB_EN_MANT", "CRB_EN_MANT",
-    "CRB_EN_SERVICIO", "CINTA_DETENIDA", "PIEZA_SUJETA_SENSOR",
+    "CRB_EN_SERVICIO", "CINTA_DETENIDA", "PIEZA_SUJETA_SENSOR", "PARO_CAUSA", "RECUP_PENDIENTE",
+    "RECUPERAR_ACK", "REINICIAR_ACK", "EMERGENCIA_SIM", "CORTINA_ENTRADA_SIM", "CORTINA_SALIDA_SIM",
+    "PUERTA_ABIERTA_SIM", "OBJETIVO_PIEZAS", "PIEZAS_BUENAS", "PIEZAS_RETRABAJO", "PEDIDOS_TERMINADOS",
+    "FASE_PIEZA",
 )
 
 
@@ -107,9 +111,29 @@ class Enlace(QThread):
             self.principal = self.rdk.Item(COORDINADOR, ITEM_TYPE_PROGRAM)
         return True
 
+    def _parar(self, causa):
+        """Representa la función de seguridad: detiene sin mover nada.
+
+        Primero el coordinador, que con una llamada frena también a sus subprogramas.
+        """
+        r = self.rdk
+        if self.principal is not None:
+            self.principal.Stop()
+        for programa in r.ItemList(ITEM_TYPE_PROGRAM):
+            if programa.Busy():
+                programa.Stop()
+        for equipo in r.ItemList(ITEM_TYPE_ROBOT):
+            equipo.Stop()
+        r.setParam("ARCO_TIG", 0)
+        # La emergencia prevalece sobre una parada de protección que ya estuviera activa.
+        if causa == 1 or not numero(r.getParam("PARO_CAUSA")):
+            r.setParam("PARO_CAUSA", causa)
+
     def _escribir(self, orden):
         r = self.rdk
-        if orden[0] == "id":
+        if orden[0] == "paro":
+            self._parar(orden[1])
+        elif orden[0] == "id":
             senal = orden[1]
             r.setParam(senal, int(numero(r.getParam(senal)) or 0) + 1)
         elif orden[0] == "modo":
@@ -128,9 +152,16 @@ class Enlace(QThread):
         self.sensores.actualizar()
         while not self.ordenes.empty():
             self._escribir(self.ordenes.get_nowait())
+        valores = dict(self.rdk.getParams())
         return {"conectado": True, "estacion_ok": True, "puerto": self.puerto,
                 "coordinador": bool(self.principal.Busy()),
-                "senales": {n: numero(self.rdk.getParam(n)) for n in SENALES}}
+                "senales": {n: numero(valores.get(n)) for n in SENALES}}
+
+    def _esperar_orden(self):
+        """Una orden despierta el ciclo al instante: la emergencia no espera al período."""
+        limite = time.monotonic() + PERIODO_S
+        while time.monotonic() < limite and self.ordenes.empty():
+            time.sleep(.005)
 
     def run(self):
         while self.activo:
@@ -140,7 +171,7 @@ class Enlace(QThread):
                     time.sleep(REINTENTO_S)
                     continue
                 self.estado.emit(self._ciclo())
-                time.sleep(PERIODO_S)
+                self._esperar_orden()
             except Exception:
                 # Caída de RoboDK o estación cerrada a mitad de una consulta.
                 self._desconectar()

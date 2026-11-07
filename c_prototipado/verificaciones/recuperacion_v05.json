@@ -1,16 +1,18 @@
 {
   "version": "6.1.1.26991",
-  "exito": true,
+  "exito": false,
   "pruebas": [
     {
-      "prueba": "Parada y recuperación",
-      "fase": 1.0,
-      "pieza_en_pinza": false,
-      "retrabajo": 0.0,
-      "y_pieza": -560.0,
-      "siguiente": 2,
-      "lote_completo": true,
-      "colisiones": 0
+      "prueba": "Pedido de 2 buenas con 1 retrabajo: se detiene, repone y queda en cero",
+      "fabricadas": 3
+    },
+    {
+      "prueba": "Reinicio manual con lote parcial: piezas en su lugar y contadores en cero"
+    },
+    {
+      "prueba": "FALLA",
+      "fase": 1,
+      "error": "Sin fase 1: ['Sold_Par_Cordones', 'Ciclo_Pieza_1', 'Coordinador_Panel'] crb_se_mueve=0.00 crb_busy=0 instruccion=23:MoveC (Sold_Transicion_Medio, Sold_B_Entrada) colisiones=[] velocidad=5.0 {'FASE_PIEZA': 4.0, 'PIEZA_ACTIVA': 1.0, 'AUTO_ACTIVO': 1.0, 'ARCO_TIG': 0.0, 'PIEZA_PRESENTADA': 1.0, 'SOLDADURA_TERMINADA': 0.0, 'CAUSA_RECHAZO': 0.0, 'RECUP_PENDIENTE': 0.0}"
     },
     {
       "prueba": "Parada y recuperación",

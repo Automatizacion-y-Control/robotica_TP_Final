@@ -23,20 +23,37 @@ INICIALES_PARADAS = {
     "FASE_PIEZA": 0, "FASE_CAPTURADA": 0, "PARO_CAUSA": 0, "RECUP_PENDIENTE": 0,
     "RECUPERAR_ID": 0, "RECUPERAR_ACK": 0, "PIEZAS_RETRABAJO": 0, "RETRABAJO_ACTUAL": 0,
     "SUJETA_CAPTURADA": 0, "PIEZA_RESUELTA": 0, "EMERGENCIA_SIM": 0, "CORTINA_ENTRADA_SIM": 0,
-    "CORTINA_SALIDA_SIM": 0, "PUERTA_ABIERTA_SIM": 0,
+    "CORTINA_SALIDA_SIM": 0, "PUERTA_ABIERTA_SIM": 0, "OBJETIVO_PIEZAS": 0, "PIEZAS_BUENAS": 0,
+    "PEDIDO_CUMPLIDO": 0, "PEDIDOS_TERMINADOS": 0, "REINICIAR_ID": 0, "REINICIAR_ACK": 0,
 }
 # Parado o sin resguardos no se acepta ninguna orden que pueda mover equipos.
 RESGUARDOS = ("CORTINA_ENTRADA_SIM", "CORTINA_SALIDA_SIM", "PUERTA_ABIERTA_SIM")
 
 
+def _acortar_trayectorias(rdk):
+    """Quita viajes a reposo heredados del pallet: el IRB va directo de la soldadura a la cinta
+    y de un depósito a la toma siguiente. Pasa por reposo al cerrar el lote y al detenerse."""
+    deposito = rdk.Item("Man_Depositar_Cinta", ITEM_TYPE_PROGRAM)
+    indices = [i for i in range(deposito.InstructionCount())
+               if deposito.Instruction(i)[0] == "MoveJ (Man_Reposo)"]
+    assert len(indices) == 1, indices
+    deposito.InstructionDelete(indices[0])
+    deposito.InstructionSelect(deposito.InstructionCount() - 1)
+    for k in range(1, 4):
+        ciclo = rdk.Item(f"Ciclo_Pieza_{k}", ITEM_TYPE_PROGRAM)
+        assert ciclo.Instruction(8)[0] == "Man_Ir_Reposo", ciclo.Instruction(8)
+        ciclo.InstructionDelete(8)
+        ciclo.InstructionSelect(ciclo.InstructionCount() - 1)
+
+
 def _marcar_fases(rdk):
     for k in range(1, 5):
         ciclo = rdk.Item(f"Ciclo_Pieza_{k}", ITEM_TYPE_PROGRAM)
-        assert ciclo.InstructionCount() == 9
         # De atrás hacia adelante: insertar no corre los índices que faltan.
         for fase in sorted(FASES, reverse=True):
-            ciclo.InstructionSelect(fase - 1)
-            ciclo.setDO("FASE_PIEZA", fase)
+            if fase < ciclo.InstructionCount():
+                ciclo.InstructionSelect(fase - 1)
+                ciclo.setDO("FASE_PIEZA", fase)
         ciclo.InstructionSelect(ciclo.InstructionCount() - 1)
 
 
@@ -76,7 +93,6 @@ def _deposito_retrabajo(rdk):
     p.addMoveL(rdk.Item("Man_Presentar_Aprox_Lado2", ITEM_TYPE_TARGET))
     p.setSpeed(V_TRASLADO, V_ARTICULAR)
     p.setRounding(5)
-    p.addMoveJ(rdk.Item("Man_Reposo", ITEM_TYPE_TARGET))
     p.addMoveJ(aprox)
     p.setRounding(0)
     p.setSpeed(V_JUNTO_PIEZA, V_ARTICULAR)
@@ -184,8 +200,26 @@ def _fijar_postura(rdk):
         t.setJoints(solucion)
 
 
+def _cierre_de_pedido(rdk):
+    p = rdk.AddProgram("Cerrar_Pedido")
+    p.RunInstruction("Evacúa y repone las piezas, aunque el lote esté incompleto, y deja todo en cero",
+                     INSTRUCTION_COMMENT)
+    p.RunInstruction("IF PROXIMA_PIEZA != 1", INSTRUCTION_INSERT_CODE)
+    p.RunInstruction("Man_Ir_Reposo", INSTRUCTION_CALL_PROGRAM)
+    p.RunInstruction("Fin_Lote", INSTRUCTION_CALL_PROGRAM)
+    p.RunInstruction("END", INSTRUCTION_INSERT_CODE)
+    for senal in ("PIEZAS_COMPLETADAS", "PIEZAS_RETRABAJO", "PIEZAS_BUENAS", "LOTES_COMPLETADOS",
+                  "AUTO_ACTIVO", "PEDIDO_CUMPLIDO"):
+        p.setDO(senal, 0)
+    p.setDO("PROXIMA_PIEZA", 1)
+    p.setDO("ESTADO_CONTROL", 9)
+    p.RunInstruction("PEDIDOS_TERMINADOS = PEDIDOS_TERMINADOS + 1", INSTRUCTION_INSERT_CODE)
+
+
 def instalar_paradas(rdk):
     _fijar_postura(rdk)
+    _acortar_trayectorias(rdk)
     _marcar_fases(rdk)
     _deposito_retrabajo(rdk)
     _recuperacion(rdk)
+    _cierre_de_pedido(rdk)

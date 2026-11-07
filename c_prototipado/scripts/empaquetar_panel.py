@@ -9,9 +9,9 @@ from pathlib import Path
 SCRIPTS = Path(__file__).resolve().parent
 PANEL = SCRIPTS.parent / "panel"
 MODULOS = (PANEL / "permisos.py", PANEL / "cuentas.py", PANEL / "procesador.py",
-           SCRIPTS / "sensores_modos.py", PANEL / "enlace.py", PANEL / "ventana.py",
+           SCRIPTS / "sensores_modos.py", PANEL / "enlace.py", PANEL / "sinoptico.py", PANEL / "ventana.py",
            PANEL / "panel.py")
-LOCALES = {"permisos", "cuentas", "procesador", "sensores_modos", "enlace", "ventana", "modos_nativos"}
+LOCALES = {"permisos", "cuentas", "procesador", "sensores_modos", "enlace", "sinoptico", "ventana", "modos_nativos"}
 CABECERA = '''"""Panel de operador de la celda. Generado por empaquetar_panel.py: no editar aquí.
 
 Se ejecuta con doble clic en RoboDK. Solo lee y escribe señales: no mueve robots ni la cinta.

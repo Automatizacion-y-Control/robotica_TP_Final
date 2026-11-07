@@ -28,11 +28,13 @@ from procesador import Procesador
 
 PRUEBAS = []
 ESPERADA = {
-    PRODUCCION: {Op.ARRANQUE, Op.PARADA},
-    MANTENIMIENTO: {Op.PARADA, Op.PREPARAR_MODO, Op.REGRESAR_MODO, Op.ENTRADA_SIMULADA},
-    ADMINISTRADOR: {Op.PARADA, Op.ADMINISTRAR},
+    PRODUCCION: {Op.ARRANQUE, Op.PARADA, Op.EMERGENCIA, Op.RESGUARDO, Op.REARME, Op.OBJETIVO},
+    MANTENIMIENTO: {Op.PARADA, Op.PREPARAR_MODO, Op.REGRESAR_MODO, Op.ENTRADA_SIMULADA, Op.EMERGENCIA,
+                    Op.RESGUARDO, Op.REARME, Op.RECUPERAR, Op.REINICIAR},
+    ADMINISTRADOR: {Op.PARADA, Op.ADMINISTRAR, Op.EMERGENCIA, Op.RESGUARDO},
 }
-OPERATIVO = {"conectado": True, "estacion_ok": True, "coordinador": True, "senales": {"AUTO_ACTIVO": 0}}
+OPERATIVO = {"conectado": True, "estacion_ok": True, "coordinador": True,
+             "senales": {"AUTO_ACTIVO": 0, "PARO_CAUSA": 2}}
 
 
 def registrar(nombre, **datos):
@@ -53,6 +55,12 @@ def argumentos(op):
         return {"modo": 1, "tipo": "Preventivo"}
     if op is Op.ENTRADA_SIMULADA:
         return {"senal": "PERMISO_OPERACION", "valor": 1}
+    if op is Op.RESGUARDO:
+        return {"senal": "PUERTA_ABIERTA_SIM", "valor": 1}
+    if op is Op.EMERGENCIA:
+        return {"valor": 1}
+    if op is Op.OBJETIVO:
+        return {"valor": 10}
     return {}
 
 
@@ -91,12 +99,38 @@ def probar_cuentas(carpeta):
 
     ordenes.clear()
     assert p.solicitar(None, Op.PARADA).aceptada and ordenes == [("id", "PARADA_ID")]
+    ordenes.clear()
+    assert p.solicitar(None, Op.EMERGENCIA, valor=1).aceptada
+    assert ordenes == [("entrada", "EMERGENCIA_SIM", 1), ("paro", 1)]
     for op in Op:
-        if op is not Op.PARADA:
+        if op not in (Op.PARADA, Op.EMERGENCIA):
             assert not p.solicitar(None, op, **argumentos(op)).aceptada
     assert c.leer_registro(50)[-1] is not None
     assert any(f["usuario"] == "sin sesión" for f in c.leer_registro(50))
-    registrar("Sin sesión solo se admite la parada normal, registrada como tal")
+    registrar("Sin sesión solo se admiten parada y emergencia, registradas como tales")
+
+    produccion = c.autenticar("produccion", "produccion")
+    mantenimiento = c.autenticar("mantenimiento", "mantenimiento")
+    p.estado = {**OPERATIVO, "senales": {"PARO_CAUSA": 1}}
+    assert not p.solicitar(produccion, Op.REARME).aceptada
+    assert p.solicitar(mantenimiento, Op.REARME).aceptada
+    p.estado = {**OPERATIVO, "senales": {"PARO_CAUSA": 1, "EMERGENCIA_SIM": 1}}
+    assert not p.solicitar(mantenimiento, Op.REARME).aceptada
+    p.estado = {**OPERATIVO, "senales": {"PARO_CAUSA": 2, "CORTINA_SALIDA_SIM": 1}}
+    assert not p.solicitar(produccion, Op.REARME).aceptada
+    p.estado = {**OPERATIVO, "senales": {"PARO_CAUSA": 0}}
+    assert not p.solicitar(mantenimiento, Op.REARME).aceptada
+    ordenes.clear()
+    p.estado = {**OPERATIVO, "senales": {"AUTO_ACTIVO": 0, "MODO_CONFIRMADO": 2}}
+    p.solicitar(mantenimiento, Op.RESGUARDO, senal="PUERTA_ABIERTA_SIM", valor=1)
+    assert ordenes == [("entrada", "PUERTA_ABIERTA_SIM", 1)]
+    ordenes.clear()
+    p.estado = {**OPERATIVO, "senales": {"AUTO_ACTIVO": 1}}
+    p.solicitar(produccion, Op.RESGUARDO, senal="CORTINA_ENTRADA_SIM", valor=1)
+    assert ordenes == [("entrada", "CORTINA_ENTRADA_SIM", 1), ("paro", 2)]
+    assert not p.solicitar(produccion, Op.OBJETIVO, valor=-1).aceptada
+    p.estado = OPERATIVO
+    registrar("Rearme según perfil y causa; resguardos según el estado de la celda")
 
     ordenes.clear()
     sesion = c.autenticar("produccion", "produccion")
@@ -183,7 +217,11 @@ def auditar_codigo():
     for ruta in archivos:
         for numero, linea in enumerate(ruta.read_text(encoding="utf-8").splitlines(), 1):
             if prohibido.search(linea):
-                hallazgos.append(f"{ruta.name}:{numero}")
+                hallazgos.append(f"{ruta.name}:{numero}:{linea.strip()}")
+    # Stop solo es válido en la función que representa la parada de seguridad.
+    detenciones = [h for h in hallazgos if h.startswith("enlace.py") and ".Stop()" in h]
+    assert len(detenciones) == 3, detenciones
+    hallazgos = [h for h in hallazgos if h not in detenciones]
     assert not hallazgos, hallazgos
     registrar("El panel y los sensores no ejecutan ni mueven nada", archivos=len(archivos))
 
@@ -220,8 +258,12 @@ def probar_interfaz(carpeta):
     senales = {"AUTO_ACTIVO": 0, "MODO_CONFIRMADO": 0, "MODO_EN_TRANSICION": 0,
                "PERMISO_OPERACION": 1, "SENSORES_VALIDOS": 1, "IRB_EN_REPOSO": 1, "CRB_EN_REPOSO": 1,
                "PIEZA_SUJETA_SENSOR": 0, "CINTA_DETENIDA": 1, "IRB_DISPONIBLE": 1,
-               "CRB_DISPONIBLE": 1, "CINTA_DISPONIBLE": 1}
+               "CRB_DISPONIBLE": 1, "CINTA_DISPONIBLE": 1, "PARO_CAUSA": 0, "RECUP_PENDIENTE": 0}
     estado = {**OPERATIVO, "puerto": 1, "senales": senales}
+    v.recibir_estado(estado)
+    v.bt_emergencia.click()
+    assert ordenes == [("entrada", "EMERGENCIA_SIM", 1), ("paro", 1)], ordenes
+    ordenes.clear()
 
     def entrar(usuario):
         v.in_usuario.setText(usuario)
@@ -253,6 +295,13 @@ def probar_interfaz(carpeta):
         entrar("produccion")
         v.bt_arranque.click()
         assert ordenes == [("id", "ARRANQUE_ID")], ordenes
+        ordenes.clear()
+        v.sp_objetivo.setValue(12)
+        v.bt_objetivo.click()
+        assert ordenes == [("entrada", "OBJETIVO_PIEZAS", 12)], ordenes
+        ordenes.clear()
+        v._accionar("puerta")
+        assert ordenes == [("entrada", "PUERTA_ABIERTA_SIM", 1)], ordenes
         v.bt_salir.click()
         v.bt_ayuda.click()
         texto = v.dialogo_ayuda.findChild(QTextBrowser).toPlainText()
@@ -264,7 +313,7 @@ def probar_interfaz(carpeta):
         v.findChild(QPushButton, "crear_cuenta").click()
         assert any(f["usuario"] == "operario" for f in c.listar())
         assert not errores, errores
-        registrar("Clics reales en casillas y botones", controles=len(ENTRADAS_SIMULADAS) + 7)
+        registrar("Clics reales en casillas y botones", controles=len(ENTRADAS_SIMULADAS) + 10)
     finally:
         sys.excepthook = anterior
         v.close()
@@ -286,7 +335,7 @@ def probar_embebido(puerto):
     from robodk.robolink import ITEM_TYPE_PROGRAM, ITEM_TYPE_PROGRAM_PYTHON, Robolink
     r = Robolink(port=puerto)
     estacion = r.ActiveStation()
-    item = r.Item("Panel_Operador", ITEM_TYPE_PROGRAM_PYTHON)
+    item = r.Item("Abrir_Panel_Operador", ITEM_TYPE_PROGRAM_PYTHON)
     assert item.Valid() and estacion.Name() == "Celda_Soldadura_Estator_Grupo4_v05"
     assert float(r.getParam("SENSORES_VALIDOS")) == 0
     item.RunProgram()
@@ -296,7 +345,7 @@ def probar_embebido(puerto):
             assert time.monotonic() - t < 25, "El panel embebido no arrancó"
             time.sleep(.2)
         assert float(r.getParam("AUTO_ACTIVO")) == 0
-        registrar("Panel_Operador arranca desde el .rdk y conecta", segundos=round(time.monotonic() - t, 1))
+        registrar("Abrir_Panel_Operador arranca desde el .rdk y conecta", segundos=round(time.monotonic() - t, 1))
     finally:
         item.Stop()
         time.sleep(.5)
@@ -335,7 +384,7 @@ def probar_integracion(puerto, carpeta):
                 raise AssertionError("Colisión durante la integración")
             if condicion():
                 return
-            time.sleep(.03)
+            time.sleep(.05)
         raise AssertionError("Tiempo máximo; " + str(v.estado.get("senales")))
 
     def entrar(usuario):
@@ -364,8 +413,9 @@ def probar_integracion(puerto, carpeta):
         esperar(lambda: v.estado.get("coordinador"), 10)
 
         entrar("mantenimiento")
+        v.pestanas.setCurrentIndex(1)
         assert [v.pestanas.tabText(i) for i in range(v.pestanas.count())] == \
-            ["Mantenimiento", "Sensores", "Registro"]
+            ["Proceso", "Mantenimiento", "Sensores", "Registro"]
         for senal in ENTRADAS_SIMULADAS:
             v.entradas[senal].click()
         esperar(lambda: v.estado["senales"]["IRB_DISPONIBLE"] == 1 and
@@ -379,8 +429,9 @@ def probar_integracion(puerto, carpeta):
         registrar("Inicio y cierre de sesión no arrancan ni mueven")
 
         entrar("produccion")
+        v.pestanas.setCurrentIndex(1)
         assert [v.pestanas.tabText(i) for i in range(v.pestanas.count())] == \
-            ["Producción", "Sensores", "Registro"]
+            ["Proceso", "Producción", "Sensores", "Registro"]
         esperar(lambda: v.bt_arranque.isEnabled(), 10)
         captura("produccion")
         v.bt_arranque.click()
@@ -400,6 +451,7 @@ def probar_integracion(puerto, carpeta):
         registrar("Cerrar sesión en producción completa la pieza y no reinicia el lote", siguiente=3)
 
         entrar("mantenimiento")
+        v.pestanas.setCurrentIndex(1)
         v.cb_modo.setCurrentIndex(v.cb_modo.findData(2))
         esperar(lambda: v.bt_preparar.isEnabled(), 10)
         v.bt_preparar.click()
@@ -422,27 +474,89 @@ def probar_integracion(puerto, carpeta):
         v.entradas["CRB_DISPONIBLE"].click()
         esperar(lambda: v.estado["senales"]["CRB_DISPONIBLE"] == 1, 10)
 
-        v.pestanas.setCurrentIndex(1)
-        captura("sensores")
         v.pestanas.setCurrentIndex(2)
+        captura("sensores")
+        v.pestanas.setCurrentIndex(3)
         v._refrescar_tablas()
         captura("registro")
         v._cerrar_sesion("Prueba")
         entrar("admin")
         assert [v.pestanas.tabText(i) for i in range(v.pestanas.count())] == \
-            ["Administración", "Sensores", "Registro"]
+            ["Proceso", "Administración", "Sensores", "Registro"]
+        v.pestanas.setCurrentIndex(1)
         captura("administracion")
         resultados = [f["resultado"] for f in cuentas.leer_registro(500)]
         assert "Confirmada" in resultados and any(x.startswith("Rechazada") for x in resultados)
         registrar("El registro distingue solicitud y confirmación nativa",
                   entradas=len(resultados))
 
+        def recuperar_desde_paro(reinicia_coordinador=True):
+            esperar(lambda: not v.estado["coordinador"], 10)
+            esperar(lambda: v.estado["senales"]["PARO_CAUSA"] == 0, 10)
+            principal.RunProgram()  # El doble clic de quien opera.
+            esperar(lambda: v.estado.get("coordinador"), 10)
+            esperar(lambda: v.estado["senales"]["RECUP_PENDIENTE"] == 1, 10)
+            v.bt_recuperar.click()
+            esperar(lambda: v.estado["senales"]["RECUP_PENDIENTE"] == 0, 120)
+
+        # Emergencia durante la soldadura: inmediata, enclavada y con rearme de mantenimiento.
+        v._cerrar_sesion("Prueba")
+        entrar("produccion")
+        esperar(lambda: v.bt_arranque.isEnabled(), 10)
+        hechas = val("PIEZAS_COMPLETADAS")
+        v.bt_arranque.click()
+        esperar(lambda: v.estado["senales"]["ARCO_TIG"] == 1)
+        v.pestanas.setCurrentIndex(0)
+        v.bt_emergencia.click()
+        esperar(lambda: v.estado["senales"]["PARO_CAUSA"] == 1 and not v.estado["coordinador"], 5)
+        assert val("ARCO_TIG") == 0 and v.estado["senales"]["PIEZA_SUJETA_SENSOR"] == 1
+        captura("proceso_emergencia")
+        v.bt_rearme.click()
+        assert "mantenimiento" in v.et_paro_resultado.text()
+        v.bt_emergencia.click()
+        esperar(lambda: v.estado["senales"]["EMERGENCIA_SIM"] == 0, 5)
+        v.bt_rearme.click()
+        assert val("PARO_CAUSA") == 1
+        v._cerrar_sesion("Prueba")
+        entrar("mantenimiento")
+        v.pestanas.setCurrentIndex(0)
+        v.bt_rearme.click()
+        recuperar_desde_paro()
+        assert val("PIEZAS_RETRABAJO") == 1 and val("PIEZAS_COMPLETADAS") == hechas + 1
+        assert val("AUTO_ACTIVO") == 0
+        registrar("Emergencia al soldar: rearme por perfil y recuperación desde el panel",
+                  retrabajo=1, completadas=val("PIEZAS_COMPLETADAS"))
+
+        # Cortina con la celda en marcha: la rearma producción y no arranca sola.
+        v._cerrar_sesion("Prueba")
+        entrar("produccion")
+        esperar(lambda: v.bt_arranque.isEnabled(), 10)
+        v.bt_arranque.click()
+        esperar(lambda: v.estado["senales"]["PIEZA_ACTIVA"] != 0)
+        v.pestanas.setCurrentIndex(0)
+        v._accionar("cortina_entrada")
+        esperar(lambda: v.estado["senales"]["PARO_CAUSA"] == 2, 5)
+        captura("proceso_cortina")
+        v.bt_rearme.click()
+        assert val("PARO_CAUSA") == 2 and "sigue presente" in v.et_paro_resultado.text()
+        v._accionar("cortina_entrada")
+        esperar(lambda: v.estado["senales"]["CORTINA_ENTRADA_SIM"] == 0, 5)
+        v.bt_rearme.click()
+        esperar(lambda: v.estado["senales"]["PARO_CAUSA"] == 0, 5)
+        v._cerrar_sesion("Prueba")
+        entrar("mantenimiento")
+        v.pestanas.setCurrentIndex(0)
+        recuperar_desde_paro()
+        assert val("AUTO_ACTIVO") == 0
+        registrar("Cortina en marcha: rearme de producción y sin autoarranque")
+
         # Cerrar la ventana en producción debe dejar salir la parada antes de terminar el hilo.
         v._cerrar_sesion("Prueba")
         entrar("produccion")
         esperar(lambda: v.bt_arranque.isEnabled(), 10)
         v.bt_arranque.click()
-        esperar(lambda: v.estado["senales"]["PIEZA_ACTIVA"] == 3)
+        esperar(lambda: v.estado["senales"]["PIEZA_ACTIVA"] != 0)
+        pieza = val("PIEZA_ACTIVA")
         parada = val("PARADA_ID")
         v.close()
         enlace.detener()
@@ -450,8 +564,8 @@ def probar_integracion(puerto, carpeta):
         t = time.monotonic()
         while val("AUTO_ACTIVO") != 0 and time.monotonic() - t < 70:
             time.sleep(.05)
-        assert val("AUTO_ACTIVO") == 0 and val("PROXIMA_PIEZA") == 4
-        registrar("Cerrar el panel en producción completa la pieza", siguiente=4)
+        assert val("AUTO_ACTIVO") == 0 and val("PROXIMA_PIEZA") == pieza + 1
+        registrar("Cerrar el panel en producción completa la pieza", siguiente=pieza + 1)
     finally:
         r.setParam("COORDINADOR_ACTIVO", 0)
         time.sleep(.5)

@@ -47,6 +47,14 @@ CONDICIONES_RECUPERAR = (
     ("PUERTA_ABIERTA_SIM == 1", 15), ("PARO_CAUSA != 0", 14),
 )
 
+CONDICIONES_REINICIAR = (
+    ("CINTA_DISPONIBLE == 0", 7), ("CINTA_DETENIDA == 0", 6), ("PIEZA_SUJETA_SENSOR == 1", 5),
+    ("CRB_EN_REPOSO == 0", 4), ("IRB_EN_REPOSO == 0", 4), ("SENSORES_VALIDOS == 0", 3),
+    ("MODO_CONFIRMADO != 0", 8), ("PERMISO_OPERACION == 0", 1), ("AUTO_ACTIVO == 1", 12),
+    ("RECUP_PENDIENTE == 1", 16), ("CORTINA_ENTRADA_SIM == 1", 15),
+    ("CORTINA_SALIDA_SIM == 1", 15), ("PUERTA_ABIERTA_SIM == 1", 15), ("PARO_CAUSA != 0", 14),
+)
+
 
 def construir():
     puerto = int(sys.argv[sys.argv.index("--puerto") + 1]) if "--puerto" in sys.argv else 20500
@@ -170,6 +178,36 @@ def construir():
         salida("ESTADO_CONTROL", 3)
         codigo("END")
         codigo("END")
+
+    # El retrabajo no cuenta para el objetivo: se fabrican piezas de más hasta alcanzarlo.
+    codigo("PIEZAS_BUENAS = PIEZAS_COMPLETADAS - PIEZAS_RETRABAJO")
+    codigo("IF AUTO_ACTIVO == 1")
+    codigo("IF OBJETIVO_PIEZAS > 0")
+    codigo("IF PIEZAS_BUENAS >= OBJETIVO_PIEZAS")
+    salida("PEDIDO_CUMPLIDO", 1)
+    codigo("END")
+    codigo("END")
+    codigo("END")
+
+    codigo("IF REINICIAR_ID != REINICIAR_ACK")
+    salida("CAUSA_RECHAZO", 0)
+    for condicion, causa in CONDICIONES_REINICIAR:
+        codigo("IF " + condicion)
+        salida("CAUSA_RECHAZO", causa)
+        codigo("END")
+    codigo("REINICIAR_ACK = REINICIAR_ID")
+    codigo("IF CAUSA_RECHAZO == 0")
+    salida("PEDIDO_CUMPLIDO", 1)
+    codigo("END")
+    codigo("END")
+
+    codigo("IF PEDIDO_CUMPLIDO == 1")
+    codigo("IF PARO_CAUSA == 0")
+    codigo("IF RECUP_PENDIENTE == 0")
+    llamar("Cerrar_Pedido")
+    codigo("END")
+    codigo("END")
+    codigo("END")
 
     codigo("IF AUTO_ACTIVO == 1")
     codigo("INDICE_CAPTURADO = PROXIMA_PIEZA")

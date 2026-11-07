@@ -14,12 +14,19 @@ class Op(Enum):
     REGRESAR_MODO = "Regresar a producción"
     ENTRADA_SIMULADA = "Entrada simulada"
     ADMINISTRAR = "Administrar cuentas"
+    EMERGENCIA = "Pulsador de emergencia"
+    RESGUARDO = "Cortina o puerta"
+    REARME = "Rearme"
+    RECUPERAR = "Recuperación"
+    REINICIAR = "Reinicio de lote"
+    OBJETIVO = "Objetivo de piezas"
 
 
 MATRIZ = {
-    PRODUCCION: {Op.ARRANQUE, Op.PARADA},
-    MANTENIMIENTO: {Op.PARADA, Op.PREPARAR_MODO, Op.REGRESAR_MODO, Op.ENTRADA_SIMULADA},
-    ADMINISTRADOR: {Op.PARADA, Op.ADMINISTRAR},
+    PRODUCCION: {Op.ARRANQUE, Op.PARADA, Op.EMERGENCIA, Op.RESGUARDO, Op.REARME, Op.OBJETIVO},
+    MANTENIMIENTO: {Op.PARADA, Op.PREPARAR_MODO, Op.REGRESAR_MODO, Op.ENTRADA_SIMULADA, Op.EMERGENCIA,
+                    Op.RESGUARDO, Op.REARME, Op.RECUPERAR, Op.REINICIAR},
+    ADMINISTRADOR: {Op.PARADA, Op.ADMINISTRAR, Op.EMERGENCIA, Op.RESGUARDO},
 }
 
 MODOS = {
@@ -32,6 +39,9 @@ MODOS = {
 }
 TIPOS_INTERVENCION = ("Preventivo", "Correctivo")
 ENTRADAS_SIMULADAS = ("PERMISO_OPERACION", "IRB_DISPONIBLE", "CRB_DISPONIBLE", "CINTA_DISPONIBLE")
+RESGUARDOS = {"CORTINA_ENTRADA_SIM": 2, "CORTINA_SALIDA_SIM": 2, "PUERTA_ABIERTA_SIM": 3}
+CAUSAS_PARO = {1: "Emergencia", 2: "Cortina de luz", 3: "Puerta abierta"}
+OBJETIVO_MAXIMO = 9999
 
 
 def permitido(perfil, operacion):
