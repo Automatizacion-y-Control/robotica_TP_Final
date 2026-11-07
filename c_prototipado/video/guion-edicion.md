@@ -27,39 +27,51 @@ No hay pausas de más de 5 s: la más larga es de 3,9 s, en 7:05,2 (`silencedete
 
 | N.º | Crudo | Tipo | Qué pasa | Acción |
 |---|---|---|---|---|
-| 1 | 0:00,0–0:01,2 | Pausa | Silencio inicial | Cortar |
-| 2 | 4:40,1–4:47,0 | Falla | «después uno lo puede… y acá puse mal,»: se equivoca al tipear la clave y la vuelve a escribir | **Queda** (decisión 2) |
-| 3 | 8:51,6–9:04,9 | Pausa | Silencio final, después de «nos estamos viendo» | Cortar |
+| 1 | 0:00,0–0:01,4 | Pausa | Silencio inicial | Cortar |
+| 2 | 0:02,6–0:04,7 | Contenido | «Nosotros somos el grupo 10 y» | Cortar (decisión 1, revisión 2) |
+| 3 | 4:40,1–4:47,0 | Falla | «después uno lo puede… y acá puse mal,»: se equivoca al tipear la clave y la vuelve a escribir | **Queda** (decisión 2) |
+| 4 | 8:51,6–9:04,9 | Pausa | Silencio final, después de «nos estamos viendo» | Cortar |
 
-## Propuesta
+## Edición (revisión 2, 2026-11-07)
+
+**Intro sobre la portada.** La portada lleva la voz encima, para que la intro no dure casi 30 s: 1 s de silencio y
+después la presentación reordenada, «Bueno, ¿qué tal?» (0:01,4–0:02,6), «Nuestro grupo está conformado por…»
+(0:15,8–0:21,6) y «Vamos a presentar ahora nuestro trabajo final… de paquete de estator» (0:04,7–0:15,7), con 0,35 s
+entre frases. La portada dura 20,4 s y se funde en «Bueno, la idea es…» (0:22,2). Se verificó volviendo a transcribir la
+intro: no queda «grupo 10» ni la «y» suelta antes de «Vamos».
 
 | Tramo del crudo | Contenido | Imagen |
 |---|---|---|
-| — | Portada, 5 s | Placa: UTN FRC, Robótica Industrial, título, Grupo 4, integrantes, docentes, 2LA1 · 2026 |
-| 0:01,2–0:22,2 | Presentación del grupo y del trabajo | Grabación completa (portada del informe) |
-| 0:22,2–0:58,4 | Qué se fabrica: el motor, el paquete de estator antes del bobinado, 4 cordones | Grabación completa (figura del motor en el informe) |
-| 0:58,4–1:20,9 | Cómo evolucionó: de una celda sencilla a la definitiva | Grabación completa |
-| 1:20,9–2:37,3 | Equipos, seguridad y mantenimiento | Grabación completa |
-| 2:37,3–3:14,9 | Modos, lotes de 4, programa principal y coordinador | **Dividida:** `Programa_Principal` |
+| (intro) | Presentación sobre la portada, 20,4 s | Placa: UTN FRC, Robótica Industrial, título, Grupo 4, integrantes, docentes, 2LA1 · 2026 |
+| 0:22,2–0:50,2 | Qué se fabrica: el motor, el paquete de estator antes del bobinado, 4 cordones | **Dividida:** motor (tres vistas) y secuencia de fabricación |
+| 0:50,2–1:20,8 | Cómo evolucionó: de una celda sencilla a la definitiva | **Dividida:** versiones v01 a v05 |
+| 1:20,8–1:57,3 | Robots, pinza, antorcha, argón y fuente | **Dividida:** árbol de la estación (equipos) |
+| 1:57,3–2:37,3 | Seguridad y mantenimiento | **Dividida:** árbol de la estación (seguridad) |
+| 2:37,3–3:14,9 | Modos, lotes de 4, programa principal y coordinador | **Dividida:** `Programa_Principal` y `Coordinador_Panel` |
 | 3:14,9–4:08,9 | El ciclo de una pieza: fases, señales, cinta, manipulador, soldador | **Dividida:** `Ciclo_Pieza_1` |
-| 4:08,9–5:37,6 | Panel: inicio de sesión (con la clave mal tipeada), entradas simuladas, producción, pedido de 12 piezas, arranque | Grabación completa |
+| 4:08,9–5:02,7 | Panel: inicio de sesión (con la clave mal tipeada) y entradas simuladas | Grabación completa |
+| 5:02,7–5:27,4 | Producción define el pedido de 12 piezas y arranca | **Dividida:** pedido en `Coordinador_Panel` y `Cerrar_Pedido` |
+| 5:27,4–5:37,6 | Arranque | Grabación completa |
 | 5:37,6–6:22,8 | Soldadura: 4 cordones, 5 mm/s, TIG, MoveL y MoveC | **Dividida:** `Sold_Par_Cordones` |
 | 6:22,8–6:46,3 | Depósito: posición de pieza correcta o de retrabajo; avanza el estator 2 | **Dividida:** `Man_Depositar_Cinta` y `Man_Depositar_Retrabajo` |
-| 6:46,3–7:56,4 | Secuencia acelerada: reposo, cordón, giro; después el paquete pasa al bobinado; el panel contando | Grabación completa |
-| 7:56,4–8:13,8 | Emergencia, rearme y pieza a revisar por calidad | **Dividida:** `Recuperar_Pieza` (extracto) |
+| 6:46,3–7:09,6 | Secuencia acelerada | Grabación completa |
+| 7:09,6–7:29,6 | Reposo, cordón y giro; después el paquete pasa al bobinado | **Dividida:** `Man_Presentar_Lado2` |
+| 7:29,6–7:56,4 | El panel contando | Grabación completa |
+| 7:56,4–8:13,8 | Emergencia, rearme y pieza a revisar por calidad | **Dividida:** `Recuperar_Pieza` y `Recuperar_Desde_Lado1` |
 | 8:13,8–8:51,6 | Fin del lote y cierre | Grabación completa |
 | — | Placa final, 3 s | Grupo 4 · Robótica Industrial · UTN FRC · 2026 |
 
-Duración estimada: **unos 8:58** (8:50,4 del crudo y 8 s de placas).
+Duración: **8:52,7**.
 
-**Pantalla dividida:** la grabación a 1280×720, a la izquierda; a la derecha, una tarjeta de 560 px de ancho con las
-instrucciones del programa, tal como están en la v05 (comentarios, `MoveJ`, `MoveL`, `MoveC`, velocidades y señales).
+**Pantalla dividida:** la grabación a 1280×720, a la izquierda; a la derecha, una tarjeta de 520 px de ancho con las
+instrucciones del programa o los elementos del árbol de la estación, tal como están en la v05 (comentarios, `MoveJ`, `MoveL`, `MoveC`, velocidades y señales).
 En los programas largos se muestra el tramo del que se habla y se marca con «…» lo que se omite. Se resalta la línea
 que se nombra; por ejemplo, `Establecer velocidad (5.0 mm/s)` y el `MoveC` en la soldadura.
 
 ## Decisiones del usuario (2026-11-07)
 
-1. **«Somos el grupo 10» (0:04):** es un error de Whisper; se dice «Grupo 4». Queda como está.
+1. **«Somos el grupo 10» (0:04):** el grupo es el 4. En la revisión 2 se quita la frase y la presentación se
+   reordena sobre la portada.
 2. **Clave mal tipeada (4:40–4:47):** no se corta, porque muestra que el panel rechaza una clave incorrecta.
 3. **Coordinador y Python (3:00):** la tarjeta de `Programa_Principal` lleva la nota «El panel (Python) solo envía
    solicitudes; Coordinador_Panel, nativo de RoboDK, decide y llama a los programas».
