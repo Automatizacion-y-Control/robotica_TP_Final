@@ -80,6 +80,10 @@ que es la fuente única de valores.
 | v04 | [`Celda_Soldadura_Estator_Grupo4_v04.rdk`](../Celda_Soldadura_Estator_Grupo4_v04.rdk) | **Mantenimiento:** pasillo, cara sur desmontable, accionamiento y equipos afuera, posiciones de mantenimiento | [mejora 02](mejora_02_modos_mantenimiento.md) |
 | **v05** | [`Celda_Soldadura_Estator_Grupo4_v05.rdk`](../Celda_Soldadura_Estator_Grupo4_v05.rdk) | **Versión actual.** Coordinador, modos, sensores y panel embebido; `Programa_Principal` sigue siendo el ciclo nativo | [panel y sensores](panel_y_sensores.md) y [manual](manual.md) |
 
+> **v05:** el cordón baja a 5 mm/s, los traslados suben a 1000 mm/s y 150°/s, y el lote pasa a 314 s,
+> medido a ×2. Los valores de velocidad y tiempo de este documento corresponden a la v02. Ver
+> [panel y sensores](panel_y_sensores.md#paradas-recuperación-y-pedido).
+
 Este documento define la **v02**. En las secciones que cambian con la v03 hay una nota
 **"v03"** al final, con el resumen del cambio; el detalle y la justificación están en la [mejora 01](mejora_01_cinta_pasante.md).
 

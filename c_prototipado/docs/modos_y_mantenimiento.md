@@ -224,8 +224,8 @@ antes de aplicar el LOTO.
 ## 10. Requisitos para la v04 y para el panel
 
 > **Estado:** la disposición está implementada en la v04 ([mejora 02](mejora_02_modos_mantenimiento.md)).
-> Los modos y el panel están implementados en la v05 ([manual](manual.md)), con estos límites: el
-> rearme, las paradas de emergencia y las de protección no se representan en el panel.
+> Los modos, las paradas, el rearme y el panel están implementados en la v05 ([manual](manual.md)).
+> La emergencia y las cortinas representan la función en simulación; no son un circuito de seguridad.
 
 **Disposición (mejora 02):**
 

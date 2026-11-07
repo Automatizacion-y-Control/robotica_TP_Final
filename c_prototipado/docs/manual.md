@@ -28,6 +28,7 @@ Comisión 2LA1 · Año 2026
 - [3. Inicio de sesión y perfiles](#3-inicio-de-sesión-y-perfiles)
 - [4. Pantalla general](#4-pantalla-general)
 - [5. Producción](#5-producción)
+- [Paradas y recuperación](#paradas-y-recuperación)
 - [6. Mantenimiento](#6-mantenimiento)
 - [7. Sensores y registro](#7-sensores-y-registro)
 - [8. Administración](#8-administración)
@@ -50,7 +51,8 @@ los movimientos y la secuencia son programas nativos de RoboDK, y el coordinador
 cada solicitud se ejecuta.
 
 - **Parada normal no es una parada de emergencia.** La celda termina y deposita la pieza en curso.
-  Una solicitud no interrumpe un movimiento.
+- **La emergencia del panel representa la función.** Detiene de inmediato la simulación; una
+  emergencia real es un circuito de seguridad por hardware, no software.
 - **Las entradas de simulación no son protecciones.** Representan señales externas de la celda.
 - **El panel no acredita energía cero.** El aislamiento y el bloqueo se hacen por procedimiento, fuera
   del panel.
@@ -70,7 +72,7 @@ estatores y termina. No usa Python ni el panel.
 
 1. Doble clic en `Coordinador_Panel`. Queda esperando solicitudes y ningún equipo se mueve. El panel
    no lo inicia: los programas de la celda se ejecutan desde RoboDK.
-2. Doble clic en `Panel_Operador`. Se abre la ventana del panel.
+2. Doble clic en `Abrir_Panel_Operador`. Se abre la ventana del panel.
 
 Si un programa queda a medias, reabrir la estación antes de usar el otro. El botón **Ayuda** resume
 estos pasos, también sin iniciar sesión.
@@ -101,14 +103,17 @@ nueva debe tener al menos 8 caracteres.
 | Operación | Producción | Mantenimiento | Administrador |
 |---|---|---|---|
 | Consultar estado, sensores y registro | Sí | Sí | Sí |
-| Parada normal | Sí | Sí | Sí |
-| Arranque | Sí | No | No |
+| Parada normal, emergencia, cortinas y puerta | Sí | Sí | Sí |
+| Arranque y objetivo de piezas | Sí | No | No |
+| Rearme | Cortina y puerta | Todas | No |
+| Recuperación y reinicio de lote | No | Sí | No |
 | Preparar modo y regresar | No | Sí | No |
 | Entradas de simulación | No | Sí | No |
 | Gestionar cuentas | No | No | Sí |
 
 Cada perfil ve solo lo que tiene permitido, y el permiso se comprueba otra vez al procesar la orden.
-La parada normal está disponible también sin sesión y queda registrada como `sin sesión`.
+La parada normal y la emergencia están disponibles también sin sesión, y quedan registradas como
+`sin sesión`.
 
 **Cierre de sesión.** La sesión termina con **Cerrar sesión**, a los 15 minutos de inactividad, al
 perder la conexión o si un administrador cambia la cuenta. Si hay producción al cerrar, se pide la
@@ -123,12 +128,12 @@ tarjetas indican:
 
 | Tarjeta | Significado |
 |---|---|
-| Estado de la celda | Inicial, Automático, Parada normal, Detenida por condición perdida, Preparando modo, Regresando de modo o Modo confirmado. |
+| Estado de la celda | Automático, Parada normal, Parada con su causa, Coordinador detenido, Recuperación pendiente, Pedido terminado o el estado del modo. |
 | Modo confirmado | Producción o el equipo intervenido. Lo confirman los sensores, no la selección. |
-| Pieza y lote | Pieza en curso o próxima, piezas hechas y lotes completados. |
+| Pieza y lote | Lote y pieza en curso, piezas buenas, objetivo, retrabajo y fase. |
 | Último rechazo | Causa del último rechazo, aunque ya esté resuelta. Ver [causas](#9-causas-de-rechazo). |
 
-La franja amarilla avisa si falta algo para operar. «Lotes» cuenta las ejecuciones de `Fin_Lote`.
+La franja amarilla avisa si falta algo para operar.
 
 ## 5. Producción
 
@@ -146,6 +151,44 @@ Con el perfil de producción:
    Si se detuvo en ese punto, el fin de lote se ejecuta en el próximo arranque.
 
 Si se pide arranque y parada a la vez, prevalece la parada.
+
+**Cantidad a fabricar.** En **Piezas buenas a fabricar**, indicar la cantidad y pulsar **Fijar**; 0 es sin
+límite. El retrabajo no cuenta, así que se fabrican las piezas que hagan falta. Al llegar al objetivo,
+la celda termina la pieza, evacúa, repone las piezas aunque el lote esté incompleto y pone los
+contadores en cero. Queda en **Pedido terminado**, lista para otro arranque.
+
+## Paradas y recuperación
+
+La pestaña **Proceso** muestra la planta de la celda. Con un clic se simulan pulsadores, cortinas y puerta.
+
+![Imagen del proceso con emergencia activa](../imagenes/panel/proceso_emergencia.png)
+
+| Función | Cuándo actúa | Qué hace |
+|---|---|---|
+| **Emergencia** | Siempre, también sin sesión, desde la banda o los pulsadores | Detiene todo de inmediato, corta el arco y queda enclavada hasta liberarla. |
+| **Cortinas** | Con equipos en marcha | Parada inmediata. Sin equipos en marcha solo impiden arrancar. |
+| **Puerta** | Con equipos en marcha | Parada inmediata. Con un modo confirmado el acceso está previsto. |
+| **Rearme** | Después de una parada | Confirma que la causa desapareció. No mueve ni arranca nada. |
+| **Recuperar** | Si la parada dejó algo a medias | Retoma la pieza interrumpida. |
+
+**Secuencia después de una parada:**
+
+1. Eliminar la causa: liberar la emergencia, despejar la cortina o cerrar la puerta.
+2. Pulsar **Rearme**. Después de una emergencia lo hace mantenimiento; después de cortina o puerta,
+   también producción.
+3. Doble clic en `Coordinador_Panel`, porque la parada lo detuvo.
+4. Con mantenimiento, pulsar **Recuperar**.
+5. Con producción, dar un nuevo **Arranque**: el lote continúa.
+
+| Dónde se detuvo | Qué hace Recuperar |
+|---|---|
+| Avance o toma, sin pieza en la pinza | Lleva a reposo; la pieza se repite. |
+| Presentación o giro | Sigue y deposita normalmente. |
+| **Soldadura** | **Repite el par de cordones, termina la pieza y la deposita corrida hacia el borde derecho de la cinta, como pieza de revisión o retrabajo.** |
+| Depósito o regreso | Completa la pieza. |
+
+**Reiniciar lote.** Con la celda detenida, mantenimiento puede pulsar **Reiniciar lote**: la cinta evacúa,
+se reponen las piezas y los contadores vuelven a cero.
 
 ## 6. Mantenimiento
 
@@ -225,6 +268,10 @@ de administrador, cerrar el panel y borrar ese archivo: al abrir, se recrean las
 | Modo desconocido | Selección no válida; no afecta a la producción. |
 | Producción activa | La celda ya está produciendo. |
 | Arranque simultáneo con una parada | Prevaleció la parada; volver a pedir el arranque. |
+| Parada activa sin rearmar | Pulsar **Rearme**. |
+| Resguardo abierto | Despejar la cortina o cerrar la puerta. |
+| Recuperación pendiente | Pulsar **Recuperar** con mantenimiento. |
+| No hay nada que recuperar | No hace falta recuperar. |
 
 ## 10. Situaciones especiales
 
@@ -232,7 +279,8 @@ de administrador, cerrar el panel y borrar ese archivo: al abrir, se recrean las
 mandos. Las órdenes sin confirmar se descartan y no se reenvían al reconectar. La celda sigue con lo
 que estaba haciendo: para detenerla, usar RoboDK.
 
-**Coordinador detenido.** La franja amarilla lo indica. Doble clic en `Coordinador_Panel`.
+**Coordinador detenido.** La franja amarilla lo indica. Doble clic en `Coordinador_Panel`. Una parada
+inmediata también lo detiene.
 
 **Sin PySide2.** Si el Python configurado en RoboDK no la trae, el panel intenta usar el de la
 instalación de RoboDK; si tampoco está, avisa con un mensaje. El ciclo de `Programa_Principal` no
@@ -248,11 +296,14 @@ equipo. Corregir la causa y dar un nuevo arranque: recuperar la condición no ar
 
 - Una señal `SENSORES_VALIDOS` no acredita vigencia: si el panel se cierra de forma abrupta, queda
   en 1 y RoboDK no lo detecta.
-- Con un equipo fuera de reposo no hay recuperación supervisada: el correctivo no puede cerrarse
-  desde el panel.
-- El rechazo por pieza sujeta no se ensayó.
+- Con un equipo fuera de reposo y sin una parada previa, el correctivo no puede cerrarse desde el panel.
+- Recuperar repite el par de cordones completo, no desde el punto exacto del corte.
+- Una parada al entrar en la fase de soldadura manda la pieza a retrabajo aunque el arco no haya encendido.
+- Después de una parada inmediata hay que reiniciar el coordinador a mano.
 - Cada cuenta tiene un solo perfil.
-- No hay reconocimiento de alarmas ni rearme, ni entradas de puerta, cortinas o emergencia.
+- No hay reconocimiento de alarmas ni forzado de sensores.
+- Cortinas y puerta se simulan con un clic: no detectan objetos de la estación.
+- El arranque se probó con la versión 6.1.1 y licencia de prueba.
 - La cinta no tiene evacuación ni vaciado desde el panel.
 - Cerrar sesión con la conexión perdida no puede pedir la parada.
 

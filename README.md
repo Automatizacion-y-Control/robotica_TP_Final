@@ -129,7 +129,7 @@ proyectoRobotica/
 | v02 | [`Celda_Soldadura_Estator_Grupo4_v02.rdk`](c_prototipado/Celda_Soldadura_Estator_Grupo4_v02.rdk) | Manipulador + soldador TIG sobre el paquete de estator; entrada por cinta y salida por pallet |
 | v03 | [`Celda_Soldadura_Estator_Grupo4_v03.rdk`](c_prototipado/Celda_Soldadura_Estator_Grupo4_v03.rdk) | Cinta pasante: la misma cinta trae y saca las piezas; sin pallet |
 | v04 | [`Celda_Soldadura_Estator_Grupo4_v04.rdk`](c_prototipado/Celda_Soldadura_Estator_Grupo4_v04.rdk) | Disposición y posiciones de mantenimiento |
-| **v05** | [`Celda_Soldadura_Estator_Grupo4_v05.rdk`](c_prototipado/Celda_Soldadura_Estator_Grupo4_v05.rdk) | **Versión actual.** Coordinador, modos de mantenimiento, sensores y panel de operador embebido |
+| **v05** | [`Celda_Soldadura_Estator_Grupo4_v05.rdk`](c_prototipado/Celda_Soldadura_Estator_Grupo4_v05.rdk) | **Versión actual.** Coordinador, modos, paradas, recuperación, sensores y panel de operador embebido |
 
 ## Cómo abrir y reproducir la celda
 
@@ -142,7 +142,7 @@ proyectoRobotica/
 archivo es autosuficiente:
 
 - **Sin panel:** doble clic en `Programa_Principal`.
-- **Con panel:** doble clic en `Coordinador_Panel` y después en `Panel_Operador`. Ver el
+- **Con panel:** doble clic en `Coordinador_Panel` y después en `Abrir_Panel_Operador`. Ver el
   [manual](c_prototipado/docs/manual.md).
 
 **Para reproducirla desde los scripts** (con RoboDK abierto):

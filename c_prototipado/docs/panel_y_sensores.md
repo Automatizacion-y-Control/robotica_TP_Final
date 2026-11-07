@@ -232,7 +232,7 @@ Decisiones técnicas cerradas el 2026-11-06:
 | Almacenamiento | `panel.db` en SQLite, para cuentas y registro, en la carpeta de datos del usuario (`%LOCALAPPDATA%\Celda_Soldadura_Grupo4`). El panel la crea si no existe. |
 | Cuentas iniciales | `admin`, `mantenimiento` y `produccion`, con clave por defecto para la puesta en marcha. El panel avisa mientras sigan vigentes; se actualizan al pasar la celda a operación. |
 | Tecnología | PySide2, incluido en el Python de RoboDK. |
-| Entrega | El entregable es el `.rdk`, el informe y el video: el panel va embebido en la estación como `Panel_Operador`. |
+| Entrega | El entregable es el `.rdk`, el informe y el video: el panel va embebido en la estación como `Abrir_Panel_Operador`. |
 | Programas | `Programa_Principal` es el ciclo nativo, que funciona sin panel; `Coordinador_Panel` atiende al panel. |
 | Arranque y parada simultáneos | Prevalece la parada; el arranque se descarta con causa 13. |
 | Pérdida de conexión | El panel bloquea los mandos e indica "sin conexión"; no reenvía órdenes al reconectar. La celda sigue con lo que estaba haciendo. `PANEL_VIGENTE` queda para más adelante. |
@@ -328,6 +328,8 @@ Ensayos de aceptación que deben quedar registrados:
 | 2026-11-06 | Ensayo sobre copia descartable de v04: retirar permiso con eje a 155 mm no detiene el avance a 2050 mm. No atribuir función de protección inmediata a WAIT ni al panel. |
 | 2026-11-06 | Separar cinta detenida, zona de robots sin piezas y banda vacía. Evacuación a 1750 mm no despeja el lote inicial; 2050 mm sí despeja ese caso, pero no representa retirada de piezas. |
 | 2026-11-06 | Modos 1 a 5 integrados en v05 con confirmación por sensores geométricos; pedirlos durante producción detiene al terminar la pieza y exige reenviar la solicitud. |
+| 2026-11-06 | Se revierte la decisión de no usar `Stop` desde el panel: representa la parada de seguridad, no mueve nada y es la vía que sugiere el foro de RoboDK. El panel detiene, pero no arranca programas. Ver [paradas](#paradas-recuperación-y-pedido). |
+| 2026-11-06 | Recuperación sin reiniciar el lote: se retoma la soldadura y la pieza interrumpida se deposita corrida, como retrabajo. Sin deflector. |
 | 2026-11-06 | `Panel_Operador` embebido en la v05; el coordinador pasa a llamarse `Coordinador_Panel` y `Programa_Principal` vuelve a ser el ciclo nativo. El acuse de arranque se escribe después de la causa. |
 | 2026-11-06 | Cerradas las decisiones técnicas del panel: ver [Usuarios y permisos](#usuarios-y-permisos). |
 | 2026-11-06 | Se agrega el modo 6, correctivo sin movimiento; cada modo exige solo los equipos que mueve y la parada del coordinador no ordena mover equipos no disponibles. Causas de rechazo enumeradas. |
@@ -548,6 +550,8 @@ Causas, comunes a `CAUSA_RECHAZO` y `MODO_CAUSA`. Si hay varias, se informa la d
 | 4 | Equipo fuera de la posición requerida | 11 | Modo desconocido |
 | 5 | Pieza sujeta | 12 | Producción activa |
 | 6 | Cinta en movimiento | 13 | Arranque simultáneo con una parada |
+| 14 | Parada activa sin rearmar | 15 | Resguardo abierto |
+| 16 | Recuperación pendiente | 17 | No hay nada que recuperar |
 
 Señales agregadas al contrato:
 
@@ -607,6 +611,65 @@ Limitaciones conocidas de esta revisión:
 2. El rechazo por pieza sujeta (causa 5) no se ensayó: requiere una falla con pieza en la pinza.
 3. Si un equipo queda fuera de reposo, el correctivo no puede cerrarse: falta la recuperación supervisada.
 
+### Paradas, recuperación y pedido
+
+Implementación nativa en [paradas_nativas.py](../scripts/paradas_nativas.py). Ensayos de mecanismos en
+[paradas_v05.json](../verificaciones/paradas_v05.json), sobre copia descartable, y de recuperación en
+[recuperacion_v05.json](../verificaciones/recuperacion_v05.json).
+
+| Mecanismo ensayado | Resultado |
+|---|---|
+| `Stop` al programa principal | Sin movimiento posterior; detiene los subprogramas. Adoptado. |
+| `Stop` solo a robots y cinta | Los programas quedan ocupados sin avanzar. Descartado. |
+| Velocidad mínima como pausa | No detiene: el robot avanza 2,5° en 1,5 s. Descartado. |
+| `Collision_Line` | Es una consulta: detecta el estator e identifica el objeto en 0,75 ms. No se usa todavía. |
+| `Fin_Lote` con lote parcial | Repone las piezas sin colisiones. Adoptado para pedido y reinicio. |
+
+La documentación de RoboDK no define una parada de emergencia. La función se representa con
+[`Item.Stop`](https://robodk.com/doc/en/PythonAPI/robodk.html?highlight=stop), sugerido por
+[el foro](https://robodk.com/forum/Thread-Raycasting-in-Robodk). Sus
+[eventos de simulación](https://robodk.com/doc/en/Robot-Programs-Simulation-event.html) no afectan al robot real.
+
+`Ciclo_Pieza_k` escribe `FASE_PIEZA` (1 avance, 2 toma, 3 presentación, 4 soldadura, 5 giro, 6 soldadura,
+7 depósito, 8 regreso). Al reiniciar, el coordinador detecta lo que quedó activo y exige recuperación.
+`Recuperar_Pieza` decide según la fase y si hay pieza en la pinza. El depósito de retrabajo queda en
+Y = −620 mm, 60 mm hacia el borde derecho. A −70 mm la salida vertical queda en el límite de alcance.
+
+| Señal | Escritor | Significado |
+|---|---|---|
+| `PARO_CAUSA` | Enlace del panel | 1 emergencia, 2 cortina, 3 puerta; 0 después del rearme. |
+| `EMERGENCIA_SIM`, `CORTINA_ENTRADA_SIM`, `CORTINA_SALIDA_SIM`, `PUERTA_ABIERTA_SIM` | Panel | Entradas de simulación. |
+| `RECUP_PENDIENTE` | Coordinador | Hay que recuperar antes de arrancar. |
+| `RECUPERAR_ID` / `RECUPERAR_ACK`, `REINICIAR_ID` / `REINICIAR_ACK` | Panel / coordinador | Solicitudes numeradas. |
+| `FASE_PIEZA` | Ciclos | Fase de la pieza en curso. |
+| `PIEZAS_RETRABAJO`, `PIEZAS_BUENAS` | Coordinador | Retrabajo y completadas menos retrabajo. |
+| `OBJETIVO_PIEZAS` | Panel | Piezas buenas a fabricar; 0 es sin límite. |
+| `PEDIDOS_TERMINADOS` | Coordinador | Pedidos cerrados por objetivo o reinicio. |
+
+`ESTADO_CONTROL` suma 7 recuperación pendiente, 8 recuperando y 9 pedido terminado.
+
+| Ensayo | Resultado |
+|---|---|
+| Parada en cada una de las 8 fases | Recuperación y lote completo, sin colisiones detectadas. |
+| Parada al soldar | Pieza terminada y depositada en Y = −620 mm; retrabajo = 1. |
+| Emergencia desde el panel | Arco en 0, pieza en la pinza, rearme de producción rechazado y aceptado con mantenimiento. |
+| Cortina en marcha | Rearme rechazado con la causa presente; aceptado al liberarla; sin autoarranque. |
+| Pedido de 2 buenas con 1 retrabajo | Se fabrican 3; repone, queda en cero y admite otro arranque. |
+| Reinicio con lote parcial | Piezas en su lugar y contadores en cero. |
+
+**Detención sin resolver.** En unas 14 de 209 corridas (cerca del 7 %), la celda quedó detenida en el
+`MoveC` entre cordones de la pieza 1, con el programa activo y el CRB quieto, sin mensaje de RoboDK.
+Ocurre también sin Python. No se resuelve con pausa previa, targets articulares, otra velocidad de
+simulación ni apagando las colisiones. Causa desconocida.
+
+**Perfil de velocidades** ([velocidades_v05.py](../scripts/velocidades_v05.py)): cordón 5 mm/s, junto a la
+pieza 100 mm/s, salidas y rodeos 200 mm/s, acercamiento 300 mm/s, traslados 1000 mm/s y MoveJ 150°/s.
+Lote medido a ×2 antes de acortar las trayectorias del IRB: 314 s, contra 305 s con el cordón a 8 mm/s.
+Después se quitó el paso por reposo del depósito y el regreso entre las piezas 1 a 3. A ×10 el tiempo sale inflado. Consultar a
+RoboDK muy seguido también frena la simulación: el panel lee todo con `getParams`, cada 0,2 s, y los
+sensores solo escriben cambios. Los 5 mm/s y los traslados son valores de referencia, a confirmar con
+ensayos de soldadura y la hoja de datos de ABB.
+
 ### Implementación del panel
 
 Código en [panel/](../panel/): `cuentas.py`, `permisos.py`, `procesador.py`, `enlace.py`, `ventana.py` y `panel.py`. Uso en el [manual](manual.md).
@@ -626,7 +689,7 @@ Las órdenes siguen este camino: interfaz → procesador (sesión y permiso) →
 | Sin servidor | El enlace falla sin abrir RoboDK. |
 | Clics reales | Casillas y botones principales pulsados en la interfaz. |
 | Paquete | Sin dependencias del repositorio; 53 kB. |
-| `Panel_Operador` | Ejecutado desde el `.rdk`: arranca y conecta. |
+| `Abrir_Panel_Operador` | Ejecutado desde el `.rdk`: arranca y conecta. |
 | Coordinador detenido | El panel lo indica y no lo inicia. |
 | Inicio y cierre de sesión | No arrancan ni mueven equipos. |
 | Botones de arranque y parada | Completan la pieza y conservan el índice. |
@@ -638,7 +701,8 @@ Las órdenes siguen este camino: interfaz → procesador (sesión y permiso) →
 No se probó el panel con otra licencia, versión de RoboDK o máquina. Con licencia gratuita, RoboDK
 limita las llamadas a la API y el panel podría no funcionar; `Programa_Principal` no depende de eso.
 
-Pendiente: reconocimiento de alarmas y rearme, entradas de puerta, cortinas y emergencia, vigencia de señales, más de un perfil por cuenta y evacuación de la cinta. No se ensayó la caída real de RoboDK con el panel abierto.
+Pendiente: reconocimiento de alarmas, forzado de sensores, detección real con `Collision_Line`,
+vigencia de señales, más de un perfil por cuenta y evacuación de la cinta. No se ensayó la caída real de RoboDK con el panel abierto.
 
 ## 11. Referencias
 
