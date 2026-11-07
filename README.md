@@ -34,6 +34,7 @@ Comisión 2LA1 · Año 2026
 [![Informe técnico](https://img.shields.io/badge/informe-PDF%20%C2%B7%207%20p%C3%A1ginas-B30B00?logo=adobeacrobatreader&logoColor=white)](d_presentacion/Informe_Tecnico_Grupo4.pdf)
 [![Estación](https://img.shields.io/badge/estaci%C3%B3n-.rdk-0E1B2C)](d_presentacion/Celda_Soldadura_Estator_Grupo4_v05.rdk)
 [![Manual del panel](https://img.shields.io/badge/manual-producci%C3%B3n%20%C2%B7%20mantenimiento%20%C2%B7%20admin-5A6B7B)](c_prototipado/docs/manual.md)
+[![Licencia](https://img.shields.io/badge/licencia-uso%20educativo%2C%20no%20comercial-6B4E9B)](LICENSE)
 
 </div>
 
@@ -50,6 +51,7 @@ Comisión 2LA1 · Año 2026
 - [Versiones de la celda](#versiones-de-la-celda)
 - [Cómo abrir y reproducir la celda](#cómo-abrir-y-reproducir-la-celda)
 - [Documentación](#documentación)
+- [Licencia y agradecimientos](#licencia-y-agradecimientos)
 
 ---
 
@@ -219,3 +221,17 @@ celda y en el documento de la mejora 01.
 | [Panel de operador y sensores](c_prototipado/docs/panel_y_sensores.md) | Trazabilidad desde los requisitos y la investigación, revisión del antecedente v01, modos, mantenimiento y señales; implementado en la v05 |
 | [Manual del panel](c_prototipado/docs/manual.md) | Puesta en marcha y operación de la v05, con el panel o sin él; perfiles de producción (§5), mantenimiento (§6) y administración (§8) |
 | [Guion de edición del video](c_prototipado/video/guion-edicion.md) | Transcripción, cortes, tramos de pantalla dividida y formato del video |
+
+## Licencia y agradecimientos
+
+Agradecemos a la **Universidad Tecnológica Nacional, Facultad Regional Córdoba**, por la formación pública y de
+calidad que hizo posible este trabajo, y a la **cátedra de Robótica Industrial**, en especial al Ing. Julián Luque y
+al Lic. Sergio Perassi, por su guía y su material.
+
+El contenido propio del repositorio se publica con una [licencia de uso educativo, no comercial](LICENSE): se puede
+consultar, estudiar y usar como referencia en la enseñanza, citando la autoría. Quedan prohibidos el uso comercial,
+la redistribución, las obras derivadas y presentarlo como trabajo propio, salvo autorización de los autores.
+
+RoboDK, su biblioteca y los modelos de ABB y Robotiq pertenecen a sus titulares y se rigen por sus propias
+licencias: para abrir las estaciones hace falta una licencia válida de RoboDK. El detalle del contenido de terceros
+está en la sección 5 de la licencia.

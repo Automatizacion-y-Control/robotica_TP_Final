@@ -1,0 +1,91 @@
+LICENCIA DE USO EDUCATIVO, NO COMERCIAL
+
+Celda robotizada de soldadura TIG de paquetes de estator
+Trabajo de fin de curso de Robótica Industrial
+Universidad Tecnológica Nacional, Facultad Regional Córdoba
+Licenciatura en Automatización y Control, comisión 2LA1, 2026
+
+Copyright (c) 2026 Casali Emiliano, Ferrero Facundo y Vera Gonzalo (Grupo 4).
+Todos los derechos reservados, salvo los que esta licencia concede expresamente.
+
+
+AGRADECIMIENTOS
+
+Agradecemos a la Universidad Tecnológica Nacional y a su Facultad Regional Córdoba por la formación
+pública y de calidad que hizo posible este trabajo, y a la cátedra de Robótica Industrial, en
+especial a sus docentes, el Ing. Julián Luque y el Lic. Sergio Perassi, por su guía, sus clases y el
+material con que se desarrolló el proyecto.
+
+
+1. OBJETO
+
+Esta licencia rige el uso del contenido propio de este repositorio: documentos, informe, guiones,
+scripts, código del panel de operador, modelos 3D propios, estaciones de RoboDK en la medida de lo
+que aportan los autores, imágenes propias y video (en adelante, "la obra"). No rige el contenido de
+terceros descrito en la sección 5.
+
+
+2. USOS PERMITIDOS
+
+Se permite, sin costo, únicamente con fines educativos y no comerciales:
+
+  a) consultar, leer y estudiar la obra;
+  b) ejecutarla y reproducirla para el aprendizaje personal;
+  c) usarla como material de referencia en clases, cursos o evaluaciones de instituciones
+     educativas, sin cobrar por ese uso en particular;
+  d) citar fragmentos en trabajos académicos, con la atribución de la sección 4.
+
+
+3. USOS PROHIBIDOS
+
+Salvo autorización previa y por escrito de los autores, queda prohibido:
+
+  a) todo uso comercial, directo o indirecto, incluidos la venta, el alquiler, la prestación de
+     servicios, la consultoría, la capacitación paga y la integración en productos o en procesos
+     productivos;
+  b) redistribuir la obra, completa o en parte, modificada o no, fuera de los usos de la sección 2;
+  c) publicar obras derivadas;
+  d) presentar la obra o una parte de ella como propia, en especial en trabajos prácticos,
+     exámenes o trabajos finales: eso constituye plagio y es contrario a la integridad académica;
+  e) quitar o alterar este aviso, la autoría o los agradecimientos.
+
+
+4. ATRIBUCIÓN
+
+Todo uso permitido debe mencionar a los autores, el título del trabajo, la cátedra de Robótica
+Industrial de la UTN Facultad Regional Córdoba, el año 2026 y el enlace al repositorio, si existe.
+
+
+5. CONTENIDO DE TERCEROS
+
+El repositorio usa o incluye contenido que pertenece a terceros y que se rige por sus propias
+licencias y condiciones. Esta licencia no otorga ningún derecho sobre ese contenido:
+
+  a) RoboDK: el software, la API, la biblioteca de robots, herramientas y mecanismos, y el ejemplo
+     de control de flujo incluido como referencia son propiedad de RoboDK Inc. y se rigen por su
+     licencia de usuario final. Para abrir o ejecutar las estaciones hace falta una licencia válida
+     de RoboDK; el trabajo se hizo con RoboDK 6.1.1 y su licencia de prueba.
+  b) Modelos de la biblioteca de RoboDK: los robots ABB IRB 1200-7/0.7 y ABB CRB 1300-10/1.15, la
+     pinza Robotiq 2F-85, la cinta transportadora y el sensor láser. Las marcas y los modelos
+     pertenecen a ABB, Robotiq y sus respectivos titulares, y se usan solo para la simulación.
+  c) Fotos del motor de referencia, de los comercios Repuestos Refrigeración (Rosario) y Norfrig,
+     incluidas con fines de estudio y con su crédito en los documentos.
+  d) Bibliotecas de Python, como PySide2 (Qt for Python), con sus propias licencias.
+  e) Normas ISO, bibliografía y material de la cátedra: se citan solo como referencia y no se
+     redistribuyen.
+
+Las marcas mencionadas pertenecen a sus titulares. Su mención no implica patrocinio ni respaldo.
+
+
+6. SIN GARANTÍA
+
+La obra es un trabajo académico de simulación. Se entrega "tal cual", sin garantía de ningún tipo.
+No es un diseño apto para construir ni operar una instalación real: una celda real exige su propia
+ingeniería, la evaluación de riesgos y el cumplimiento de la normativa de seguridad aplicable. En
+ningún caso los autores, la universidad ni la cátedra son responsables por daños derivados de su uso.
+
+
+7. AUTORIZACIONES
+
+Para cualquier uso no previsto en la sección 2, comunicarse con los autores a través del
+repositorio.
