@@ -94,6 +94,13 @@ class Celda:
         r.setParam("ARCO_TIG", 0)
         r.setParam("PARO_CAUSA", causa)
 
+    def instruccion(self):
+        for n in ("Sold_Retirar", "Sold_Ir_Reposo", "Sold_Par_Cordones"):
+            p = self.r.Item(n, ITEM_TYPE_PROGRAM)
+            if p.Busy():
+                return n
+        return None
+
     def padre(self, k):
         return self.r.Item(f"Estator_{k}").Parent().Name()
 
@@ -154,6 +161,34 @@ def probar_fase(r, copia, fase):
         c.cerrar()
 
 
+def probar_corte(r, copia, fase, demora):
+    """Corta a distintos tiempos dentro de la soldadura: el choque depende del punto del corte."""
+    c = Celda(r, copia)
+    try:
+        c.arrancar()
+        c.esperar(lambda: c.v("PIEZA_ACTIVA") == 2 and c.v("FASE_PIEZA") == fase, f"fase {fase}", 120)
+        time.sleep(demora)
+        c.parar()
+        fase_real = c.v("FASE_PIEZA")
+        arco = c.v("ARCO_TIG")
+        time.sleep(.3)
+        c.r.setParam("PARO_CAUSA", 0)
+        c.coordinador.RunProgram()
+        c.esperar(lambda: c.v("RECUP_PENDIENTE") == 1, "recuperación pendiente", 5)
+        c.r.setParam("RECUPERAR_ID", 1)
+
+        def termino():
+            # RoboDK frena todo ante una colisión: el coordinador deja de correr.
+            assert c.coordinador.Busy(), f"Colisión al recuperar: coordinador detenido, instr {c.instruccion()}"
+            return c.v("RECUP_PENDIENTE") == 0
+        c.esperar(termino, "recuperación", 120)
+        assert c.v("PIEZA_ACTIVA") == 0 and c.v("PROXIMA_PIEZA") == 3
+        registrar("Corte en la soldadura", fase=fase_real, demora=demora, y=round(c.y(2), 1),
+                  retrabajo=c.v("PIEZAS_RETRABAJO"), colisiones=0)
+    finally:
+        c.cerrar()
+
+
 def probar_pedido(r, copia):
     """Objetivo de dos piezas buenas con una de retrabajo: se fabrican tres."""
     c = Celda(r, copia)
@@ -199,6 +234,7 @@ def main():
     parser.add_argument("--puerto", type=int, default=20500)
     parser.add_argument("--fases", default="1,2,3,4,5,6,7,8")
     parser.add_argument("--sin-pedido", dest="pedido", action="store_false")
+    parser.add_argument("--cortes", action="store_true")
     args = parser.parse_args()
     with socket.create_connection(("localhost", args.puerto), timeout=3):
         pass
@@ -215,6 +251,14 @@ def main():
             except AssertionError as e:
                 fallos.append({"prueba": "pedido", "error": str(e)[:700]})
                 registrar("FALLA", prueba="pedido", error=str(e)[:700])
+        if args.cortes:
+            for fase in (4, 6):
+                for demora in (.3, 1.0, 1.8, 2.6, 3.4, 4.2, 5.0):
+                    try:
+                        probar_corte(r, copia, fase, demora)
+                    except AssertionError as e:
+                        fallos.append({"fase": fase, "demora": demora, "error": str(e)[:400]})
+                        registrar("FALLA", fase=fase, demora=demora, error=str(e)[:400])
         for fase in (int(f) for f in args.fases.split(",") if f):
             try:
                 probar_fase(r, copia, fase)

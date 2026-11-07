@@ -119,10 +119,21 @@ def _recuperacion(rdk):
         for _ in condiciones:
             code(p, "END")
 
+    # Sold_Ir_Reposo es un MoveJ: desde el punto de soldadura atraviesa el estator.
+    crb = rdk.Item("ABB CRB 1300-10/1.15", ITEM_TYPE_ROBOT)
+    retiro = rdk.AddProgram("Sold_Retirar", crb)
+    retiro.RunInstruction("Sale de la pieza en línea recta antes de ir a reposo", INSTRUCTION_COMMENT)
+    retiro.setPoseFrame(rdk.Item("Frame_Soldadura", ITEM_TYPE_FRAME))
+    retiro.setPoseTool(rdk.Item("Antorcha_TIG", ITEM_TYPE_TOOL))
+    retiro.setSpeed(V_JUNTO_PIEZA, V_ARTICULAR)
+    retiro.addMoveL(rdk.Item("Sold_Zona_Aprox", ITEM_TYPE_TARGET))
+
     def limpiar(p):
         p.setDO("ARCO_TIG", 0)
         p.setDO("PIEZA_PRESENTADA", 0)
         p.setDO("SOLDADURA_TERMINADA", 0)
+        for fase in (4, 6):
+            si(p, [f"FASE_CAPTURADA == {fase}"], lambda: call(p, "Sold_Retirar"))
         call(p, "Sold_Ir_Reposo")
 
     def depositar(p):

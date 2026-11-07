@@ -3,85 +3,113 @@
   "exito": false,
   "pruebas": [
     {
-      "prueba": "Pedido de 2 buenas con 1 retrabajo: se detiene, repone y queda en cero",
-      "fabricadas": 3
+      "prueba": "Corte en la soldadura",
+      "fase": 4.0,
+      "demora": 0.3,
+      "y": -620.0,
+      "retrabajo": 1.0,
+      "colisiones": 0
     },
     {
-      "prueba": "Reinicio manual con lote parcial: piezas en su lugar y contadores en cero"
+      "prueba": "Corte en la soldadura",
+      "fase": 4.0,
+      "demora": 1.0,
+      "y": -620.0,
+      "retrabajo": 1.0,
+      "colisiones": 0
+    },
+    {
+      "prueba": "Corte en la soldadura",
+      "fase": 4.0,
+      "demora": 1.8,
+      "y": -620.0,
+      "retrabajo": 1.0,
+      "colisiones": 0
     },
     {
       "prueba": "FALLA",
-      "fase": 1,
-      "error": "Sin fase 1: ['Sold_Par_Cordones', 'Ciclo_Pieza_1', 'Coordinador_Panel'] crb_se_mueve=0.00 crb_busy=0 instruccion=23:MoveC (Sold_Transicion_Medio, Sold_B_Entrada) colisiones=[] velocidad=5.0 {'FASE_PIEZA': 4.0, 'PIEZA_ACTIVA': 1.0, 'AUTO_ACTIVO': 1.0, 'ARCO_TIG': 0.0, 'PIEZA_PRESENTADA': 1.0, 'SOLDADURA_TERMINADA': 0.0, 'CAUSA_RECHAZO': 0.0, 'RECUP_PENDIENTE': 0.0}"
+      "fase": 4,
+      "demora": 2.6,
+      "error": "Sin fase 4: ['Sold_Par_Cordones', 'Ciclo_Pieza_1', 'Coordinador_Panel'] crb_se_mueve=0.00 crb_busy=0 instruccion=23:MoveC (Sold_Transicion_Medio, Sold_B_Entrada) colisiones=[] velocidad=5.0 {'FASE_PIEZA': 4.0, 'PIEZA_ACTIVA': 1.0, 'AUTO_ACTIVO': 1.0, 'ARCO_TIG': 0.0, 'PIEZA_PRESENTADA': 1.0, 'SOLDADURA_TERMINADA': 0.0, 'CAUSA_RECHAZO': 0.0, 'RECUP_PENDIENTE': 0.0}"
     },
     {
-      "prueba": "Parada y recuperación",
-      "fase": 2.0,
-      "pieza_en_pinza": false,
-      "retrabajo": 0.0,
-      "y_pieza": -560.0,
-      "siguiente": 2,
-      "lote_completo": true,
-      "colisiones": 0
-    },
-    {
-      "prueba": "Parada y recuperación",
-      "fase": 3.0,
-      "pieza_en_pinza": true,
-      "retrabajo": 0.0,
-      "y_pieza": -560.0,
-      "siguiente": 3,
-      "lote_completo": true,
-      "colisiones": 0
-    },
-    {
-      "prueba": "Parada y recuperación",
+      "prueba": "Corte en la soldadura",
       "fase": 4.0,
-      "pieza_en_pinza": true,
+      "demora": 3.4,
+      "y": -620.0,
       "retrabajo": 1.0,
-      "y_pieza": -620.0,
-      "siguiente": 3,
-      "lote_completo": true,
       "colisiones": 0
     },
     {
-      "prueba": "Parada y recuperación",
-      "fase": 5.0,
-      "pieza_en_pinza": true,
-      "retrabajo": 0.0,
-      "y_pieza": -560.0,
-      "siguiente": 3,
-      "lote_completo": true,
+      "prueba": "Corte en la soldadura",
+      "fase": 4.0,
+      "demora": 4.2,
+      "y": -620.0,
+      "retrabajo": 1.0,
       "colisiones": 0
     },
     {
-      "prueba": "Parada y recuperación",
+      "prueba": "Corte en la soldadura",
+      "fase": 4.0,
+      "demora": 5.0,
+      "y": -620.0,
+      "retrabajo": 1.0,
+      "colisiones": 0
+    },
+    {
+      "prueba": "Corte en la soldadura",
       "fase": 6.0,
-      "pieza_en_pinza": true,
+      "demora": 0.3,
+      "y": -620.0,
       "retrabajo": 1.0,
-      "y_pieza": -620.0,
-      "siguiente": 3,
-      "lote_completo": true,
       "colisiones": 0
     },
     {
-      "prueba": "Parada y recuperación",
-      "fase": 7.0,
-      "pieza_en_pinza": true,
-      "retrabajo": 0.0,
-      "y_pieza": -560.0,
-      "siguiente": 3,
-      "lote_completo": true,
+      "prueba": "Corte en la soldadura",
+      "fase": 6.0,
+      "demora": 1.0,
+      "y": -620.0,
+      "retrabajo": 1.0,
       "colisiones": 0
     },
     {
-      "prueba": "Parada y recuperación",
-      "fase": 8.0,
-      "pieza_en_pinza": false,
-      "retrabajo": 0.0,
-      "y_pieza": -560.0,
-      "siguiente": 3,
-      "lote_completo": true,
+      "prueba": "Corte en la soldadura",
+      "fase": 6.0,
+      "demora": 1.8,
+      "y": -620.0,
+      "retrabajo": 1.0,
+      "colisiones": 0
+    },
+    {
+      "prueba": "Corte en la soldadura",
+      "fase": 6.0,
+      "demora": 2.6,
+      "y": -620.0,
+      "retrabajo": 1.0,
+      "colisiones": 0
+    },
+    {
+      "prueba": "Corte en la soldadura",
+      "fase": 6.0,
+      "demora": 3.4,
+      "y": -620.0,
+      "retrabajo": 1.0,
+      "colisiones": 0
+    },
+    {
+      "prueba": "Corte en la soldadura",
+      "fase": 6.0,
+      "demora": 4.2,
+      "y": -620.0,
+      "retrabajo": 1.0,
+      "colisiones": 0
+    },
+    {
+      "prueba": "Corte en la soldadura",
+      "fase": 6.0,
+      "demora": 5.0,
+      "y": -620.0,
+      "retrabajo": 1.0,
       "colisiones": 0
     }
   ]
