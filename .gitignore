@@ -39,3 +39,8 @@ c_prototipado/panel/panel.db*
 
 # Guía personal para grabar y presentar el video (no forma parte de la entrega)
 d_presentacion/Construccion_de_la_celda_y_guion_del_video.md
+
+# Video: crudo, temporales, gráficos y vistas previas. Se versionan los scripts y el guion; el video final va en d_presentacion/
+c_prototipado/video/*.mp4
+c_prototipado/video/g/
+c_prototipado/video/trabajo/
