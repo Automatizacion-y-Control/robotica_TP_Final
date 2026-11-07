@@ -79,6 +79,12 @@ def construir():
     ajustar_velocidades(rdk)
     instalar(rdk)
     instalar_paradas(rdk)
+    # Heredados sin uso en v05: Parada_Entre_Piezas reemplaza a Parada_Ciclo, y el modo de
+    # servicio de antorcha (Preparar_Servicio_Antorcha + Sold_Servicio_Antorcha) al cambio de tungsteno.
+    for heredado in ("Parada_Ciclo", "Sold_Cambio_Tungsteno"):
+        programa = rdk.Item(heredado, ITEM_TYPE_PROGRAM)
+        assert programa.Valid() and programa.Name() == heredado, heredado
+        programa.Delete()
     p = rdk.AddProgram("Coordinador_Panel")
 
     def codigo(texto):

@@ -111,6 +111,9 @@ modo = COLLISION_ON if CON_COLISIONES else COLLISION_OFF
 resultados = {}
 for nombre in INDEPENDIENTES:
     prog = RDK.Item(nombre, ITEM_TYPE_PROGRAM)
+    if not prog.Valid() or prog.Name() != nombre:
+        print(f"  --  {nombre:26s} no existe en esta versión")  # Sold_Cambio_Tungsteno sale en v05.
+        continue
     estado_inicial()
     # Paso de muestreo fino (1 mm, 1°): con el paso por defecto se pierden
     # contactos cortos, como el roce de la punta con el escalón de la arista.

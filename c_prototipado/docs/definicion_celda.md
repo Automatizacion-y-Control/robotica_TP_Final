@@ -274,6 +274,9 @@ El **cambio de tungsteno** (`Sold_Cambio_Tungsteno`) se ejecuta a pedido: el rob
 antorcha a la bandeja de servicio, la celda se pausa para el operario y, al reanudar, se verifica
 el TCP.
 
+> **v05:** `Sold_Cambio_Tungsteno` se retira; el cambio de tungsteno se hace con el modo de servicio de
+> antorcha del panel (`Preparar_Servicio_Antorcha` y, al regresar, `Sold_Servicio_Antorcha`).
+
 > **v03:** en el paso 7 el manipulador devuelve la pieza soldada a la banda, un paso aguas abajo
 > de la toma. El avance de la cinta del ciclo siguiente la corre hacia la salida y libera el
 > depósito. Al final del lote, `Cinta_Evacuar` saca las 4 piezas soldadas fuera de la celda.

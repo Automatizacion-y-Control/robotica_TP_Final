@@ -526,7 +526,8 @@ Resultados de [modos](../verificaciones/modos_v05.json) y de
 [coordinación](../verificaciones/coordinacion_v05.json), a ×10 y con colisiones activas.
 
 El coordinador llama a `Parada_Entre_Piezas` en lugar de `Parada_Ciclo`: apaga el arco y lleva a
-reposo solo los robots disponibles. Cada modo exige la disponibilidad de los equipos que mueve;
+reposo solo los robots disponibles. `Parada_Ciclo`, heredada de la v04 y sin uso, se retira de la v05 junto con
+`Sold_Cambio_Tungsteno`, que reemplaza el modo de servicio de antorcha. Cada modo exige la disponibilidad de los equipos que mueve;
 una avería ajena a la tarea no la impide.
 
 | `MODO_SOLICITADO` | Preparación | Postura confirmada | Regreso |
