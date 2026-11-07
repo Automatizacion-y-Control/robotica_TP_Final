@@ -176,7 +176,7 @@ cumpliendo C3 con la cinta y el segundo robot.
 
 ## 7. Implementación
 
-La v03 se genera con [`scripts/mejora_01_cinta_pasante.py`](../scripts/mejora_01_cinta_pasante.py)
+La v03 se genera con [`scripts/03_cinta_pasante.py`](../scripts/03_cinta_pasante.py)
 **a partir del archivo de la v02**, y no reconstruyendo desde cero. Así se conservan los eventos de
 simulación de tomar y soltar que se cargaron a mano en la interfaz de RoboDK.
 
@@ -190,7 +190,7 @@ simulación de tomar y soltar que se cargaron a mano en la interfaz de RoboDK.
 | 6 | Crea `Man_Depositar_Cinta` y `Cinta_Evacuar`; reescribe `Ciclo_Pieza_1…4` y `Fin_Lote` |
 | 7 | Desactiva solo los contactos previstos (estator apoyado sobre el tramo de salida) y guarda la v03 |
 
-Los modelos nuevos los genera [`scripts/generar_modelos.py`](../scripts/generar_modelos.py):
+Los modelos nuevos los genera [`scripts/01_generar_modelos.py`](../scripts/01_generar_modelos.py):
 `cinta_extension_banda.stl`, `cinta_extension_estructura.stl`, `cortina_luz_cinta.stl` y el
 cerramiento `*_v03.stl`. Los parámetros están en la sección "Mejora 01" de
 [`scripts/parametros_celda.py`](../scripts/parametros_celda.py).
@@ -248,8 +248,8 @@ internet. Sin eso, RoboDK aplica los límites de la licencia gratuita y no guard
 | Archivo | Contenido |
 |---|---|
 | `Celda_Soldadura_Estator_Grupo4_v03.rdk` | Estación v03 |
-| `scripts/mejora_01_cinta_pasante.py` | Genera la v03 a partir de la v02 |
-| `scripts/generar_modelos.py`, `scripts/parametros_celda.py` | Modelos y parámetros de la mejora |
+| `scripts/03_cinta_pasante.py` | Genera la v03 a partir de la v02 |
+| `scripts/01_generar_modelos.py`, `scripts/parametros_celda.py` | Modelos y parámetros de la mejora |
 | `scripts/verificar_celda.py` | Verificación (con `--estacion` para elegir la versión) |
 | `imagenes/v03/` | Capturas de este documento |
 

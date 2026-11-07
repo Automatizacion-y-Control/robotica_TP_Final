@@ -1,10 +1,10 @@
 """Parámetros geométricos y de proceso de la celda de soldadura de estatores.
 
 Fuente única de cotas y valores de proceso. La usan:
-    generar_modelos.py          geometría de los modelos propios (STL)
-    construir_celda.py          estación v02: disposición, targets y programas
+    01_generar_modelos.py          geometría de los modelos propios (STL)
+    02_construir_celda.py          estación v02: disposición, targets y programas
     programa_soldadura.py       targets y programa del par de cordones
-    mejora_01_cinta_pasante.py  estación v03, a partir de la v02
+    03_cinta_pasante.py  estación v03, a partir de la v02
     verificar_celda.py          pieza de prueba para la verificación
 
 Unidades: mm, grados (°) y mm/s, salvo que se indique otra cosa.
@@ -26,14 +26,14 @@ Cómo actualizar un valor
 ------------------------
 1. Cambiar el valor en este archivo (y su comentario, si cambia el origen).
 2. Si afecta la geometría (pieza, antorcha, cerramiento, cinta, pallet,
-   estación de servicio): python generar_modelos.py
+   estación de servicio): python 01_generar_modelos.py
 3. Reconstruir las estaciones:
-     a. v02: construir_celda.py. Borra y rehace la estación: hay que volver a
+     a. v02: 02_construir_celda.py. Borra y rehace la estación: hay que volver a
         cargar desde la GUI los eventos Evento_Tomar_Pieza (adjuntar a
         TCP_Pinza) y Evento_Soltar_Pieza (separar a Frame_Pallet), y guardar.
         Si solo cambia la soldadura, alcanza con actualizar_soldadura.py, que
         conserva los eventos.
-     b. v03: mejora_01_cinta_pasante.py, a partir de la v02 ya guardada
+     b. v03: 03_cinta_pasante.py, a partir de la v02 ya guardada
         (conserva los eventos de tomar y soltar). Después hay que volver a
         cargar en Fin_Lote los eventos de reposición del lote, con los
         estatores en su posición de inicio, y guardar.
@@ -58,7 +58,7 @@ ESTATOR_LARGO = 55.0          # largo de apilado (eje del paquete); el cordón m
 ESTATOR_D_AGUJERO = 55.0      # diámetro del agujero central; tiene que superar 29 mm (dedos de la pinza cerrados)
 ESTATOR_ESCALON = 4.0         # escalón en cada arista, alojamiento del cordón
 # Masa resultante con acero al silicio (7,65 g/cm3): 3,6 kg. La calcula
-# generar_modelos.py. Junto con la pinza (~0,9 kg) tiene que quedar por debajo
+# 01_generar_modelos.py. Junto con la pinza (~0,9 kg) tiene que quedar por debajo
 # de la carga del IRB 1200 (7 kg).
 
 # Punto de soldadura: vértice interior del escalón, medido desde el eje.
@@ -125,7 +125,7 @@ PALLET_ESPESOR = 20.0
 PALLET_PASO = 200.0
 SOPORTE_PALLET_ALTURA = 350.0
 
-# Estación de servicio de la antorcha (pedestal de 900 mm, ver generar_modelos).
+# Estación de servicio de la antorcha (pedestal de 900 mm, ver 01_generar_modelos.py).
 SERVICIO_BASE = (520.0, 1300.0)
 SERVICIO_PUNTO = (0.0, 60.0, 970.0)   # punto de verificación del TCP, relativo a la base
 

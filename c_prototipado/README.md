@@ -42,7 +42,7 @@ Al cerrar RoboDK, no guardar: se conservaría el estado de la simulación.
 Con RoboDK abierto como administrador y una sola estación abierta, desde `scripts/`:
 
 ```text
-C:\RoboDK\Python-Embedded\python.exe mejora_03_coordinacion.py --puerto 20500
+C:\RoboDK\Python-Embedded\python.exe 05_coordinacion.py --puerto 20500
 C:\RoboDK\Python-Embedded\python.exe verificar_celda.py --colisiones --con-pieza --estacion Celda_Soldadura_Estator_Grupo4_v05
 C:\RoboDK\Python-Embedded\python.exe verificar_modos_v05.py --puerto 20500
 C:\RoboDK\Python-Embedded\python.exe verificar_coordinacion_v05.py --puerto 20500

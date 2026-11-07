@@ -3,7 +3,7 @@
 Arma la estación completa a partir de parametros_celda.py y de los modelos de
 c_prototipado/modelos/: equipos, frames, herramientas, targets y programas.
 El resultado se guarda en c_prototipado/Celda_Soldadura_Estator_Grupo4_v02.rdk
-(versión con pallet de salida; la v03 se obtiene con mejora_01_cinta_pasante.py).
+(versión con pallet de salida; la v03 se obtiene con 03_cinta_pasante.py).
 
 Alcance del script:
     - Solo CONSTRUYE la estación. No ejecuta ni mueve los robots durante el
@@ -15,9 +15,9 @@ Alcance del script:
       desde el menú de RoboDK.
 
 Requisitos: RoboDK abierto (API en el puerto 20500) y los modelos generados
-con generar_modelos.py.
+con 01_generar_modelos.py.
 
-Uso:  C:\\RoboDK\\Python-Embedded\\python.exe construir_celda.py
+Uso:  C:\\RoboDK\\Python-Embedded\\python.exe 02_construir_celda.py
 """
 import math
 import os

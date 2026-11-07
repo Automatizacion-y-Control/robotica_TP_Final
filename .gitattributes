@@ -34,7 +34,7 @@
 *.tool  binary
 
 # Modelos 3D. Los STL propios son ASCII, pero se tratan como binarios:
-# diff ilegible y sin conversión; generar_modelos.py los escribe con LF.
+# diff ilegible y sin conversión; 01_generar_modelos.py los escribe con LF.
 *.stl   binary
 *.step  binary
 *.stp   binary

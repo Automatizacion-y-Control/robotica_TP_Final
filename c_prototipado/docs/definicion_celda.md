@@ -560,8 +560,8 @@ Queda fuera del alcance de este trabajo.
 | `Celda_Soldadura_Estator_Grupo4_v01.rdk` | Versión anterior del grupo (posicionador MTD 250) |
 | `Celda_Soldadura_Estator_Grupo4_v02.rdk` | Estación descripta en este documento (salida por pallet) |
 | `scripts/parametros_celda.py` | Todas las cotas y parámetros de proceso |
-| `scripts/generar_modelos.py` | Genera los STL propios (pieza, pallet, soporte, antorcha, estación de servicio, cerramiento, puerta, cortina) |
-| `scripts/construir_celda.py` | Arma la estación: equipos, frames, herramientas, targets, programas y pares de colisión |
+| `scripts/01_generar_modelos.py` | Genera los STL propios (pieza, pallet, soporte, antorcha, estación de servicio, cerramiento, puerta, cortina) |
+| `scripts/02_construir_celda.py` | Arma la estación: equipos, frames, herramientas, targets, programas y pares de colisión |
 | `scripts/programa_soldadura.py` | Geometría y programa del par de cordones (compartido) |
 | `scripts/actualizar_soldadura.py` | Rehace solo la soldadura en una estación existente, sin perder los eventos |
 | `scripts/verificar_celda.py` | Verifica alcance, programas y colisiones (con pieza de prueba opcional) |
@@ -572,19 +572,19 @@ Queda fuera del alcance de este trabajo.
 Para regenerar la estación, con RoboDK abierto:
 
 ```text
-python scripts/generar_modelos.py
-C:\RoboDK\Python-Embedded\python.exe scripts/construir_celda.py
+python scripts/01_generar_modelos.py
+C:\RoboDK\Python-Embedded\python.exe scripts/02_construir_celda.py
 C:\RoboDK\Python-Embedded\python.exe scripts/verificar_celda.py --colisiones --con-pieza
 ```
 
-`construir_celda.py` borra y rehace la estación, así que los eventos de simulación agregados a mano
+`02_construir_celda.py` borra y rehace la estación, así que los eventos de simulación agregados a mano
 (§13) se pierden si se vuelve a ejecutar. Para cambiar la soldadura en una estación que ya tiene
 los eventos se usa `scripts/actualizar_soldadura.py`, que solo rehace `Sold_Par_Cordones` y sus
 targets; con `--reiniciar-lote` deja además la simulación en el inicio de lote. La estación queda con la velocidad de simulación en 1×
 (tiempo real), para que la ejecución se vea con los tiempos de §12.3.
 
-> **v03:** se genera con `scripts/mejora_01_cinta_pasante.py` a partir de la v02, para conservar
-> los eventos de tomar y soltar. No se reconstruye con `construir_celda.py`.
+> **v03:** se genera con `scripts/03_cinta_pasante.py` a partir de la v02, para conservar
+> los eventos de tomar y soltar. No se reconstruye con `02_construir_celda.py`.
 
 ## 15. Referencias
 

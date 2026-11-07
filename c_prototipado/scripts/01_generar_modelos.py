@@ -13,7 +13,7 @@ Salida: c_prototipado/modelos/
 El script no se conecta con RoboDK: solo escribe geometría. Las cotas salen de
 parametros_celda.py para que la geometría y la disposición no se desfasen.
 
-Uso:  python generar_modelos.py
+Uso:  python 01_generar_modelos.py
 """
 import math
 import os
@@ -304,7 +304,7 @@ def cinta_extension():
     CINTA_ALTURA_BANDA) y el ancho de la banda, con largueros laterales y patas.
     Es geometría fija: lo que viaja sobre la banda lo mueve el eje del mecanismo.
     """
-    x_base = P.CINTA_TOMA[0] + 250.0 - P.CINTA_LARGO          # misma base que en construir_celda.py
+    x_base = P.CINTA_TOMA[0] + 250.0 - P.CINTA_LARGO          # misma base que en 02_construir_celda.py
     y_eje = P.CINTA_TOMA[1]
     x0, x1 = x_base + P.CINTA_BANDA_FIN_REL, P.CINTA_EXT_FIN_X
     zt = P.CINTA_ALTURA_BANDA

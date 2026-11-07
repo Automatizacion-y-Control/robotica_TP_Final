@@ -153,11 +153,11 @@ archivo es autosuficiente:
 
 ```text
 cd c_prototipado/scripts
-python generar_modelos.py                                                   # modelos 3D propios
-C:\RoboDK\Python-Embedded\python.exe construir_celda.py                     # estación v02
-C:\RoboDK\Python-Embedded\python.exe mejora_01_cinta_pasante.py             # estación v03, a partir de la v02
-C:\RoboDK\Python-Embedded\python.exe mejora_02_modos_mantenimiento.py       # estación v04, a partir de la v03
-C:\RoboDK\Python-Embedded\python.exe mejora_03_coordinacion.py              # estación v05, a partir de la v04
+python 01_generar_modelos.py                                                   # modelos 3D propios
+C:\RoboDK\Python-Embedded\python.exe 02_construir_celda.py                     # estación v02
+C:\RoboDK\Python-Embedded\python.exe 03_cinta_pasante.py             # estación v03, a partir de la v02
+C:\RoboDK\Python-Embedded\python.exe 04_modos_mantenimiento.py       # estación v04, a partir de la v03
+C:\RoboDK\Python-Embedded\python.exe 05_coordinacion.py              # estación v05, a partir de la v04
 C:\RoboDK\Python-Embedded\python.exe verificar_coordinacion_v05.py --puerto 20500   # ensayos de la v05
 C:\RoboDK\Python-Embedded\python.exe verificar_modos_v05.py --puerto 20500
 C:\RoboDK\Python-Embedded\python.exe verificar_paradas_v05.py --puerto 20500

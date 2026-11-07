@@ -6,7 +6,7 @@ entra y sale de la celda: el manipulador toma el estator en un punto de la banda
 y lo devuelve soldado en otro punto, aguas abajo; la cinta lo saca por la cara
 este. El operario ya no tiene que alcanzar ningún objeto dentro de la celda.
 
-Se parte de la v02 guardada (y no de construir_celda.py) para conservar los
+Se parte de la v02 guardada (y no de 02_construir_celda.py) para conservar los
 eventos de simulación cargados a mano:
     - Evento_Tomar_Pieza (adjuntar a TCP_Pinza) se usa sin cambios.
     - Evento_Soltar_Pieza deja la pieza en el frame que era Frame_Pallet. Ese
@@ -23,7 +23,7 @@ Cambios sobre la v02:
        Man_Depositar_Cinta, porque el depósito es siempre el mismo punto.
     5. Fin_Lote evacúa las piezas soldadas fuera de la celda.
 
-Uso:  C:\\RoboDK\\Python-Embedded\\python.exe mejora_01_cinta_pasante.py
+Uso:  C:\\RoboDK\\Python-Embedded\\python.exe 03_cinta_pasante.py
 """
 import os
 import sys

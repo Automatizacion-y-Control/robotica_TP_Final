@@ -1,7 +1,7 @@
 """Actualiza el programa Sold_Par_Cordones y sus targets en la estación abierta.
 
 Se usa cuando la estación ya tiene cargados a mano los eventos de simulación
-(Evento_Tomar_Pieza, Evento_Soltar_Pieza): volver a correr construir_celda.py
+(Evento_Tomar_Pieza, Evento_Soltar_Pieza): volver a correr 02_construir_celda.py
 los borraría. Este script solo:
     - crea o actualiza los targets de soldadura (programa_soldadura.crear_targets);
     - vacía y vuelve a cargar las instrucciones de Sold_Par_Cordones.
@@ -52,7 +52,7 @@ print(f"{prog.Name()}: {prog.InstructionCount()} instrucciones")
 # --- Reinicio del lote (opcional) ------------------------------------------------
 if "--reiniciar-lote" in sys.argv:
     # Los estatores vuelven a Frame_Banda con la misma pose relativa que les da
-    # construir_celda.py: el estator k queda k pasos antes de la toma.
+    # 02_construir_celda.py: el estator k queda k pasos antes de la toma.
     f_banda = RDK.Item("Frame_Banda", ITEM_TYPE_FRAME)
     x_toma, y_toma = P.CINTA_TOMA
     x_base = x_toma + 250.0 - P.CINTA_LARGO

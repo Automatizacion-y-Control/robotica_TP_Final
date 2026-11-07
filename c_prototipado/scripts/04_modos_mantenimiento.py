@@ -15,7 +15,7 @@ Aplica los requisitos de c_prototipado/docs/modos_y_mantenimiento.md (§10):
 Se parte de la v03 guardada para conservar los eventos de simulación cargados
 a mano (tomar, soltar y reposición del lote). El ciclo de producción no cambia.
 
-Uso:  C:\\RoboDK\\Python-Embedded\\python.exe mejora_02_modos_mantenimiento.py
+Uso:  C:\\RoboDK\\Python-Embedded\\python.exe 04_modos_mantenimiento.py
 """
 import os
 import sys

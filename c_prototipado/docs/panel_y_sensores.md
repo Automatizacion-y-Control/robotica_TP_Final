@@ -455,7 +455,7 @@ pendiente; la primera implementación del coordinador v05 se describe a continua
 
 ### Implementación inicial de parada entre piezas
 
-Se implementó [mejora_03_coordinacion.py](../scripts/mejora_03_coordinacion.py) y se generó la
+Se implementó [05_coordinacion.py](../scripts/05_coordinacion.py) y se generó la
 estación v05. El primer intento se interrumpió al abrirse RoboDK con licencia gratuita y limitarse
 las llamadas a la API. Después se conectó a la instancia administrativa en **20501**, con licencia
 `Free (Trial)`, y se completaron generación, guardado, reapertura y ensayos dinámicos.

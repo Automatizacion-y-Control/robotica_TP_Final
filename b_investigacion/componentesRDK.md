@@ -135,7 +135,7 @@ tolerancia de posición de un cordón. Ya está integrado con la antorcha en la 
 | Electrodo de tungsteno | Ø2,4 mm | Valor típico |
 | Saliente del tungsteno | 5 mm fuera de la boquilla | Valor típico |
 | **TCP** | **X = 0, Y = 0, Z = 207 mm** desde la brida, sin rotación (Z a lo largo del electrodo) | Modelo propio |
-| Archivo | `c_prototipado/modelos/antorcha_tig.stl` | `generar_modelos.py` |
+| Archivo | `c_prototipado/modelos/antorcha_tig.stl` | `01_generar_modelos.py` |
 
 **Por qué TIG y no MIG:** para un paquete de chapas magnéticas importa que la soldadura tenga **poco
 calor y no agregue material**. El TIG sin aporte funde los bordes de las chapas entre sí, deja un
@@ -174,7 +174,7 @@ de la biblioteca de RoboDK, una antorcha MIG con alimentación de alambre y cuel
 | Bandeja de servicio | 250 × 120 × 15 mm, a 900 mm de altura | Modelo propio |
 | Horquilla de verificación del TCP | Dos brazos con dos haces cruzados | Modelo propio, inspirado en los dispositivos comerciales de verificación de TCP |
 | Punto de verificación | (0, 60, 970) mm respecto de la base del pedestal | Modelo propio |
-| Archivo | `c_prototipado/modelos/estacion_servicio_antorcha.stl` | `generar_modelos.py` |
+| Archivo | `c_prototipado/modelos/estacion_servicio_antorcha.stl` | `01_generar_modelos.py` |
 
 **Función:**
 
@@ -394,7 +394,7 @@ respecto de la versión anterior.
 
 | Archivo | Cómo se obtiene |
 |---|---|
-| `c_prototipado/modelos/paquete_estator.stl` | `python c_prototipado/scripts/generar_modelos.py` |
+| `c_prototipado/modelos/paquete_estator.stl` | `python c_prototipado/scripts/01_generar_modelos.py` |
 | `c_prototipado/modelos/pallet_4_posiciones.stl` | Mismo script |
 | `c_prototipado/modelos/antorcha_tig.stl` | Mismo script |
 | `c_prototipado/modelos/estacion_servicio_antorcha.stl` | Mismo script |
@@ -403,7 +403,7 @@ respecto de la versión anterior.
 | Cinta, sensor y mesa | Biblioteca local de RoboDK (`C:\RoboDK\Library`) |
 | Imágenes de `componentes/` | Capturas de RoboDK v6.1.1 (estación de trabajo `Componentes_Grupo4`) |
 
-El script `generar_modelos.py` solo escribe archivos STL: no se conecta con RoboDK ni mueve ningún
+El script `01_generar_modelos.py` solo escribe archivos STL: no se conecta con RoboDK ni mueve ningún
 robot.
 
 ## 15. Cambios en la v03 (mejora 01)

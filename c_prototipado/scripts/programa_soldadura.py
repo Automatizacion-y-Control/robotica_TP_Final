@@ -1,6 +1,6 @@
 """Targets y programa del par de cordones (Sold_Par_Cordones).
 
-Módulo compartido por construir_celda.py (construcción completa) y
+Módulo compartido por 02_construir_celda.py (construcción completa) y
 actualizar_soldadura.py (actualización de una estación ya existente sin
 perder los eventos de simulación cargados a mano).
 

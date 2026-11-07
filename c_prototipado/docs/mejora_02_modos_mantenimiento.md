@@ -84,7 +84,7 @@ Programas agregados:
 
 ## 4. Generación de la estación
 
-La v04 se genera con [mejora_02_modos_mantenimiento.py](../scripts/mejora_02_modos_mantenimiento.py) a
+La v04 se genera con [04_modos_mantenimiento.py](../scripts/04_modos_mantenimiento.py) a
 partir de la v03 guardada, para conservar los eventos de simulación cargados desde la interfaz.
 
 ## 5. Verificación
