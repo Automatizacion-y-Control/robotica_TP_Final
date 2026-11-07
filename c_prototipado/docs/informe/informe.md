@@ -6,8 +6,13 @@ equipos y frames, programas y movimientos, resultados, conclusiones y dificultad
 
 ## 1. Tarea de la celda
 
-La celda suelda con **TIG sin aporte** los paquetes de chapa de estator de un motor universal de
-lavarropas de unos 330 W. El paquete mide 105 × 105 × 55 mm, tiene un agujero central de 55 mm y pesa
+La celda es una etapa de la fabricación de un motor universal de lavarropas de unos 330 W. Suelda con
+**TIG sin aporte** el paquete de chapa del estator, la parte fija del motor: une las chapas apiladas en un
+paquete rígido, que después recibe las bobinas de campo y pasa al armado del motor.
+
+![Motor de referencia, vistas lado conector, lado eje y frontal. El paquete de estator es el bloque de chapas, de sección casi cuadrada, que rodea las bobinas de cobre; los cordones van en sus aristas.](./assets/fig_motor.png)
+
+El paquete mide 105 × 105 × 55 mm, tiene un agujero central de 55 mm y pesa
 3,6 kg. Lleva **cuatro cordones axiales de 53 mm**, uno por arista, que mantienen unidas las chapas.
 
 La tarea reúne las condiciones que justifican un robot: trabajo peligroso por la
