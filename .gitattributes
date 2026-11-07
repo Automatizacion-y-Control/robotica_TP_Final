@@ -7,6 +7,9 @@
 *.py    text eol=lf
 *.json  text eol=lf
 *.csv   text eol=lf
+*.yml   text eol=lf
+*.yaml  text eol=lf
+*.svg   text eol=lf
 
 # Scripts de Windows con CRLF
 *.bat   text eol=crlf
@@ -23,6 +26,7 @@
 *.jpeg  binary
 *.gif   binary
 *.zip   binary
+*.db    binary
 
 # RoboDK: estaciones y modelos de robots y herramientas de la biblioteca
 *.rdk   binary

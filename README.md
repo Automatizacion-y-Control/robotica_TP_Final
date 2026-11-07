@@ -67,7 +67,7 @@ El informe de la **entrega anterior** (celda v01) se conserva en [`c_prototipado
 
 ## La celda
 
-![Celda v03](c_prototipado/imagenes/v03/v03_vista_general.png)
+![Celda v05](c_prototipado/docs/informe/assets/fig_vista_general.png)
 
 | Elemento | Función |
 |---|---|
@@ -76,9 +76,13 @@ El informe de la **entrega anterior** (celda v01) se conserva en [`c_prototipado
 | **Cinta pasante** | Trae los estatores desde afuera de la celda y saca los soldados por el otro lado |
 | **Estación de servicio** | Verificación del TCP de la antorcha y cambio de tungsteno |
 | **Cerramiento**, **puerta enclavada**, **cortinas de luz** | Seguridad: el operario carga y descarga afuera; solo entra por la puerta con la celda detenida |
+| **Panel de operador** | Embebido en la estación: perfiles, modos de mantenimiento, paradas, recuperación, objetivo de piezas e imagen del proceso |
 
-**Ciclo:** ~75 s por pieza; lote de 4 piezas en ~315 s (≈ 45 piezas/h). Verificada sin colisiones y
-en bucle.
+**Ciclo:** ~72 s por pieza, con 42 s de arco; lote de 4 piezas en ~307 s (≈ 47 piezas/h), medido a ×2.
+Cordón a 5 mm/s. 0 targets fuera de alcance y programas válidos con la pieza transportada.
+
+**Pendiente:** detención intermitente en el `MoveC` entre cordones, sin causa identificada, y repetir la
+batería completa de ensayos sobre la versión final.
 
 ## Cumplimiento de los requisitos
 
@@ -105,7 +109,7 @@ proyectoRobotica/
 │   ├── img/                           Fotos del motor de referencia
 │   └── biblio/                        Libros y clases (no se versiona)
 ├── c_prototipado/                   Diseño, construcción y verificación de la celda
-│   ├── docs/                          Definición de la celda, mejoras, modos, panel y manual
+│   ├── docs/                          Definición, mejoras, modos, panel, manual, informe y antecedentes
 │   ├── panel/                         Código del panel de operador; va embebido en la v05
 │   ├── Celda_Soldadura_Estator_Grupo4_v01.rdk
 │   ├── Celda_Soldadura_Estator_Grupo4_v02.rdk
@@ -116,8 +120,9 @@ proyectoRobotica/
 │   ├── scripts/                       Parámetros, generación de modelos, construcción y verificación
 │   ├── modelos/                       Modelos 3D propios y de la biblioteca de RoboDK
 │   ├── verificaciones/                Resultados de los ensayos
+│   ├── referencias/                   Panel de la v01 y ejemplo de control de flujo
 │   └── imagenes/                      Capturas de la celda y del panel
-└── d_presentacion/                  Productos finales: celda, informe y video
+└── d_presentacion/                  Productos finales: estación e informe; falta el video
 ```
 
 ## Versiones de la celda
@@ -155,7 +160,9 @@ C:\RoboDK\Python-Embedded\python.exe mejora_02_modos_mantenimiento.py       # es
 C:\RoboDK\Python-Embedded\python.exe mejora_03_coordinacion.py              # estación v05, a partir de la v04
 C:\RoboDK\Python-Embedded\python.exe verificar_coordinacion_v05.py --puerto 20500   # ensayos de la v05
 C:\RoboDK\Python-Embedded\python.exe verificar_modos_v05.py --puerto 20500
+C:\RoboDK\Python-Embedded\python.exe verificar_paradas_v05.py --puerto 20500
 C:\RoboDK\Python-Embedded\python.exe verificar_panel.py --puerto 20500
+C:\RoboDK\Python-Embedded\python.exe medir_ciclo_v05.py --puerto 20500        # tiempo de ciclo, a x2
 ```
 
 Los eventos de simulación (tomar y soltar la pieza, reponer el lote) no se pueden crear desde la API
@@ -174,6 +181,7 @@ celda y en el documento de la mejora 01.
 | [Bibliografía](b_investigacion/bibliografia.md) | Barrientos, Groover, Craig, clases de la cátedra y normativa |
 | [Catálogo de componentes](b_investigacion/componentesRDK.md) | Datos, justificación e imágenes de cada componente |
 | [Definición de la celda](c_prototipado/docs/definicion_celda.md) | Diseño completo de la celda y su justificación |
+| [Informe técnico](d_presentacion/Informe_Tecnico_Grupo4.pdf) | Informe de entrega; sus fuentes están en [docs/informe/](c_prototipado/docs/informe/) |
 | [Mejora 01 · Cinta pasante](c_prototipado/docs/mejora_01_cinta_pasante.md) | Cambio de la v02 a la v03 |
 | [Modos y mantenimiento](c_prototipado/docs/modos_y_mantenimiento.md) | Paradas, LOTO, energías, zonas, modos y tareas |
 | [Mejora 02 · Modos y mantenimiento](c_prototipado/docs/mejora_02_modos_mantenimiento.md) | Cambio de la v03 a la v04 |
